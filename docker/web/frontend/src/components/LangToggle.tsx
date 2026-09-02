@@ -5,9 +5,12 @@ import { useTranslation } from "react-i18next";
 
 import { cn } from "@/lib/utils";
 
+// A segmented control still reads fine at three entries; revisit as a
+// dropdown if a fourth language ever lands.
 const LANGS: Array<[string, string]> = [
   ["ko", "KO"],
   ["en", "EN"],
+  ["zh-TW", "TW"],
 ];
 
 export function LangToggle() {

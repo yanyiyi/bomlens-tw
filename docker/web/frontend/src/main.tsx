@@ -18,6 +18,14 @@ import "@fontsource/jetbrains-mono/400.css";
 // splits the face across unicode ranges, so a screen loads the ranges it
 // actually shows rather than the whole face.
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+// Traditional Chinese: Pretendard ships KS-X-1001 Korean-style Hanja glyphs,
+// so it must never sit in front of a TC face — index.css swaps the CJK slot
+// (--font-cjk) to Noto Sans TC when <html lang="zh-TW">. Fontsource splits the
+// face into unicode-range subsets, so a screen only downloads the ranges it
+// shows. Weights mirror Inter's; 600 resolves to the nearest (700).
+import "@fontsource/noto-sans-tc/400.css";
+import "@fontsource/noto-sans-tc/500.css";
+import "@fontsource/noto-sans-tc/700.css";
 import "@fontsource/jetbrains-mono/500.css";
 
 import App from "./App";

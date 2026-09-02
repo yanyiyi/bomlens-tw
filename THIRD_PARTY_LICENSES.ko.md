@@ -55,11 +55,11 @@ BomLens(Apache-2.0)는 자체 코드를 셸 스크립트로 두고, SBOM 생성�
 | react, react-dom, scheduler | UI 렌더링 | MIT |
 | @radix-ui/react-label, react-progress, react-slot, react-primitive, react-context, react-compose-refs | 접근성 있는 기본 컴포넌트 | MIT |
 | cytoscape, cytoscape-dagre, dagre, graphlib, lodash | 의존성 그래프 시각화와 배치 | MIT |
-| i18next, react-i18next, i18next-browser-languagedetector | 한국어·영어 전환 | MIT |
+| i18next, react-i18next, i18next-browser-languagedetector | 한국어·영어·중국어(번체) 전환 | MIT |
 | class-variance-authority | 컴포넌트 변형 정의 | Apache-2.0 |
 | clsx, tailwind-merge | 클래스 이름 결합 | MIT |
 | lucide-react | 아이콘 | ISC |
-| @fontsource/inter, @fontsource/jetbrains-mono | 글꼴(아래 절 참고) | OFL-1.1 |
+| @fontsource/inter, @fontsource/jetbrains-mono, @fontsource/noto-sans-tc, pretendard | 글꼴(아래 절 참고) | OFL-1.1 |
 
 목록이 낡지 않도록 `npm run notices:check`가 생성 파일을 검사합니다. 라이선스를 선언하지 않은 패키지, 전문을 찾지 못한 패키지, copyleft 라이선스가 하나라도 있으면 CI가 실패합니다.
 
@@ -77,19 +77,23 @@ shadcn/ui는 패키지로 설치하는 라이브러리가 아니라 컴포넌트
 
 ### 웹 UI 폰트
 
-웹 UI(`--ui`)는 타이포그래피 일관성과 오프라인·데스크톱(Electron) 동작을 위해 두 글꼴을 `@fontsource`로 번들합니다. 글꼴 파일(woff2)은 빌드 시 웹 SPA에 포함되어 기본 이미지로 함께 배포되며, 외부 폰트 CDN을 호출하지 않습니다.
+웹 UI(`--ui`)는 타이포그래피 일관성과 오프라인·데스크톱(Electron) 동작을 위해 네 글꼴을 번들합니다. 글꼴 파일(woff2)은 빌드 시 웹 SPA에 포함되어 기본 이미지로 함께 배포되며, 외부 폰트 CDN을 호출하지 않습니다.
 
 | 글꼴 | 용도 | 라이선스 (SPDX) | Source |
 |------|------|------------------|--------|
-| Inter | 본문·UI 서체 | OFL-1.1 | https://github.com/rsms/inter |
+| Inter | 본문·UI 서체(라틴) | OFL-1.1 | https://github.com/rsms/inter |
 | JetBrains Mono | 코드·고정폭 서체 | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |
+| Pretendard | 본문·UI 서체(한글) | OFL-1.1 | https://github.com/orioncactus/pretendard |
+| Noto Sans TC | 본문·UI 서체(중국어 번체) | OFL-1.1 | https://github.com/notofonts/noto-cjk |
 
-SIL Open Font License 1.1은 출처(저작권) 표시를 요구하며, 두 글꼴 모두 원본을 수정 없이 그대로 번들합니다.
+SIL Open Font License 1.1은 출처(저작권) 표시를 요구하며, 글꼴 모두 원본을 수정 없이 그대로 번들합니다.
 
 - Inter: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
 - JetBrains Mono: Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+- Pretendard: Copyright 2021 Kil Hyung-jin (https://github.com/orioncactus/pretendard), Reserved Font Name 'Pretendard'. Source Sans Pro 포함: Copyright 2014-2021 Adobe (http://www.adobe.com/), Reserved Font Name 'Source'.
+- Noto Sans TC: Copyright 2014-2021 Adobe (http://www.adobe.com/), Reserved Font Name 'Noto'.
 
-OFL-1.1 전문은 위 Source의 각 저장소 `OFL.txt`에서 받을 수 있습니다.
+OFL-1.1 전문은 위 Source의 각 저장소 `OFL.txt`에서 받을 수 있습니다. Pretendard npm 패키지는 자체 라이선스 파일을 포함하지 않으므로, 그 전문은 이 저장소의 `docker/web/frontend/licenses/pretendard.txt`에 있으며 웹 UI가 생성하는 `third-party-licenses.txt`에도 재수록됩니다.
 
 ### vendored 오픈소스 식별과 OSSKB API (opt-in)
 

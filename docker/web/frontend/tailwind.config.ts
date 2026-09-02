@@ -100,10 +100,13 @@ const config: Config = {
         },
       },
       fontFamily: {
-        // Inter first, Pretendard behind it: Inter carries no Hangul, so Latin
-        // keeps the face the design was built on and Korean falls through to
-        // the one that matches its proportions.
-        sans: ["Inter", "Pretendard Variable", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Inter first, the CJK face behind it: Inter carries no Hangul/Han, so
+        // Latin keeps the face the design was built on and CJK falls through to
+        // the one that matches its proportions. The CJK slot is a variable
+        // because Pretendard (Korean) also carries Korean-style Hanja glyphs —
+        // it must not sit in front of Noto Sans TC when the UI is zh-TW, or
+        // ideographs render in KR forms. index.css picks per <html lang>.
+        sans: ["Inter", "var(--font-cjk)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       borderRadius: {

@@ -3,11 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * i18n coverage — fails when the en and ko message catalogues drift apart.
- * Every key present in one locale must exist in the other (DoD: en ≡ ko,
- * missing keys 0). Run in CI so a new string can't ship in one language only.
+ * i18n coverage — fails when any message catalogue drifts from the English
+ * reference. Every locale under src/locales must carry exactly the keys en
+ * has (DoD: en ≡ every locale, missing keys 0). Run in CI so a new string
+ * can't ship in one language only.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -38,18 +39,30 @@ function load(lng) {
   );
 }
 
-const en = load("en");
-const ko = load("ko");
-
-const missingInKo = [...en].filter((k) => !ko.has(k)).sort();
-const missingInEn = [...ko].filter((k) => !en.has(k)).sort();
-
-if (missingInKo.length || missingInEn.length) {
-  console.error("i18n coverage failed — locales are out of sync:\n");
-  if (missingInKo.length)
-    console.error(`Missing in ko (${missingInKo.length}):\n  ${missingInKo.join("\n  ")}\n`);
-  if (missingInEn.length)
-    console.error(`Missing in en (${missingInEn.length}):\n  ${missingInEn.join("\n  ")}\n`);
+const locales = readdirSync(LOCALES, { withFileTypes: true })
+  .filter((d) => d.isDirectory())
+  .map((d) => d.name)
+  .sort();
+const others = locales.filter((l) => l !== "en");
+if (!locales.includes("en") || others.length === 0) {
+  console.error(`i18n coverage failed — expected en plus at least one other locale under ${LOCALES}, found: ${locales.join(", ") || "none"}`);
   process.exit(1);
 }
-console.log(`i18n coverage passed — en ≡ ko (${en.size} keys).`);
+
+const en = load("en");
+let failed = false;
+for (const lng of others) {
+  const cat = load(lng);
+  const missing = [...en].filter((k) => !cat.has(k)).sort();
+  const extra = [...cat].filter((k) => !en.has(k)).sort();
+  if (missing.length || extra.length) {
+    if (!failed) console.error("i18n coverage failed — locales are out of sync:\n");
+    failed = true;
+    if (missing.length)
+      console.error(`Missing in ${lng} (${missing.length}):\n  ${missing.join("\n  ")}\n`);
+    if (extra.length)
+      console.error(`Extra in ${lng}, not in en (${extra.length}):\n  ${extra.join("\n  ")}\n`);
+  }
+}
+if (failed) process.exit(1);
+console.log(`i18n coverage passed — en ≡ ${others.join(" ≡ ")} (${en.size} keys).`);

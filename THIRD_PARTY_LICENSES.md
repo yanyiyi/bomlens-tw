@@ -56,12 +56,12 @@ The 23 packages currently in the bundle are below. All are permissive; none is c
 | react, react-dom, scheduler | UI rendering | MIT |
 | @radix-ui/react-label, react-progress, react-slot, react-primitive, react-context, react-compose-refs | Accessible primitives | MIT |
 | cytoscape, cytoscape-dagre, dagre, graphlib, lodash | Dependency graph rendering and layout | MIT |
-| i18next, react-i18next, i18next-browser-languagedetector | English and Korean switching | MIT |
+| i18next, react-i18next, i18next-browser-languagedetector | English, Korean and Traditional Chinese switching | MIT |
 | class-variance-authority | Component variant definitions | Apache-2.0 |
 | clsx, tailwind-merge | Class name composition | MIT |
 | lucide-react | Icons | ISC |
 | highlight.js | Syntax highlighting in the source viewer (grammars loaded on demand) | BSD-3-Clause |
-| @fontsource/inter, @fontsource/jetbrains-mono, pretendard | Fonts (see the section below) | OFL-1.1 |
+| @fontsource/inter, @fontsource/jetbrains-mono, @fontsource/noto-sans-tc, pretendard | Fonts (see the section below) | OFL-1.1 |
 
 `npm run notices:check` keeps the list from going stale by checking the generated file. CI fails when a bundled package declares no license, when no license text was found to reproduce, or when any copyleft license appears.
 
@@ -79,19 +79,21 @@ Those seven carry the upstream MIT notice alongside our own copyright line, and 
 
 ### Web UI fonts
 
-The web UI (`--ui`) bundles three typefaces for consistent typography and for offline and desktop (Electron) operation. The font files (woff2) are compiled into the web SPA at build time and ship with the base image; no external font CDN is called.
+The web UI (`--ui`) bundles four typefaces for consistent typography and for offline and desktop (Electron) operation. The font files (woff2) are compiled into the web SPA at build time and ship with the base image; no external font CDN is called.
 
 | Font | Purpose | License (SPDX) | Source |
 |------|---------|----------------|--------|
 | Inter | Body and UI typeface (Latin) | OFL-1.1 | https://github.com/rsms/inter |
 | JetBrains Mono | Code and monospace typeface | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |
 | Pretendard | Body and UI typeface (Hangul) | OFL-1.1 | https://github.com/orioncactus/pretendard |
+| Noto Sans TC | Body and UI typeface (Traditional Chinese) | OFL-1.1 | https://github.com/notofonts/noto-cjk |
 
-The SIL Open Font License 1.1 requires attribution, and both fonts are bundled unmodified:
+The SIL Open Font License 1.1 requires attribution, and the fonts are bundled unmodified:
 
 - Inter: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter)
 - JetBrains Mono: Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
 - Pretendard: Copyright 2021 Kil Hyung-jin (https://github.com/orioncactus/pretendard), with Reserved Font Name 'Pretendard'. Includes Source Sans Pro: Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'.
+- Noto Sans TC: Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name 'Noto'.
 
 The full OFL-1.1 text is available as `OFL.txt` in each repository listed under Source. The Pretendard npm package ships no license file of its own, so its text is carried in this repository at `docker/web/frontend/licenses/pretendard.txt` and reproduced in the web UI's generated `third-party-licenses.txt`.
 

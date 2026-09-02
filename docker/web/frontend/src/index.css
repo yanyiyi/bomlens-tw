@@ -20,6 +20,17 @@
  * ------------------------------------------------------------------------- */
 
 @layer base {
+  /* The CJK member of the sans stack (tailwind.config.ts). Korean keeps
+   * Pretendard; Traditional Chinese swaps in Noto Sans TC so ideographs do
+   * not render with Pretendard's Korean-style Hanja forms. i18n.ts keeps
+   * <html lang> in sync with the active language. */
+  :root {
+    --font-cjk: "Pretendard Variable";
+  }
+  html[lang="zh-TW"] {
+    --font-cjk: "Noto Sans TC";
+  }
+
   :root {
     --background: 0 0% 98%; /* #fafafa */
     --foreground: 240 6% 10%; /* #18181b warm near-black */
