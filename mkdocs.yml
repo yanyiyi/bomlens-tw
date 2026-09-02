@@ -5,7 +5,7 @@
 site_name: BomLens
 site_description: BomLens is a local-first SBOM generator and open-source risk assessor. Produce a CycloneDX SBOM, an open-source notice, and a security and license risk report from source code, containers, binaries, firmware, or an SBOM you received — from the CLI or a browser UI, with no SaaS.
 site_author: SK Telecom
-site_url: https://yanyiyi.github.io/bomlens/
+site_url: https://bomlens.ospo.tw/
 repo_url: https://github.com/sktelecom/bomlens
 repo_name: sktelecom/bomlens
 edit_uri: edit/main/docs/
@@ -136,18 +136,18 @@ plugins:
   # emit a stub pointing at the nonexistent /x.ko/ URL.
   - redirects:
       redirect_maps:
-        getting-started.md: https://yanyiyi.github.io/bomlens/ko/start/first-scan/
-        quickstart-no-cli.md: https://yanyiyi.github.io/bomlens/ko/start/no-cli/
-        scenarios-guide.md: https://yanyiyi.github.io/bomlens/ko/guides/by-input/
-        usage-guide.md: https://yanyiyi.github.io/bomlens/ko/reference/cli/
-        notice-and-security.md: https://yanyiyi.github.io/bomlens/ko/guides/reports/
-        examples-guide.md: https://yanyiyi.github.io/bomlens/ko/reference/ecosystems/
-        docker-image.md: https://yanyiyi.github.io/bomlens/ko/reference/docker-image/
-        architecture.md: https://yanyiyi.github.io/bomlens/ko/concepts/architecture/
-        firmware-analysis-guide.md: https://yanyiyi.github.io/bomlens/ko/guides/firmware/
-        supplier-sbom-validation.md: https://yanyiyi.github.io/bomlens/ko/guides/supplier-sbom/
-        contributing/package-manager-guide.md: https://yanyiyi.github.io/bomlens/ko/contribute/package-managers/
-        contributing/testing-guide.md: https://yanyiyi.github.io/bomlens/ko/contribute/testing/
+        getting-started.md: https://bomlens.ospo.tw/ko/start/first-scan/
+        quickstart-no-cli.md: https://bomlens.ospo.tw/ko/start/no-cli/
+        scenarios-guide.md: https://bomlens.ospo.tw/ko/guides/by-input/
+        usage-guide.md: https://bomlens.ospo.tw/ko/reference/cli/
+        notice-and-security.md: https://bomlens.ospo.tw/ko/guides/reports/
+        examples-guide.md: https://bomlens.ospo.tw/ko/reference/ecosystems/
+        docker-image.md: https://bomlens.ospo.tw/ko/reference/docker-image/
+        architecture.md: https://bomlens.ospo.tw/ko/concepts/architecture/
+        firmware-analysis-guide.md: https://bomlens.ospo.tw/ko/guides/firmware/
+        supplier-sbom-validation.md: https://bomlens.ospo.tw/ko/guides/supplier-sbom/
+        contributing/package-manager-guide.md: https://bomlens.ospo.tw/ko/contribute/package-managers/
+        contributing/testing-guide.md: https://bomlens.ospo.tw/ko/contribute/testing/
         en/index.md: index.md
         en/getting-started.md: start/first-scan.md
         en/quickstart-no-cli.md: start/no-cli.md
@@ -187,7 +187,7 @@ nav:
   - Home: index.md
   # 읽기 전용 데모. 사이트 안(/demo/)에 있지만 MkDocs 페이지가 아니라 SPA 번들이라
   # 전체 URL로 건다 — 상대 경로로 걸면 --strict의 링크 검증이 문서를 찾지 못한다.
-  - Live demo: https://yanyiyi.github.io/bomlens/demo/
+  - Live demo: https://bomlens.ospo.tw/demo/
   - Get started:
       - What is an SBOM: concepts/what-is-sbom.md
       - First scan: start/first-scan.md

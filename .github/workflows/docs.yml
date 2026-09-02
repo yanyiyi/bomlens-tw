@@ -48,8 +48,8 @@ concurrency:
 env:
   # 사이트가 하위 경로(/bomlens/)에 서비스되므로 번들의 자산 경로와 데이터 경로
   # 모두 그 하위를 가리켜야 한다. mkdocs.yml의 site_url과 함께 움직인다.
-  DEMO_BASE_PATH: /bomlens/demo/
-  DEMO_DATA_BASE: /bomlens/demo/data
+  DEMO_BASE_PATH: /demo/
+  DEMO_DATA_BASE: /demo/data
 
 jobs:
   # PR에서는 배포 없이 빌드만 검증한다. --strict라 깨진 링크·설정 오류가
