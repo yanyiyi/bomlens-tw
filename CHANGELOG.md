@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Traditional Chinese (`zh-TW`) joins English and Korean. The web UI carries a third language button and follows a Chinese browser locale on first visit; the human-facing conformance, AI-profile and risk reports render in Chinese with `--lang zh-TW` (`REPORT_LANG=zh-TW`), and the G7 / CISA registries and the AI risk knowledge base carry their Chinese labels alongside the existing ones. The SBOM and the JSON reports stay English, as they do for Korean. This first translation was produced by machine and is pending native-speaker review.
+
 ## [v1.11.5] - 2026-08-31
 
 ### Added

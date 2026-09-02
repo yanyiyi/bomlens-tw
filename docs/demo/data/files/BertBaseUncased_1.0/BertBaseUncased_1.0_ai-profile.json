@@ -1,6 +1,6 @@
 {
   "project": "BertBaseUncased",
-  "generatedAt": "2026-08-31T23:05:53Z",
+  "generatedAt": "2026-09-02T08:21:58Z",
   "conformanceResult": "pass",
   "g7": {
     "total": 51,
@@ -945,6 +945,7 @@
     "usageContext": "",
     "disclaimer": "This assessment is guidance, not legal advice. It summarizes license terms and recorded signals; the final use decision needs human review.",
     "disclaimer_ko": "이 판정은 법적 자문이 아닌 안내입니다. 라이선스 조건과 수집된 신호를 요약한 것이며, 최종 사용 판단은 사람의 검토가 필요합니다.",
+    "disclaimer_zh": "本評估僅供參考，並非法律意見。內容為授權條款與所記錄訊號的摘要；最終的使用判斷仍需人工檢視。",
     "counts": {
       "ok": 0,
       "conditional": 0,
@@ -973,16 +974,19 @@
         ],
         "summary": "Permissive license: commercial use, modification and redistribution are allowed; keep the copyright and license notices.",
         "summary_ko": "허용적 라이선스입니다. 상업 이용·수정·재배포가 가능하며 저작권과 라이선스 고지를 유지해야 합니다.",
+        "summary_zh": "寬鬆式授權條款：允許商業使用、修改與再散布；須保留著作權與授權條款聲明。",
         "conditions": [
           {
             "id": "attribution",
             "label": "Keep the copyright notice and credit the source",
-            "label_ko": "저작권 고지 유지와 출처 표시"
+            "label_ko": "저작권 고지 유지와 출처 표시",
+            "label_zh": "保留著作權聲明並標示出處"
           },
           {
             "id": "notice-file",
             "label": "Include the license text and NOTICE when distributing",
-            "label_ko": "배포 시 라이선스 원문과 NOTICE 포함"
+            "label_ko": "배포 시 라이선스 원문과 NOTICE 포함",
+            "label_zh": "散布時須附上授權條款原文與 NOTICE"
           }
         ],
         "sourceUrls": [

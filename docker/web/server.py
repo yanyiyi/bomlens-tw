@@ -1508,13 +1508,15 @@ def conformance_summary(run_id):
             # badge how each element was satisfied. Dropped here => dropped from UI.
             "cluster": str(c.get("cluster") or ""),
             "source": str(c.get("source") or ""),
-            # The Korean label the registry declares for this element. The JSON
-            # contract stays English — that is deliberate and tested — so the
-            # translation rides alongside rather than replacing it, and a client
-            # rendering in Korean picks it up. Empty for the checks the scripts
-            # write themselves, whose labels carry a threshold or a spec version
-            # and so cannot be looked up whole.
+            # The translated labels the registry declares for this element. The
+            # JSON contract stays English — that is deliberate and tested — so
+            # the translations ride alongside rather than replacing it, and a
+            # client rendering in Korean or Traditional Chinese picks them up.
+            # Empty for the checks the scripts write themselves, whose labels
+            # carry a threshold or a spec version and so cannot be looked up
+            # whole.
             "labelKo": str(c.get("label_ko") or ""),
+            "labelZh": str(c.get("label_zh") or ""),
         }
         # Any check can carry a regulatory-crosswalk mapping (validate-sbom.sh
         # joins docker/lib/regulation-crosswalk.json by check id): the named
@@ -1533,6 +1535,7 @@ def conformance_summary(run_id):
                 # "BSI TR-03183-2 Section 5.2.2" instead of the framework id.
                 "short": str(r.get("short") or r.get("framework") or ""),
                 "short_ko": str(r.get("short_ko") or r.get("short") or r.get("framework") or ""),
+                "short_zh": str(r.get("short_zh") or r.get("short") or r.get("framework") or ""),
             }
             for r in (c.get("regulations") or [])
             if isinstance(r, dict)
@@ -1561,11 +1564,12 @@ def conformance_summary(run_id):
         if isinstance(rg, dict):
             how = str(rg.get("how") or "")[:MAX_GUIDANCE_SNIPPET]
             how_ko = str(rg.get("how_ko") or "")[:MAX_GUIDANCE_SNIPPET]
+            how_zh = str(rg.get("how_zh") or "")[:MAX_GUIDANCE_SNIPPET]
             rg_url = str(rg.get("docUrl") or "")
             if not rg_url.startswith("https://"):
                 rg_url = ""
-            if how or how_ko:
-                row["reviewGuide"] = {"how": how, "howKo": how_ko, "docUrl": rg_url}
+            if how or how_ko or how_zh:
+                row["reviewGuide"] = {"how": how, "howKo": how_ko, "howZh": how_zh, "docUrl": rg_url}
         checks.append(row)
     out = {
         "result": data.get("result", "unknown"),
@@ -1722,11 +1726,13 @@ def ai_profile_summary(run_id):
                 "reasons": [str(r) for r in (m.get("reasons") or [])][:MAX_ASSESS_REASONS],
                 "summary": str(m.get("summary") or ""),
                 "summary_ko": str(m.get("summary_ko") or ""),
+                "summary_zh": str(m.get("summary_zh") or ""),
                 "conditions": [
                     {
                         "id": str(cond.get("id") or ""),
                         "label": str(cond.get("label") or ""),
                         "label_ko": str(cond.get("label_ko") or ""),
+                        "label_zh": str(cond.get("label_zh") or ""),
                     }
                     for cond in (m.get("conditions") or [])
                     if isinstance(cond, dict)
@@ -1737,6 +1743,7 @@ def ai_profile_summary(run_id):
             "usageContext": str(assess.get("usageContext") or ""),
             "disclaimer": str(assess.get("disclaimer") or ""),
             "disclaimer_ko": str(assess.get("disclaimer_ko") or ""),
+            "disclaimer_zh": str(assess.get("disclaimer_zh") or ""),
             "counts": {
                 k: int(raw_counts.get(k) or 0)
                 for k in ("ok", "conditional", "caution", "review")

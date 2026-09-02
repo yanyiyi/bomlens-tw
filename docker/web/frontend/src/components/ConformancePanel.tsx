@@ -28,6 +28,7 @@ import {
   verdictTally,
 } from "@/lib/conformance";
 import { Disclosure } from "@/components/ui/disclosure";
+import { pickLocalized } from "@/lib/locale";
 import { cn } from "@/lib/utils";
 
 const STATUS = {
@@ -242,7 +243,11 @@ function CheckRow({ check }: { check: ConformanceCheck }) {
   // elements were rendered as three bare lines while the block above them showed
   // the same kind of element in full. The gate is what the check IS, not what it
   // is called: the checks the scripts write themselves carry no cluster.
-  const isKo = (i18n.language ?? "").startsWith("ko");
+  // Which sibling translation to read (labelKo / label_zh / …) — the report
+  // contract stays English and translations ride alongside each field, so the
+  // lookup is per field and falls back to English for artifacts scanned before
+  // a language existed (lib/locale.ts).
+  const lang = i18n.language ?? "";
   const fromRegistry = isRegistryCheck(check);
   const what = fromRegistry
     ? t(`g7.help.${check.id}.what`, { defaultValue: "" })
@@ -251,7 +256,7 @@ function CheckRow({ check }: { check: ConformanceCheck }) {
   // TR-03183-2 Section 5.2.2 · CISA 2026 Component Producer". The crosswalk
   // section stays a per-framework roll-up rather than reprinting these.
   const regText = (check.regulations ?? [])
-    .map((r) => `${(isKo ? r.short_ko : r.short) || r.framework} ${r.ref}`)
+    .map((r) => `${pickLocalized(r, "short", lang) || r.framework} ${r.ref}`)
     .join(" · ");
   const notMet = check.status !== "pass";
   const fix =
@@ -264,12 +269,10 @@ function CheckRow({ check }: { check: ConformanceCheck }) {
   // What a person has to establish. Shown for an element no scan can settle, and
   // for one that is checkable in a form this report cannot see — a signature
   // delivered beside the SBOM reads as "not present" without it.
-  const reviewHow = notMet
-    ? (isKo ? check.reviewGuide?.howKo || check.reviewGuide?.how : check.reviewGuide?.how) ?? ""
-    : "";
-  // The registry's own Korean label, when the reader is reading Korean. The
-  // contract stays English; this is the translation riding alongside it.
-  const label = (isKo && check.labelKo) || check.label;
+  const reviewHow = notMet ? pickLocalized(check.reviewGuide, "how", lang) : "";
+  // The registry's own label in the reader's language. The contract stays
+  // English; the translation rides alongside it.
+  const label = pickLocalized(check, "label", lang) || check.label;
   const missing = dedupeMissing(check.missing ?? []);
   const overflow = missingOverflow(check);
   // Supplied by the report itself (validate-sbom.sh joins docker/lib/g7-guidance.json),

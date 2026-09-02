@@ -280,12 +280,15 @@ export interface ConformanceCheck {
    *  rather than replacing it. Empty for checks whose label carries a threshold
    *  or a spec version and so cannot be looked up whole. */
   labelKo?: string;
+  /** The Traditional Chinese label, riding alongside `label` like `labelKo`. */
+  labelZh?: string;
 }
 
 /** What a person has to establish for one element. */
 export interface ReviewGuideRef {
   how?: string;
   howKo?: string;
+  howZh?: string;
   /** Authoritative documentation (absolute https URL). */
   docUrl?: string;
 }
@@ -310,6 +313,8 @@ export interface RegulationRef {
   short?: string;
   /** Korean short framework name; falls back to `short` when absent. */
   short_ko?: string;
+  /** Traditional Chinese short framework name; falls back to `short` when absent. */
+  short_zh?: string;
 }
 
 /** One crosswalk element: a G7 element with its status and regulation refs, in

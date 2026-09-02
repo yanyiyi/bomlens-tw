@@ -2,7 +2,7 @@
   "project": "FlaskDataService",
   "format": "CycloneDX",
   "result": "pass",
-  "generatedAt": "2026-08-31T23:03:46Z",
+  "generatedAt": "2026-09-02T08:21:59Z",
   "untraceableComponents": 0,
   "checks": [
     {
@@ -18,7 +18,8 @@
           "ref": "Section 4",
           "basis": "an SBOM must be JSON or XML and valid against CycloneDX 1.6+ or SPDX 3.0.1+",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -35,7 +36,8 @@
           "ref": "Section 5.2.1",
           "basis": "required SBOM-level field: date and time of the SBOM data compilation",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -52,7 +54,8 @@
           "ref": "Section 5.2.1",
           "basis": "required SBOM-level field: creator of the SBOM, given as an email address or URL",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -69,7 +72,8 @@
           "ref": "Section 5.1",
           "basis": "the primary component the SBOM describes has to be identifiable",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -88,7 +92,8 @@
           "ref": "Section 5.2.2",
           "basis": "required per-component fields: component name and component version",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -107,7 +112,8 @@
           "ref": "Section 5.2.4",
           "basis": "additional field: other unique identifiers such as PURL or CPE, required where they exist",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -155,7 +161,8 @@
           "ref": "Section 5.1; 5.2.2",
           "basis": "dependencies on other components must be enumerated; the guideline requires recursive resolution within the scope of delivery, which is stricter than the CRA top-level minimum",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -174,7 +181,8 @@
           "ref": "Section 5.2.2",
           "basis": "required per-component field: the distribution licence under which the component may be used",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -193,7 +201,8 @@
           "ref": "Section 5.2.2",
           "basis": "required per-component field: a cryptographic checksum of the deployable component",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -212,7 +221,8 @@
           "ref": "Section 5.2.2",
           "basis": "the deployable-component checksum is specified as SHA-512",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -231,7 +241,8 @@
           "ref": "Section 5.2.2",
           "basis": "required per-component field: the entity that created and maintains the component, as an email address or URL",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -250,7 +261,8 @@
           "ref": "Section 5.2.2",
           "basis": "required per-component field: the actual filename of the component",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -269,7 +281,8 @@
           "ref": "Section 5.2.4",
           "basis": "additional fields: the source code URI and the URI of the deployable form, required where they exist",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -288,7 +301,8 @@
           "ref": "Section 5.2.2",
           "basis": "required per-component fields: the executable, archive and structured properties, each determined by inspecting the delivered file",
           "short": "BSI TR-03183-2",
-          "short_ko": "BSI TR-03183-2"
+          "short_ko": "BSI TR-03183-2",
+          "short_zh": "BSI TR-03183-2"
         }
       ]
     },
@@ -296,6 +310,7 @@
       "id": "cisa-sbom-author",
       "label": "SBOM author",
       "label_ko": "SBOM 작성자",
+      "label_zh": "SBOM 作者",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -314,7 +329,8 @@
           "ref": "SBOM Author",
           "basis": "the name of the entity that creates the SBOM data for the target component",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -322,6 +338,7 @@
       "id": "cisa-sbom-author-signature",
       "label": "SBOM author signature",
       "label_ko": "SBOM 작성자 서명",
+      "label_zh": "SBOM 作者簽章",
       "required": false,
       "status": "warn",
       "detail": "not present in the SBOM",
@@ -333,6 +350,7 @@
       "reviewGuide": {
         "how": "A signature delivered beside the SBOM rather than inside it does not appear here, because this report reads one file. If the SBOM arrived with a detached signature, verify it against the sender's key before treating the contents as theirs, and record that you did. A signature carried inside the document is read automatically and this row will say so.",
         "how_ko": "SBOM 안이 아니라 파일 옆에 따로 온 서명은 이 보고서에 나타나지 않습니다. 보고서가 파일 하나만 읽기 때문입니다. 분리 서명과 함께 받았다면 보낸 쪽의 키로 검증한 뒤 내용을 그쪽의 것으로 취급하고, 검증했다는 사실을 기록해 둡니다. 문서 안에 담긴 서명은 자동으로 읽히며 그 경우 이 행에 표시됩니다.",
+        "how_zh": "隨 SBOM 送達、但不在檔案之內的簽章不會出現在此處，因為本報告只讀取單一檔案。若 SBOM 附有分離簽章，請先以寄送方的金鑰驗證，再將內容視為出自對方，並記錄已完成驗證。內嵌於文件中的簽章會自動讀取，本列也會如實顯示。",
         "docUrl": "https://www.cisa.gov/resources-tools/resources/2026-minimum-elements-software-bill-materials-sbom"
       },
       "regulations": [
@@ -341,7 +359,8 @@
           "ref": "SBOM Author Signature",
           "basis": "a digital signature attributable to the SBOM author",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -349,6 +368,7 @@
       "id": "cisa-sbom-format-name",
       "label": "SBOM data format name",
       "label_ko": "SBOM 데이터 형식 이름",
+      "label_zh": "SBOM 資料格式名稱",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -363,7 +383,8 @@
           "ref": "SBOM Data Format Name",
           "basis": "the name of the data format used to represent the SBOM data",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -371,6 +392,7 @@
       "id": "cisa-sbom-format-version",
       "label": "SBOM data format version",
       "label_ko": "SBOM 데이터 형식 버전",
+      "label_zh": "SBOM 資料格式版本",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -385,7 +407,8 @@
           "ref": "SBOM Data Format Version",
           "basis": "the version of the data format named above",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -393,6 +416,7 @@
       "id": "cisa-sbom-generation-context",
       "label": "SBOM generation context",
       "label_ko": "SBOM 생성 시점",
+      "label_zh": "SBOM 產生情境",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -411,7 +435,8 @@
           "ref": "SBOM Generation Context",
           "basis": "the lifecycle phase and data available when the SBOM was generated, such as before or after build",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -419,6 +444,7 @@
       "id": "cisa-sbom-timestamp",
       "label": "SBOM timestamp",
       "label_ko": "SBOM 생성 시각",
+      "label_zh": "SBOM 時間戳記",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -433,7 +459,8 @@
           "ref": "SBOM Timestamp",
           "basis": "the date and time of the most recent update to the SBOM data, following RFC 9557",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -441,6 +468,7 @@
       "id": "cisa-sbom-tool-name",
       "label": "SBOM tool name",
       "label_ko": "SBOM 생성 도구 이름",
+      "label_zh": "SBOM 工具名稱",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -455,7 +483,8 @@
           "ref": "SBOM Tool Name",
           "basis": "the tool the SBOM author used to generate or amend the SBOM",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -463,6 +492,7 @@
       "id": "cisa-sbom-tool-version",
       "label": "SBOM tool version",
       "label_ko": "SBOM 생성 도구 버전",
+      "label_zh": "SBOM 工具版本",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -481,7 +511,8 @@
           "ref": "SBOM Tool Version",
           "basis": "the version of that tool, stated as unknown when no identifier is available",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -489,6 +520,7 @@
       "id": "cisa-sbom-version",
       "label": "SBOM version",
       "label_ko": "SBOM 문서 버전",
+      "label_zh": "SBOM 版本",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -503,7 +535,8 @@
           "ref": "SBOM Version",
           "basis": "an identifier distinguishing this SBOM from earlier iterations for the same component and version",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -511,6 +544,7 @@
       "id": "cisa-component-name",
       "label": "Component name",
       "label_ko": "구성요소 이름",
+      "label_zh": "元件名稱",
       "required": false,
       "status": "pass",
       "detail": "40/40 component(s)",
@@ -525,7 +559,8 @@
           "ref": "Component Name",
           "basis": "the name the component producer assigned to the component",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -533,6 +568,7 @@
       "id": "cisa-component-version",
       "label": "Component version",
       "label_ko": "구성요소 버전",
+      "label_zh": "元件版本",
       "required": false,
       "status": "pass",
       "detail": "40/40 component(s)",
@@ -547,7 +583,8 @@
           "ref": "Component Version",
           "basis": "the producer's version identifier, stated as unknown when none was provided",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -555,6 +592,7 @@
       "id": "cisa-component-producer",
       "label": "Component producer",
       "label_ko": "구성요소 생산자",
+      "label_zh": "元件產製者",
       "required": false,
       "status": "warn",
       "detail": "32/40 component(s)",
@@ -582,7 +620,8 @@
           "ref": "Component Producer",
           "basis": "the entity that creates, defines and identifies the component; replaces the 2021 element Supplier Name",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -590,6 +629,7 @@
       "id": "cisa-component-identifiers",
       "label": "Component identifiers",
       "label_ko": "구성요소 식별자",
+      "label_zh": "元件識別碼",
       "required": false,
       "status": "warn",
       "detail": "39/40 component(s)",
@@ -646,7 +686,8 @@
           "ref": "Component Identifiers",
           "basis": "at least one software identifier such as PURL or CPE, or an intrinsic one such as a hash",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -654,6 +695,7 @@
       "id": "cisa-component-license",
       "label": "Component license",
       "label_ko": "구성요소 라이선스",
+      "label_zh": "元件授權條款",
       "required": false,
       "status": "warn",
       "detail": "39/40 component(s)",
@@ -670,7 +712,8 @@
           "ref": "Component License",
           "basis": "the identifiers for the licenses under which the component is available",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -678,6 +721,7 @@
       "id": "cisa-component-hash-value",
       "label": "Component hash value",
       "label_ko": "구성요소 해시 값",
+      "label_zh": "元件雜湊值",
       "required": false,
       "status": "warn",
       "detail": "39/40 component(s)",
@@ -698,7 +742,8 @@
           "ref": "Component Hash Value",
           "basis": "the hash of the executable component artifact, stated as unknown when the artifact is out of reach",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -706,6 +751,7 @@
       "id": "cisa-component-hash-algorithm",
       "label": "Component hash algorithm",
       "label_ko": "구성요소 해시 알고리즘",
+      "label_zh": "元件雜湊演算法",
       "required": false,
       "status": "pass",
       "detail": "40/40 component(s)",
@@ -720,7 +766,8 @@
           "ref": "Component Hash Algorithm",
           "basis": "the algorithm that produced the hash, named by its IANA hash function textual name",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -728,6 +775,7 @@
       "id": "cisa-component-dependency-relationship",
       "label": "Component dependency relationship",
       "label_ko": "구성요소 의존 관계",
+      "label_zh": "元件相依關係",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -742,7 +790,8 @@
           "ref": "Component Dependency Relationship",
           "basis": "the relationship between two components where one is necessary for the operation of the other",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -750,6 +799,7 @@
       "id": "cisa-machine-processable-data",
       "label": "Machine-processable data",
       "label_ko": "기계 판독 가능 데이터",
+      "label_zh": "機器可處理資料",
       "required": false,
       "status": "pass",
       "detail": "present",
@@ -764,7 +814,8 @@
           "ref": "Machine-Processable Data",
           "basis": "the SBOM uses a widely used, open, machine-processable format",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -772,6 +823,7 @@
       "id": "cisa-coverage",
       "label": "Coverage",
       "label_ko": "포함 범위",
+      "label_zh": "涵蓋範圍",
       "required": false,
       "status": "warn",
       "detail": "requires human review (no automated source)",
@@ -783,6 +835,7 @@
       "reviewGuide": {
         "how": "Establish that the SBOM lists every component making up the software, transitive dependencies included. No tool can confirm this from the document alone — the document cannot show what was left out of it. Compare it against the build's own dependency resolution, or against the manifests the software is built from.",
         "how_ko": "SBOM이 소프트웨어를 이루는 구성요소를 이행 의존성까지 빠짐없이 담았는지 확인합니다. 문서만 보고는 어떤 도구도 판정할 수 없습니다. 문서는 자기가 빠뜨린 것을 보여 주지 못하기 때문입니다. 빌드가 실제로 해석한 의존성이나 빌드에 쓰인 매니페스트와 대조합니다.",
+        "how_zh": "確認 SBOM 已列出組成軟體的所有元件，包含間接相依。僅憑文件本身，任何工具都無法確認這一點——文件呈現不出自己遺漏了什麼。請與建置本身的相依性解析結果，或與軟體建置所依據的 manifest 比對。",
         "docUrl": "https://www.cisa.gov/resources-tools/resources/2026-minimum-elements-software-bill-materials-sbom"
       },
       "regulations": [
@@ -791,7 +844,8 @@
           "ref": "Coverage",
           "basis": "information for every component making up the target software, including transitive dependencies, with no minimum depth",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -799,6 +853,7 @@
       "id": "cisa-accommodation-of-updates",
       "label": "Accommodation of updates to SBOM data",
       "label_ko": "SBOM 데이터 갱신 수용",
+      "label_zh": "SBOM 資料更新因應機制",
       "required": false,
       "status": "warn",
       "detail": "requires human review (no automated source)",
@@ -810,6 +865,7 @@
       "reviewGuide": {
         "how": "Establish that there is a way to correct SBOM data after it has been published, and that corrections go out promptly. This is a practice of the organisation issuing the SBOM, not a field in it.",
         "how_ko": "발행한 SBOM 데이터를 나중에 정정할 방법이 있고 정정본이 지체 없이 나가는지 확인합니다. 문서 안의 필드가 아니라 SBOM을 발행하는 조직의 관행에 대한 항목입니다.",
+        "how_zh": "確認 SBOM 發佈後仍可更正其資料，且更正版能及時發佈。這是發行 SBOM 的組織作業實務，而非文件中的欄位。",
         "docUrl": "https://www.cisa.gov/resources-tools/resources/2026-minimum-elements-software-bill-materials-sbom"
       },
       "regulations": [
@@ -818,7 +874,8 @@
           "ref": "Accommodation of Updates to SBOM Data",
           "basis": "corrections and updates to published SBOM data are accommodated and issued promptly",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -826,6 +883,7 @@
       "id": "cisa-distribution-and-delivery",
       "label": "Distribution and delivery",
       "label_ko": "배포와 전달",
+      "label_zh": "散布與交付",
       "required": false,
       "status": "warn",
       "detail": "requires human review (no automated source)",
@@ -837,6 +895,7 @@
       "reviewGuide": {
         "how": "Establish that whoever needs the SBOM can get it promptly, and that any access control keeps unauthorized parties out without blocking authorized ones or preventing the data from being loaded into their security tools.",
         "how_ko": "SBOM이 필요한 쪽이 지체 없이 받을 수 있는지, 접근 통제가 권한 없는 쪽을 막되 권한 있는 쪽의 수신이나 보안 도구로의 반입까지 막지는 않는지 확인합니다.",
+        "how_zh": "確認需要 SBOM 的一方能即時取得，且任何存取控制在阻擋未經授權者之餘，不會擋住已授權的一方，也不會妨礙資料匯入其安全工具。",
         "docUrl": "https://www.cisa.gov/resources-tools/resources/2026-minimum-elements-software-bill-materials-sbom"
       },
       "regulations": [
@@ -845,7 +904,8 @@
           "ref": "Distribution and Delivery",
           "basis": "the SBOM is available promptly to those who need it, with access controls that do not block authorized parties",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -853,6 +913,7 @@
       "id": "cisa-explicit-unknowns",
       "label": "Explicitly identifying unknown information",
       "label_ko": "미상 정보의 명시",
+      "label_zh": "明確標示不明資訊",
       "required": false,
       "status": "warn",
       "detail": "not present in the SBOM",
@@ -871,7 +932,8 @@
           "ref": "Explicitly Identifying Unknown Information",
           "basis": "a value that is absent is stated as unknown to the author or as withheld, and the two are distinguished",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     },
@@ -879,6 +941,7 @@
       "id": "cisa-frequency",
       "label": "Frequency",
       "label_ko": "갱신 주기",
+      "label_zh": "更新頻率",
       "required": false,
       "status": "warn",
       "detail": "requires human review (no automated source)",
@@ -890,6 +953,7 @@
       "reviewGuide": {
         "how": "Establish that each software version or update has an SBOM of its own, and that a revised SBOM is issued when the component data changes or an error in it is found.",
         "how_ko": "소프트웨어 버전이나 업데이트마다 자기 SBOM이 있는지, 구성요소 데이터가 바뀌거나 오류를 발견했을 때 정정본을 다시 내는지 확인합니다.",
+        "how_zh": "確認每個軟體版本或更新都有自己的 SBOM，且在元件資料變動或發現其中有誤時，會發出修訂版 SBOM。",
         "docUrl": "https://www.cisa.gov/resources-tools/resources/2026-minimum-elements-software-bill-materials-sbom"
       },
       "regulations": [
@@ -898,7 +962,8 @@
           "ref": "Frequency",
           "basis": "each software version or update has an associated SBOM, and a corrected SBOM is reissued when data changes",
           "short": "CISA 2026",
-          "short_ko": "CISA 2026"
+          "short_ko": "CISA 2026",
+          "short_zh": "CISA 2026"
         }
       ]
     }
