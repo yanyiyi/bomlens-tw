@@ -169,6 +169,7 @@ extra:
 
 exclude_docs: |
   korean-style-guide.md
+  chinese-style-guide.md
   images/src/
 
 # Validate internal links and heading anchors against the rendered site. Anchors

@@ -1361,19 +1361,44 @@ bash "$LIB/validate-sbom.sh" "$FIX/aibom-owasp-1_7.json" "$WORK/genshape" "gensh
 gg7=$(jq '[.checks[] | select(.id|startswith("g7-"))] | length' "$WORK/genshape_conformance.json")
 [ "$gg7" -eq 51 ] && pass "the generator's own shape still gets the G7 elements" || fail "G7 checks=$gg7 on the generator shape, expected 51"
 
-echo "== G7 registry: Korean labels/cluster names cover every element/cluster =="
-# Drift guard mirroring the crosswalk one: the ko reports look up label_ko by id
-# and name_ko by cluster id, so a new element/cluster without a Korean string
-# would silently render English. Fail here so ko strings cannot drift.
+echo "== G7 registry: translated labels/cluster names cover every element/cluster =="
+# Drift guard mirroring the crosswalk one: a translated report looks up
+# label_<sfx> by id and name_<sfx> by cluster id, so a new element/cluster
+# without a translation would silently render English. Fail here so no
+# language's strings can drift.
 REG="$LIB/g7-registry.json"
-miss_lk=$(jq -r '[.clusters[].elements[] | select(has("label") and ((.label_ko // "")==""))] | length' "$REG")
-[ "$miss_lk" = "0" ] && pass "every element with a label has a non-empty label_ko" || fail "$miss_lk G7 element(s) missing label_ko"
-miss_nk=$(jq -r '[.clusters[] | select(((.name // "")=="") or ((.name_ko // "")==""))] | length' "$REG")
-[ "$miss_nk" = "0" ] && pass "every cluster has a name and name_ko" || fail "$miss_nk cluster(s) missing name/name_ko"
+for sfx in ko zh; do
+    miss_lk=$(jq -r --arg s "$sfx" '[.clusters[].elements[] | select(has("label") and ((.["label_" + $s] // "")==""))] | length' "$REG")
+    [ "$miss_lk" = "0" ] && pass "every element with a label has a non-empty label_$sfx" || fail "$miss_lk G7 element(s) missing label_$sfx"
+    miss_nk=$(jq -r --arg s "$sfx" '[.clusters[] | select(((.name // "")=="") or ((.["name_" + $s] // "")==""))] | length' "$REG")
+    [ "$miss_nk" = "0" ] && pass "every cluster has a name and name_$sfx" || fail "$miss_nk cluster(s) missing name/name_$sfx"
+done
 
-echo "== report string catalog is valid and has no unfilled placeholders in ko output =="
+echo "== report string catalogs are valid and agree on their key set =="
 CAT="$LIB/i18n/report-strings.ko.json"
+CAT_ZH="$LIB/i18n/report-strings.zh-TW.json"
 jq empty "$CAT" >/dev/null 2>&1 && pass "report-strings.ko.json is valid JSON" || fail "report-strings.ko.json is not valid JSON"
+jq empty "$CAT_ZH" >/dev/null 2>&1 && pass "report-strings.zh-TW.json is valid JSON" || fail "report-strings.zh-TW.json is not valid JSON"
+# A key present in one catalog and missing from another renders as the bare key
+# name in that language (kstr's `.[$k] // $k`), so key parity IS the gate.
+if diff <(jq -S 'keys' "$CAT") <(jq -S 'keys' "$CAT_ZH") >/dev/null 2>&1; then
+    pass "ko and zh-TW catalogs carry the same key set"
+else
+    fail "ko and zh-TW report catalogs have drifted apart"
+fi
+if diff <(jq -S '.["conformance.label_exact"] | keys' "$CAT") <(jq -S '.["conformance.label_exact"] | keys' "$CAT_ZH") >/dev/null 2>&1; then
+    pass "ko and zh-TW label_exact maps key on the same English labels"
+else
+    fail "label_exact English keys differ between ko and zh-TW"
+fi
+# Templates are filled by printf (%s, in argument order — bash printf has no
+# positional parameters) and by jq gsub (%n%/%a%/%b%/%v%). A translation that
+# drops or adds one renders a broken line, so the token profile must match.
+tok_drift=$(jq -n --slurpfile a "$CAT" --slurpfile b "$CAT_ZH" '
+    def toks: [scan("%s|%n%|%a%|%b%|%v%")] | sort;
+    [ ($a[0] | to_entries[] | select(.value | type == "string"))
+      | select((.value | toks) != (($b[0][.key] // "") | toks)) | .key ] | length')
+[ "$tok_drift" = "0" ] && pass "zh-TW templates carry the same placeholders as ko" || fail "$tok_drift zh-TW template(s) have mismatched placeholders"
 
 echo "== ko conformance report renders Korean while the JSON stays English =="
 REPORT_LANG=ko bash "$LIB/validate-sbom.sh" "$FIX/aibom-owasp-1_7.json" "$WORK/koconf" "bert-base-uncased" >/dev/null 2>&1
@@ -1408,6 +1433,43 @@ if [ -f "$WORK/koconf_ai-profile.json" ]; then
     fi
 else
     fail "ko profile produced no output"
+fi
+
+echo "== zh-TW conformance report renders Chinese while the JSON stays English =="
+REPORT_LANG=zh-TW bash "$LIB/validate-sbom.sh" "$FIX/aibom-owasp-1_7.json" "$WORK/zhconf" "bert-base-uncased" >/dev/null 2>&1
+if diff <(jq 'del(.generatedAt)' "$CONF") <(jq 'del(.generatedAt)' "$WORK/zhconf_conformance.json") >/dev/null 2>&1; then
+    pass "zh-TW conformance JSON == en conformance JSON (contract stays English)"
+else
+    fail "zh-TW conformance JSON diverged from the English JSON"
+fi
+grep -q '<html lang="zh-TW">' "$WORK/zhconf_conformance.html" && pass "zh-TW conformance HTML sets lang=zh-TW" || fail "zh-TW conformance HTML lang is not zh-TW"
+grep -q 'PingFang TC' "$WORK/zhconf_conformance.html" && pass "zh-TW conformance HTML uses a Traditional Chinese font stack" || fail "zh-TW conformance HTML kept the Korean font stack"
+grep -q 'SBOM 符合性報告' "$WORK/zhconf_conformance.html" && pass "zh-TW conformance HTML h1 is Chinese" || fail "zh-TW conformance HTML h1 not localized"
+grep -q '模型授權條款' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance MD localizes a G7 element label" || fail "zh-TW conformance MD label not localized"
+grep -q '需人工檢視' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance MD localizes a review detail" || fail "zh-TW conformance MD detail not localized"
+# Data/identifiers must survive verbatim in the zh report too.
+grep -q 'Apache-2.0' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance keeps the license id verbatim" || fail "zh-TW conformance dropped the license id"
+grep -q '✅' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance keeps the status emoji" || fail "zh-TW conformance dropped the status emoji"
+# An untranslated key renders as the bare key name (kstr's `.[$k] // $k`), which
+# would read as "conformance.h1" in the middle of a report.
+if grep -qE '(^|[^a-z.])(conformance|aiprofile|risk|crosswalk|common)\.[a-z0-9_]+([^a-z.]|$)' "$WORK/zhconf_conformance.md"; then
+    fail "zh-TW conformance MD contains an unfilled catalog key"
+else
+    pass "zh-TW conformance MD has no unfilled catalog keys"
+fi
+
+echo "== zh-TW AI compliance profile renders Chinese while the JSON stays English =="
+cp "$WORK/conf_bom.json" "$WORK/zhconf_bom.json" 2>/dev/null
+REPORT_LANG=zh-TW bash "$LIB/generate-ai-profile.sh" "$WORK/zhconf" "demo" >/dev/null 2>&1
+if [ -f "$WORK/zhconf_ai-profile.json" ]; then
+    grep -qE '^\| (中繼資料|模型|基礎設施) ' "$WORK/zhconf_ai-profile.md" && pass "zh-TW profile localizes cluster display names (name_zh)" || fail "zh-TW profile cluster names not localized"
+    if diff <(jq 'del(.generatedAt)' "$WORK/conf_ai-profile.json") <(jq 'del(.generatedAt)' "$WORK/zhconf_ai-profile.json") >/dev/null 2>&1; then
+        pass "zh-TW profile JSON == en profile JSON (contract stays English)"
+    else
+        fail "zh-TW profile JSON diverged from the English JSON"
+    fi
+else
+    fail "zh-TW profile produced no output"
 fi
 
 echo ""

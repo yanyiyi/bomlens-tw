@@ -827,6 +827,14 @@ if grep -q "7일 이내" "$atmp/rr_risk-report.md" && grep -q "30일 이내" "$a
 else
     fail "risk report (ko): deadlines + unmet-items note localized"
 fi
+# Same report in Traditional Chinese.
+REPORT_LANG=zh-TW bash "$LIB/generate-risk-report.sh" "$atmp/rr" "demo" >/dev/null 2>&1
+if grep -q "7 天內" "$atmp/rr_risk-report.md" && grep -q "30 天內" "$atmp/rr_risk-report.md" \
+   && grep -q "未滿足的格式驗證項目" "$atmp/rr_risk-report.md" && grep -q 'lang="zh-TW"' "$atmp/rr_risk-report.html"; then
+    pass "risk report (zh-TW): deadlines + unmet-items note localized"
+else
+    fail "risk report (zh-TW): deadlines + unmet-items note localized"
+fi
 rm -rf "$atmp"
 
 # Self-generated risk report (no conformance artifact) — the all-modes default.
@@ -865,6 +873,14 @@ if grep -q "오픈소스 위험 분석 보고서" "$stmp/self_risk-report.md" \
     pass "risk report (self, ko): titled 오픈소스 위험 분석 보고서, no 포맷 검증 section"
 else
     fail "risk report (self, ko): titled 오픈소스 위험 분석 보고서, no 포맷 검증 section"
+fi
+REPORT_LANG=zh-TW bash "$LIB/generate-risk-report.sh" "$stmp/self" "SelfApp" >/dev/null 2>&1
+if grep -q "開放原始碼風險分析報告" "$stmp/self_risk-report.md" \
+   && ! grep -q "格式驗證" "$stmp/self_risk-report.md" \
+   && grep -q "<h1>開放原始碼風險分析報告</h1>" "$stmp/self_risk-report.html"; then
+    pass "risk report (self, zh-TW): titled 開放原始碼風險分析報告, no 格式驗證 section"
+else
+    fail "risk report (self, zh-TW): titled 開放原始碼風險分析報告, no 格式驗證 section"
 fi
 rm -rf "$stmp"
 

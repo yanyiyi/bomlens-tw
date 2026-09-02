@@ -42,7 +42,7 @@ Full options, analysis modes, CI/CD integration, and troubleshooting for BomLens
 | `--spdx` | false | Also export the SBOM as SPDX 2.3 JSON (`_bom.spdx.json`), converted from the final CycloneDX output |
 | `--all` | — | `--notice --security --spdx` |
 | `--no-report` | false | Skip the open-source risk report (see below) |
-| `--lang <en\|ko>` | `en` | Language for the human-facing conformance and AI-profile reports (`.md`/`.html`). The SBOM and the JSON reports stay English regardless |
+| `--lang <en\|ko\|zh-TW>` | `en` | Language for the human-facing conformance and AI-profile reports (`.md`/`.html`). The SBOM and the JSON reports stay English regardless |
 | `--deep-license` | false | Precise license detection with scancode (opt-in image) |
 | `--deep-cve` | false | Add a second CVE-matching pass via grype's NVD CPE matcher (opt-in `bomlens-deep-cve` image, pulled automatically). Recovers NVD-only CVEs that Trivy misses, mostly for older Maven libraries, since BomLens attaches an NVD-matchable CPE to Maven components specifically; implies `--security`. Findings not verified against the live NVD version range are flagged version-unverified in the report — see the [deep CVE matching guide](../guides/reports.md) |
 | `--identify-vendored` | false | Identify open source copied (vendored) into C/C++ source that has no package manager. Matches file fingerprints against the OSSKB service (included in the published image; sends hashes, not source). See the [identify bundled OSS guide](../guides/identify-vendored.md) |

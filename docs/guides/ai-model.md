@@ -176,7 +176,7 @@ Because the card lists its datasets, BomLens looks up all seven the model was tr
 
 The lookup is what makes the next part visible. Three of the seven datasets carry a license — `odc-by` on the FineWeb-Edu family, MIT on the OpenCoder corpus — and three declare none at all: both HAERAE-HUB sets and open-web-math. Counting dataset names would have called this model's training data fully open. Reading the datasets shows a model published under Apache-2.0 whose training corpus is, in part, of unstated license. That is not a finding the tool judges; it is the one a reviewer needs before release, and it only appears once each dataset is looked up.
 
-The report this run produced is here to open as-is: the [conformance report](../samples/aether-7b-5attn_conformance.html) for the base model, which opens with the same G7 rollup the AI compliance profile carries in JSON and Markdown. Add `--lang ko` for the same reports in Korean; the SBOM and the JSON reports stay English either way.
+The report this run produced is here to open as-is: the [conformance report](../samples/aether-7b-5attn_conformance.html) for the base model, which opens with the same G7 rollup the AI compliance profile carries in JSON and Markdown. Add `--lang ko` or `--lang zh-TW` for the same reports in Korean or Traditional Chinese; the SBOM and the JSON reports stay English either way.
 
 ## Next steps
 

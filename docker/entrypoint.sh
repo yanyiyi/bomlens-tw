@@ -52,10 +52,16 @@ OUT_PREFIX="${SAFE_PROJECT}_${SAFE_VERSION}"
 LIBDIR="/usr/local/lib/sbom"
 
 # Report language for the human-facing conformance + AI-profile reports. Only
-# en (default) or ko; the report generators read REPORT_LANG directly, so export
-# a normalized value here for both of them. Anything else falls back to English
-# and never aborts the run.
-case "${REPORT_LANG:-en}" in ko) REPORT_LANG="ko" ;; *) REPORT_LANG="en" ;; esac
+# en (default), ko or zh-TW; the report generators read REPORT_LANG directly, so
+# export a normalized value here for all of them — the value becomes a catalog
+# filename, so its exact spelling matters. Chinese variants fold onto zh-TW, the
+# one Chinese we ship. Anything else falls back to English and never aborts the
+# run.
+case "$(printf '%s' "${REPORT_LANG:-en}" | tr '[:upper:]' '[:lower:]')" in
+    ko) REPORT_LANG="ko" ;;
+    zh|zh-tw|zh_tw|zh-hant|zh-hant-tw) REPORT_LANG="zh-TW" ;;
+    *) REPORT_LANG="en" ;;
+esac
 export REPORT_LANG
 
 # Shared language detection + cdxgen image selection (also used by the CLI).

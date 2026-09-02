@@ -104,7 +104,7 @@ fi
 # rendering of the verdicts can print it.
 # --------------------------------------------------------
 KBJ="$(dirname "$0")/ai-risk-knowledge.json"
-ASSESS='{"disclaimer":"","disclaimer_ko":"","counts":{"ok":0,"conditional":0,"caution":0,"review":0},"models":[]}'
+ASSESS='{"disclaimer":"","disclaimer_ko":"","disclaimer_zh":"","counts":{"ok":0,"conditional":0,"caution":0,"review":0},"models":[]}'
 if [ -f "$BOM" ] && [ -f "$KBJ" ]; then
     ASSESS=$(jq -c --slurpfile kb "$KBJ" '
       ($kb[0]) as $K
@@ -132,22 +132,25 @@ if [ -f "$BOM" ] && [ -f "$KBJ" ]; then
           | .usageContext as $uc
           | . + { summary:    ([ .terms[].summary ]    | join(" ")),
                   summary_ko: ([ .terms[].summary_ko ] | join(" ")),
+                  summary_zh: ([ .terms[].summary_zh ] | join(" ")),
                   conditions: ([ .terms[].conditions[]?
                                  | select($uc == "" or ((.appliesTo // []) | index($uc)))
                                  | .id ] | unique
                                | map({ id: ., label: ($K.conditionLabels[.].en // .),
-                                       label_ko: ($K.conditionLabels[.].ko // .) })),
+                                       label_ko: ($K.conditionLabels[.].ko // .),
+                                       label_zh: ($K.conditionLabels[.].zh // .) })),
                   sourceUrls: ([ .terms[].sourceUrl ] | unique) }
           | del(.terms)
         ] as $models
       | { usageContext: ([ $models[].usageContext ] | map(select(. != "")) | (.[0] // "")),
           disclaimer: $K.disclaimer.en, disclaimer_ko: $K.disclaimer.ko,
+          disclaimer_zh: $K.disclaimer.zh,
           counts: { ok:          ($models | map(select(.overall == "ok"))          | length),
                     conditional: ($models | map(select(.overall == "conditional")) | length),
                     caution:     ($models | map(select(.overall == "caution"))     | length),
                     review:      ($models | map(select(.overall == "review"))      | length) },
           models: $models }' "$BOM" 2>/dev/null) \
-        || ASSESS='{"disclaimer":"","disclaimer_ko":"","counts":{"ok":0,"conditional":0,"caution":0,"review":0},"models":[]}'
+        || ASSESS='{"disclaimer":"","disclaimer_ko":"","disclaimer_zh":"","counts":{"ok":0,"conditional":0,"caution":0,"review":0},"models":[]}'
 fi
 
 # --------------------------------------------------------
@@ -159,21 +162,28 @@ jq -n --arg project "$PROJECT" --arg ts "$GEN_AT" --arg confResult "$CONF_RESULT
   g7: $g7, regulatoryCrosswalk: $xwalk, licenseReview: $lic, riskAssessment: $assess }' > "$JSON"
 
 # --------------------------------------------------------
-# Localization (REPORT_LANG=ko). The JSON above stays English (a contract). Only
-# the Markdown/HTML below are localized. English (default) renders the exact
-# inline literals it always did (every render var = the English data, every
-# chrome var = its English literal), so its output is byte-identical. Korean
-# swaps chrome strings from docker/lib/i18n/report-strings.ko.json, element
-# labels + cluster names from g7-registry.json (label_ko / name_ko), and the
-# license-flag labels.
+# Localization (REPORT_LANG=ko|zh-TW). The JSON above stays English (a
+# contract). Only the Markdown/HTML below are localized. English (default)
+# renders the exact inline literals it always did (every render var = the
+# English data, every chrome var = its English literal), so its output is
+# byte-identical. A translation swaps chrome strings from its
+# docker/lib/i18n/report-strings.<lang>.json, element labels + cluster names
+# from g7-registry.json (label_<sfx> / name_<sfx>), and the license-flag labels.
 # --------------------------------------------------------
-REPORT_LANG="${REPORT_LANG:-en}"; [ "$REPORT_LANG" = "ko" ] || REPORT_LANG="en"
-KO_CAT="$(dirname "$0")/i18n/report-strings.ko.json"
-if [ "$REPORT_LANG" = "ko" ] && [ ! -f "$KO_CAT" ]; then
-    echo "[ai-profile] WARN: ko report catalog not found ($KO_CAT); using English." >&2
+REPORT_LANG="${REPORT_LANG:-en}"
+case "$REPORT_LANG" in ko|zh-TW) ;; *) REPORT_LANG="en" ;; esac
+LANG_CAT="$(dirname "$0")/i18n/report-strings.${REPORT_LANG}.json"
+if [ "$REPORT_LANG" != "en" ] && [ ! -f "$LANG_CAT" ]; then
+    echo "[ai-profile] WARN: $REPORT_LANG report catalog not found ($LANG_CAT); using English." >&2
     REPORT_LANG="en"
 fi
-kstr() { jq -r --arg k "$1" '.[$k] // $k' "$KO_CAT"; }
+# Registry sibling-field suffix for the language; empty for English (base field).
+case "$REPORT_LANG" in
+    ko) L_SFX="_ko" ;;
+    zh-TW) L_SFX="_zh" ;;
+    *) L_SFX="" ;;
+esac
+kstr() { jq -r --arg k "$1" '.[$k] // $k' "$LANG_CAT"; }
 # shellcheck disable=SC2059  # the format is a trusted catalog template, not user input
 tfmt() { local f; f="$(kstr "$1")"; shift; printf -- "$f" "$@"; }
 # HTML-escape helper (defined here so the chrome block below can build the meta line).
@@ -182,13 +192,13 @@ esc() { printf '%s' "$1" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }
 G7R="$G7"        # render copy of the G7 rollup (cluster names + item labels)
 FLAG_B="Behavioral-use restriction"
 FLAG_N="Non-commercial"
-if [ "$REPORT_LANG" = "ko" ]; then
+if [ "$REPORT_LANG" != "en" ]; then
     FLAG_B=$(kstr aiprofile.flag_behavioral); FLAG_N=$(kstr aiprofile.flag_noncommercial)
     REG="${G7_REGISTRY:-$(dirname "$0")/g7-registry.json}"
     # Localize element labels (by id) and cluster display names (by cluster id).
-    G7R=$(printf '%s' "$G7" | jq -c --slurpfile reg "$REG" '
-      ([ $reg[0].clusters[].elements[] | {(.id): .label_ko} ] | add) as $RK
-      | ([ $reg[0].clusters[] | {(.id): .name_ko} ] | add) as $CK
+    G7R=$(printf '%s' "$G7" | jq -c --slurpfile reg "$REG" --arg sfx "$L_SFX" '
+      ([ $reg[0].clusters[].elements[] | {(.id): .["label" + $sfx]} ] | add) as $RK
+      | ([ $reg[0].clusters[] | {(.id): .["name" + $sfx]} ] | add) as $CK
       | .clusters   |= map(.cluster = ($CK[.cluster] // .cluster))
       | .reviewItems |= map(.label = ($RK[.id] // .label) | .cluster = ($CK[.cluster] // .cluster))
       | .gapItems    |= map(.label = ($RK[.id] // .label) | .cluster = ($CK[.cluster] // .cluster))') || G7R="$G7"
@@ -213,8 +223,8 @@ AT=$(echo "$ASSESS" | jq -r '.models | length')
 AOK=$(echo "$ASSESS" | jq -r '.counts.ok'); ACOND=$(echo "$ASSESS" | jq -r '.counts.conditional')
 ACAU=$(echo "$ASSESS" | jq -r '.counts.caution'); AREV=$(echo "$ASSESS" | jq -r '.counts.review')
 
-# Chrome strings: English literals by default (byte-identical), catalog for ko.
-if [ "$REPORT_LANG" = "ko" ]; then
+# Chrome strings: English literals by default (byte-identical), catalog otherwise.
+if [ "$REPORT_LANG" != "en" ]; then
     P_MD_TITLE=$(tfmt aiprofile.md_title "$PROJECT")
     P_MD_GEN=$(tfmt aiprofile.md_generated "$GEN_AT")
     P_MD_INTRO=$(kstr aiprofile.md_intro)
@@ -236,7 +246,7 @@ if [ "$REPORT_LANG" = "ko" ]; then
     P_H2_REVIEW=$(kstr aiprofile.h2_review); P_REVIEW_INTRO=$(kstr aiprofile.review_intro)
     P_H2_ASSESS=$(kstr aiprofile.h2_assessment)
     P_SUM_ASSESS=$(tfmt aiprofile.sum_assess "$AOK" "$ACOND" "$ACAU" "$AREV")
-    P_ASSESS_DISC=$(echo "$ASSESS" | jq -r '.disclaimer_ko // .disclaimer')
+    P_ASSESS_DISC=$(echo "$ASSESS" | jq -r --arg sfx "$L_SFX" '.["disclaimer" + $sfx] // .disclaimer')
     AUC=$(echo "$ASSESS" | jq -r '.usageContext // ""')
     P_ASSESS_USAGE=""
     if [ -n "$AUC" ]; then
@@ -320,17 +330,17 @@ fi
             .models[] |
             "| \(.name|gsub("[|\n]";" ")) | \(.version|gsub("[|\n]";" ")) | \(.license|gsub("[|\n]";" ")) | \(vl(.axes.license)) | \(vl(.axes.security)) | \(vl(.axes.datasets)) | \(vl(.overall)) |"'
         echo ""
-        echo "$ASSESS" | jq -r --arg lang "$REPORT_LANG" --arg condlbl "$P_ASSESS_COND" --arg srclbl "$P_ASSESS_SRC" '
+        echo "$ASSESS" | jq -r --arg sfx "$L_SFX" --arg condlbl "$P_ASSESS_COND" --arg srclbl "$P_ASSESS_SRC" '
             # Collapse newlines/pipes the same way the table cells do: $body
             # embeds a component-supplied license string from an untrusted SBOM,
             # so leaving newlines in would let it inject markdown structure
             # (headings, list items, links) into this report.
             def flat: gsub("[|\n]"; " ");
             .models[] | select(.overall != "ok")
-            | (if $lang == "ko" and ((.summary_ko // "") != "") then .summary_ko
+            | (if ((.["summary" + $sfx] // "") != "") then .["summary" + $sfx]
                elif (.summary // "") != "" then .summary
                else (.reasons | join("; ")) end | flat) as $body
-            | ((if $lang == "ko" then [ .conditions[]?.label_ko ] else [ .conditions[]?.label ] end)
+            | ([ .conditions[]?.["label" + $sfx] ]
                | join("; ") | flat) as $conds
             | "- **\(.name|flat)** — \($body)"
               + (if $conds != "" then " (\($condlbl): \($conds))" else "" end)
@@ -349,7 +359,7 @@ fi
               elif .flag=="non-commercial" then $fn else .flag end) |"'
         if [ "$LT" -gt "$CAP" ]; then
             echo ""
-            if [ "$REPORT_LANG" = "ko" ]; then tfmt aiprofile.lic_more_md "$((LT - CAP))"; echo ""; else echo "_… and $((LT - CAP)) more (see the JSON profile)._"; fi
+            if [ "$REPORT_LANG" != "en" ]; then tfmt aiprofile.lic_more_md "$((LT - CAP))"; echo ""; else echo "_… and $((LT - CAP)) more (see the JSON profile)._"; fi
         fi
     else
         echo "${P_LIC_NONE}"

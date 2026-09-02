@@ -246,7 +246,7 @@ Options:
                          against the OSSKB service (opt-in image; sends hashes,
                          not source). See docs/guides/identify-vendored.md
   --byte-stable          Deterministic SBOM output
-  --lang <en|ko>         Language for the human-facing conformance and AI-profile
+  --lang <en|ko|zh-TW>   Language for the human-facing conformance and AI-profile
                          reports (.md/.html). Default en. The SBOM and the JSON
                          reports stay English regardless.
   --sign                 cosign sign (requires COSIGN_KEY)
@@ -435,12 +435,17 @@ FETCH_LICENSE="${FETCH_LICENSE:-true}"
 # post-process container so SECURITY_ENRICH=false works for air-gapped runs.
 SECURITY_ENRICH="${SECURITY_ENRICH:-true}"
 
-# Normalize the report language: only en (default) or ko reach the container. An
+# Normalize the report language: only en (default), ko or zh-TW reach the
+# container, always in that exact spelling — the value becomes a catalog
+# filename and an HTML lang attribute inside the image. Chinese variants are
+# accepted in any case and folded onto zh-TW, the one Chinese we ship. An
 # unknown value is a user typo, so warn and fall back to English rather than
 # silently producing an English report the user did not expect.
-case "$REPORT_LANG" in
-    en|ko) ;;
-    *) echo "[WARN] --lang '$REPORT_LANG' not supported (use en or ko); defaulting to en."; REPORT_LANG="en" ;;
+case "$(printf '%s' "$REPORT_LANG" | tr '[:upper:]' '[:lower:]')" in
+    en) REPORT_LANG="en" ;;
+    ko) REPORT_LANG="ko" ;;
+    zh|zh-tw|zh_tw|zh-hant|zh-hant-tw) REPORT_LANG="zh-TW" ;;
+    *) echo "[WARN] --lang '$REPORT_LANG' not supported (use en, ko or zh-TW); defaulting to en."; REPORT_LANG="en" ;;
 esac
 
 # Common -e flags for the post-process image.

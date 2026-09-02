@@ -365,9 +365,10 @@ registry_checks() {
             "{id:" + (.id|@json)
             + ",label:" + (.label|@json)
             # Carried on the check itself, not only looked up when this file
-            # renders Korean: a consumer of the JSON contract (the web UI) has no
-            # registry to look it up in.
+            # renders a translation: a consumer of the JSON contract (the web
+            # UI) has no registry to look it up in.
             + ",label_ko:" + ((.label_ko // "")|@json)
+            + ",label_zh:" + ((.label_zh // "")|@json)
             + ",required:" + ((.required // false)|tojson)
             + ",cluster:" + ($c.id|@json)
             + ",source:" + (.source|@json)
@@ -398,7 +399,7 @@ registry_checks() {
              elif ._present==true then {status:"pass", detail:"present", missing:[]}
              elif ._present==false then {status:$unmet, detail:"not present in the SBOM", missing:[]}
              else {status:"warn", detail:"requires human review (no automated source)", missing:[]} end) as $s
-            | {id, label, label_ko, required, status:$s.status, detail:$s.detail,
+            | {id, label, label_ko, label_zh, required, status:$s.status, detail:$s.detail,
                missing:$s.missing,
                evidence: ((._ev // []) | unique | .[0:$cap]),
                cluster, source, role}
@@ -671,7 +672,8 @@ if [ -f "$XWALK_FILE" ]; then
         | (($x[0].frameworks) // {}) as $fw
         | map(. + {regulations: (($m[.id] // []) | map(
             . + {short:    ($fw[.framework].short // .framework),
-                 short_ko: ($fw[.framework].short_ko // $fw[.framework].short // .framework)}))})' 2>/dev/null); then
+                 short_ko: ($fw[.framework].short_ko // $fw[.framework].short // .framework),
+                 short_zh: ($fw[.framework].short_zh // $fw[.framework].short // .framework)}))})' 2>/dev/null); then
         CHECKS="$XW_JOINED"
     else
         echo "[validate] WARN: regulation crosswalk join failed; continuing without it." >&2
@@ -746,7 +748,7 @@ G7_CLUSTERS='[]'
 if echo "$CHECKS" | jq -e 'any(.[]; .id|startswith("g7-"))' >/dev/null 2>&1; then
     REG_FILE="${G7_REGISTRY:-$(dirname "$0")/g7-registry.json}"
     G7_CLUSTERS=$(echo "$CHECKS" | jq -c --slurpfile reg "$REG_FILE" '
-      ([ $reg[0].clusters[] | {(.id): {name: .name, name_ko: (.name_ko // .name)}} ] | add) as $names
+      ([ $reg[0].clusters[] | {(.id): {name: .name, name_ko: (.name_ko // .name), name_zh: (.name_zh // .name)}} ] | add) as $names
       | ([ $reg[0].clusters[].id ]) as $order
       | [ .[] | select(.id|startswith("g7-")) ]
       | group_by(.cluster)
@@ -754,6 +756,7 @@ if echo "$CHECKS" | jq -e 'any(.[]; .id|startswith("g7-"))' >/dev/null 2>&1; the
       | map({ cluster: (.[0].cluster // "other"),
               name:    ($names[(.[0].cluster // "")].name // (.[0].cluster // "other")),
               name_ko: ($names[(.[0].cluster // "")].name_ko // (.[0].cluster // "other")),
+              name_zh: ($names[(.[0].cluster // "")].name_zh // (.[0].cluster // "other")),
               total:   length,
               present: (map(select(.status=="pass"))|length),
               gap:     (map(select(.status=="warn" and ((.source//"")!="na")))|length),
@@ -788,23 +791,32 @@ jq -n \
 ' > "$JSON"
 
 # --------------------------------------------------------
-# Localization (REPORT_LANG=ko). The JSON above is NEVER localized — it is an
-# English contract the web layer and CI consume. Only the human-facing Markdown
-# and HTML below are localized. English (the default) renders the exact inline
-# literals it always did (RCHECKS/RXW = the English CHECKS/XW_SUMMARY, every
-# chrome var = its English literal), so its output stays byte-identical. Korean
-# swaps the chrome strings from docker/lib/i18n/report-strings.ko.json and the
-# per-row label/detail text (element labels via g7-registry.json label_ko).
+# Localization (REPORT_LANG=ko|zh-TW). The JSON above is NEVER localized — it is
+# an English contract the web layer and CI consume. Only the human-facing
+# Markdown and HTML below are localized. English (the default) renders the exact
+# inline literals it always did (RCHECKS/RXW = the English CHECKS/XW_SUMMARY,
+# every chrome var = its English literal), so its output stays byte-identical.
+# A translation swaps the chrome strings from its
+# docker/lib/i18n/report-strings.<lang>.json and the per-row label/detail text
+# (element labels via the registries' label_<sfx> fields).
 # --------------------------------------------------------
-REPORT_LANG="${REPORT_LANG:-en}"; [ "$REPORT_LANG" = "ko" ] || REPORT_LANG="en"
-KO_CAT="$(dirname "$0")/i18n/report-strings.ko.json"
-if [ "$REPORT_LANG" = "ko" ] && [ ! -f "$KO_CAT" ]; then
-    echo "[validate] WARN: ko report catalog not found ($KO_CAT); using English." >&2
+REPORT_LANG="${REPORT_LANG:-en}"
+case "$REPORT_LANG" in ko|zh-TW) ;; *) REPORT_LANG="en" ;; esac
+LANG_CAT="$(dirname "$0")/i18n/report-strings.${REPORT_LANG}.json"
+if [ "$REPORT_LANG" != "en" ] && [ ! -f "$LANG_CAT" ]; then
+    echo "[validate] WARN: $REPORT_LANG report catalog not found ($LANG_CAT); using English." >&2
     REPORT_LANG="en"
 fi
-# kstr KEY -> the ko string for KEY (or KEY itself if missing, so a gap is visible).
-kstr() { jq -r --arg k "$1" '.[$k] // $k' "$KO_CAT"; }
-# tfmt KEY ARGS... -> the ko template for KEY, filled with printf (%s placeholders).
+# The registry sibling-field suffix for the language (label_ko / label_zh).
+# Empty for English, which reads the base field.
+case "$REPORT_LANG" in
+    ko) L_SFX="_ko" ;;
+    zh-TW) L_SFX="_zh" ;;
+    *) L_SFX="" ;;
+esac
+# kstr KEY -> the localized string for KEY (or KEY itself if missing, so a gap is visible).
+kstr() { jq -r --arg k "$1" '.[$k] // $k' "$LANG_CAT"; }
+# tfmt KEY ARGS... -> the localized template for KEY, filled with printf (%s placeholders).
 # shellcheck disable=SC2059  # the format is a trusted catalog template, not user input
 tfmt() { local f; f="$(kstr "$1")"; shift; printf -- "$f" "$@"; }
 
@@ -824,22 +836,31 @@ fi
 HTML_LANG="en"
 RCHECKS="$CHECKS"
 RXW="$XW_SUMMARY"
+# CJK fallbacks inside the report's font stack. The HTML is self-contained (no
+# webfonts — the CSP allows inline style and nothing else), so whatever the
+# reader's system supplies is all there is, and Korean and Traditional Chinese
+# want different families. English keeps the stack it has always shipped so its
+# output stays byte-identical.
+case "$REPORT_LANG" in
+    zh-TW) FONT_CJK='"PingFang TC","Microsoft JhengHei","Noto Sans TC","Noto Sans CJK TC"' ;;
+    *) FONT_CJK='"Apple SD Gothic Neo","Malgun Gothic"' ;;
+esac
 
-if [ "$REPORT_LANG" = "ko" ]; then
-    HTML_LANG="ko"
+if [ "$REPORT_LANG" != "en" ]; then
+    HTML_LANG="$REPORT_LANG"
     REG="${G7_REGISTRY:-$(dirname "$0")/g7-registry.json}"
     # Registry rows are labelled from the registry that declares them, so a
-    # baseline added later is translated by shipping label_ko with its elements
-    # and nothing here needs to know its id prefix. The catalog below stays for
-    # the checks this file writes itself, whose labels carry a threshold or a
-    # spec version and so cannot be looked up whole.
+    # baseline added later is translated by shipping label_<sfx> with its
+    # elements and nothing here needs to know its id prefix. The catalog below
+    # stays for the checks this file writes itself, whose labels carry a
+    # threshold or a spec version and so cannot be looked up whole.
     REG_CISA="${CISA_REGISTRY:-$(dirname "$0")/cisa-registry.json}"
     [ -f "$REG_CISA" ] || REG_CISA="$REG"
     # Localize per-row label + detail into a render copy (status/missing/guidance/
     # evidence/regulations untouched, so the render loops below are unchanged).
-    RCHECKS=$(printf '%s' "$CHECKS" | jq -c --slurpfile cat "$KO_CAT" --slurpfile reg "$REG" --slurpfile reg2 "$REG_CISA" '
+    RCHECKS=$(printf '%s' "$CHECKS" | jq -c --slurpfile cat "$LANG_CAT" --slurpfile reg "$REG" --slurpfile reg2 "$REG_CISA" --arg sfx "$L_SFX" '
       ($cat[0]) as $C
-      | (([ ($reg[0], $reg2[0]) | .clusters[].elements[] | select(.label_ko != null) | {(.id): .label_ko} ] | add) // {}) as $RK
+      | (([ ($reg[0], $reg2[0]) | .clusters[].elements[] | select(.["label" + $sfx] != null) | {(.id): .["label" + $sfx]} ] | add) // {}) as $RK
       | def llabel($id; $en):
           if ($RK[$id] != null) then $RK[$id]
           elif ($en|test("^Spec version \\(CycloneDX ")) then ($C["conformance.label.spec_cdx"] | gsub("%v%"; ($en|capture("^Spec version \\(CycloneDX (?<v>.+)\\)$").v)))
@@ -884,21 +905,21 @@ if [ "$REPORT_LANG" = "ko" ]; then
           elif ($d|test("^[0-9]+ checksum\\(s\\)$")) then ($C["conformance.detail.checksum"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
           else $d end;
       map(.label = llabel(.id; .label) | .detail = ldetail(.detail)
-          | (if (.reviewGuide.how_ko // "") != "" then .reviewGuide.how = .reviewGuide.how_ko else . end))
+          | (if (.reviewGuide["how" + $sfx] // "") != "" then .reviewGuide.how = .reviewGuide["how" + $sfx] else . end))
     ') || RCHECKS="$CHECKS"
     # Crosswalk: swap the framework display titles and the disclaimer for their
-    # Korean wording from the crosswalk file itself (same convention as the G7
-    # registry's label_ko). The `source` line stays verbatim — a regulation's
-    # citation is an identifier, not prose. The JSON contract keeps the English
-    # title, so this touches the render copy only.
-    RXW=$(printf '%s' "$XW_SUMMARY" | jq -c --slurpfile x "$XWALK_FILE" '
+    # translated wording from the crosswalk file itself (same convention as the
+    # G7 registry's label_<sfx>). The `source` line stays verbatim — a
+    # regulation's citation is an identifier, not prose. The JSON contract keeps
+    # the English title, so this touches the render copy only.
+    RXW=$(printf '%s' "$XW_SUMMARY" | jq -c --slurpfile x "$XWALK_FILE" --arg sfx "$L_SFX" '
       (($x[0].frameworks) // {}) as $F
-      | .disclaimer = ($x[0].disclaimer_ko // .disclaimer)
-      | .frameworks |= map(.title = ($F[.id].title_ko // .title))') || RXW="$XW_SUMMARY"
+      | .disclaimer = ($x[0]["disclaimer" + $sfx] // .disclaimer)
+      | .frameworks |= map(.title = ($F[.id]["title" + $sfx] // .title))') || RXW="$XW_SUMMARY"
 fi
 
-# Chrome strings: English literals by default (byte-identical), catalog for ko.
-if [ "$REPORT_LANG" = "ko" ]; then
+# Chrome strings: English literals by default (byte-identical), catalog otherwise.
+if [ "$REPORT_LANG" != "en" ]; then
     C_MD_TITLE=$(tfmt conformance.md_title "$PROJECT")
     C_MD_GEN=$(tfmt conformance.md_generated "$GEN_AT")
     C_MD_FMT=$(tfmt conformance.md_format "$FORMAT")
@@ -979,11 +1000,11 @@ fi
     # advisory G7 elements after, each under its own heading and reason.
     md_rows() {   # $1: "submission" | "g7"
         echo "$RCHECKS" | jq -r --arg yes "$C_YES" --arg no "$C_NO" --arg kind "$1" \
-            --arg lang "$REPORT_LANG" '
+            --arg sfx "$L_SFX" '
             [ .[] | select(if $kind=="g7" then (.id|startswith("g7-")) else ((.id|startswith("g7-"))|not) end) ][] |
             # Same idea as the HTML: the regulatory references sit with the
             # requirement instead of being reprinted as their own table.
-            (((.regulations // []) | map((if $lang=="ko" then .short_ko else .short end) + " " + .ref)) as $refs
+            (((.regulations // []) | map(.["short" + $sfx] + " " + .ref)) as $refs
              | if ($refs|length) > 0 then " — " + ($refs|join(" · ")) else "" end) as $reftext |
             "| \(if .status=="pass" then "✅" elif .status=="fail" then "❌" elif (.naKind // "")=="not-applicable" then "—" elif (.source // "")=="na" then "🔍" else "⚠️" end) | \((.label + $reftext) | gsub("[|\n]"; " ")) | "
             + (if $kind=="g7" then "" else "\(if .required then $yes else $no end) | " end)
@@ -1084,7 +1105,7 @@ fi
   --brand:#EA002C;--brand-2:#F47725;--th-bg:#f4f4f5;--row-hover:#fafafa;--review:#2563eb;
   --radius:.375rem;--radius-card:.5rem;
   --shadow:0 1px 2px rgb(0 0 0/.04),0 2px 8px -2px rgb(0 0 0/.08);
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,${FONT_CJK},sans-serif;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
  }
  @media (prefers-color-scheme:dark){:root{
@@ -1173,7 +1194,7 @@ HTMLHEAD
     html_rows() {   # $1: "submission" | "g7"
         echo "$RCHECKS" | jq -r --arg yes "$C_YES" --arg no "$C_NO" \
             --arg fix "$C_FIX_SUMMARY" --arg chk "$C_CHECK_SUMMARY" --arg ref "$C_REF" --arg kind "$1" \
-            --arg lang "$REPORT_LANG" '
+            --arg sfx "$L_SFX" '
             [ .[] | select(if $kind=="g7" then (.id|startswith("g7-")) else ((.id|startswith("g7-"))|not) end) ]
             | to_entries[] | .key as $i | .value |
             (if (.naKind // "")=="not-applicable" then "s-na"
@@ -1187,7 +1208,7 @@ HTMLHEAD
             # mapped row verbatim; here they cost one line and stay next to the
             # status the reader is already looking at.
             "<td>" + (.label|@html) +
-            (((.regulations // []) | map((if $lang=="ko" then .short_ko else .short end) + " " + .ref)) as $refs
+            (((.regulations // []) | map(.["short" + $sfx] + " " + .ref)) as $refs
              | if ($refs|length) > 0
                then "<br><span class=\"meta\">" + (($refs|join(" · "))|@html) + "</span>"
                else "" end) + "</td>" +
@@ -1220,8 +1241,8 @@ HTMLHEAD
     if [ "$G7_CLUSTERS" != "[]" ]; then
         echo "<h2>${C_H2_CLUSTERS}</h2>"
         echo "<div class=\"table-wrap\"><table><tr><th>${C_TH_CLUSTER}</th><th>${C_TH_PRESENT}</th><th>${C_TH_GAP}</th><th>${C_TH_REVIEWCNT}</th><th>${C_TH_TOTAL}</th></tr>"
-        echo "$G7_CLUSTERS" | jq -r --arg lang "$REPORT_LANG" '.[] |
-            "<tr><td>" + ((if $lang=="ko" then .name_ko else .name end)|@html) + "</td>"
+        echo "$G7_CLUSTERS" | jq -r --arg sfx "$L_SFX" '.[] |
+            "<tr><td>" + (.["name" + $sfx]|@html) + "</td>"
             + "<td>" + (.present|tostring) + "</td><td>" + (.gap|tostring) + "</td>"
             + "<td>" + (.review|tostring) + "</td><td>" + (.total|tostring) + "</td></tr>"'
         echo "$G7_CLUSTERS" | jq -r --arg total "$C_TH_TOTAL" '

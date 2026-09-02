@@ -9,11 +9,13 @@
       "id": "cisa-metadata",
       "name": "SBOM metadata",
       "name_ko": "SBOM 메타데이터",
+      "name_zh": "SBOM 後設資料",
       "elements": [
         {
           "id": "cisa-sbom-author",
           "label": "SBOM author",
           "label_ko": "SBOM 작성자",
+          "label_zh": "SBOM 作者",
           "source": "declared",
           "cdxPath": "((.metadata.authors // []) | length > 0) or ((.metadata.supplier // null) != null) or ((.metadata.manufacturer // null) != null)"
         },
@@ -21,6 +23,7 @@
           "id": "cisa-sbom-author-signature",
           "label": "SBOM author signature",
           "label_ko": "SBOM 작성자 서명",
+          "label_zh": "SBOM 作者簽章",
           "source": "declared",
           "cdxPath": "(.signature // null) != null"
         },
@@ -28,6 +31,7 @@
           "id": "cisa-sbom-format-name",
           "label": "SBOM data format name",
           "label_ko": "SBOM 데이터 형식 이름",
+          "label_zh": "SBOM 資料格式名稱",
           "source": "auto",
           "cdxPath": "(.bomFormat // \"\") != \"\""
         },
@@ -35,6 +39,7 @@
           "id": "cisa-sbom-format-version",
           "label": "SBOM data format version",
           "label_ko": "SBOM 데이터 형식 버전",
+          "label_zh": "SBOM 資料格式版本",
           "source": "auto",
           "cdxPath": "(.specVersion // \"\") != \"\""
         },
@@ -42,6 +47,7 @@
           "id": "cisa-sbom-generation-context",
           "label": "SBOM generation context",
           "label_ko": "SBOM 생성 시점",
+          "label_zh": "SBOM 產生情境",
           "source": "auto",
           "cdxPath": "[ (.metadata.lifecycles // [])[] | select(((.phase // \"\") != \"\") or ((.name // \"\") != \"\")) ] | length > 0"
         },
@@ -49,6 +55,7 @@
           "id": "cisa-sbom-timestamp",
           "label": "SBOM timestamp",
           "label_ko": "SBOM 생성 시각",
+          "label_zh": "SBOM 時間戳記",
           "source": "auto",
           "cdxPath": "(.metadata.timestamp // \"\") != \"\""
         },
@@ -56,6 +63,7 @@
           "id": "cisa-sbom-tool-name",
           "label": "SBOM tool name",
           "label_ko": "SBOM 생성 도구 이름",
+          "label_zh": "SBOM 工具名稱",
           "source": "auto",
           "cdxPath": "[ (if ((.metadata.tools // null) | type) == \"array\" then (.metadata.tools // [])[] else ((.metadata.tools.components // []) + (.metadata.tools.services // []))[] end) | select((.name // \"\") != \"\") ] | length > 0"
         },
@@ -63,6 +71,7 @@
           "id": "cisa-sbom-tool-version",
           "label": "SBOM tool version",
           "label_ko": "SBOM 생성 도구 버전",
+          "label_zh": "SBOM 工具版本",
           "source": "auto",
           "cdxPath": "[ (if ((.metadata.tools // null) | type) == \"array\" then (.metadata.tools // [])[] else ((.metadata.tools.components // []) + (.metadata.tools.services // []))[] end) ] as $t | ($t | length > 0) and ([ $t[] | select((.version // \"\") == \"\") ] | length == 0)"
         },
@@ -70,6 +79,7 @@
           "id": "cisa-sbom-version",
           "label": "SBOM version",
           "label_ko": "SBOM 문서 버전",
+          "label_zh": "SBOM 版本",
           "source": "auto",
           "cdxPath": "(.version // null) != null"
         }
@@ -79,11 +89,13 @@
       "id": "cisa-component",
       "name": "Component data",
       "name_ko": "구성요소 데이터",
+      "name_zh": "元件資料",
       "elements": [
         {
           "id": "cisa-component-name",
           "label": "Component name",
           "label_ko": "구성요소 이름",
+          "label_zh": "元件名稱",
           "source": "auto",
           "missingPath": "[ $subjects[] | select((.name // \"\") == \"\") | (.purl // \"(unnamed)\") ]"
         },
@@ -91,6 +103,7 @@
           "id": "cisa-component-version",
           "label": "Component version",
           "label_ko": "구성요소 버전",
+          "label_zh": "元件版本",
           "source": "auto",
           "missingPath": "[ $subjects[] | select((.version // \"\") == \"\") | select([ (.properties // [])[] | select((.name // \"\") == \"bomlens:evidenceGrade\") ] | length == 0) | (.name // \"(unnamed)\") ]"
         },
@@ -98,6 +111,7 @@
           "id": "cisa-component-producer",
           "label": "Component producer",
           "label_ko": "구성요소 생산자",
+          "label_zh": "元件產製者",
           "source": "auto",
           "missingPath": "[ $subjects[] | select((((.authors // []) | length) == 0) and ((.publisher // \"\") == \"\") and (((.supplier // {}) | length) == 0) and (((.manufacturer // {}) | length) == 0)) | (.name // \"(unnamed)\") ]"
         },
@@ -105,6 +119,7 @@
           "id": "cisa-component-identifiers",
           "label": "Component identifiers",
           "label_ko": "구성요소 식별자",
+          "label_zh": "元件識別碼",
           "source": "auto",
           "missingPath": "[ $subjects[] | select(((.purl // \"\") == \"\") and ((.cpe // \"\") == \"\") and (((.hashes // []) | length) == 0) and ((.swhid // \"\") == \"\")) | (.name // \"(unnamed)\") ]",
           "evidencePath": "[ $subjects[] | (.purl // .cpe) | select(. != null and . != \"\") ] | unique"
@@ -113,6 +128,7 @@
           "id": "cisa-component-license",
           "label": "Component license",
           "label_ko": "구성요소 라이선스",
+          "label_zh": "元件授權條款",
           "source": "auto",
           "missingPath": "[ $subjects[] | select(((.licenses // []) | length) == 0) | (.name // \"(unnamed)\") ]"
         },
@@ -120,6 +136,7 @@
           "id": "cisa-component-hash-value",
           "label": "Component hash value",
           "label_ko": "구성요소 해시 값",
+          "label_zh": "元件雜湊值",
           "source": "auto",
           "missingPath": "[ $subjects[] | select([ (.hashes // [])[] | select((.content // \"\") != \"\") ] | length == 0) | (.name // \"(unnamed)\") ]"
         },
@@ -127,6 +144,7 @@
           "id": "cisa-component-hash-algorithm",
           "label": "Component hash algorithm",
           "label_ko": "구성요소 해시 알고리즘",
+          "label_zh": "元件雜湊演算法",
           "source": "auto",
           "missingPath": "[ $subjects[] | select(((.hashes // []) | length) > 0) | select((([ (.hashes // [])[] | select(((.alg // \"\") | ascii_downcase) | test(\"^(md5|sha-?1|sha-?(224|256|384|512)|sha3-(256|384|512)|blake2b-(256|384|512)|blake3)$\")) ] | length) != ((.hashes // []) | length))) | (.name // \"(unnamed)\") ]"
         },
@@ -134,6 +152,7 @@
           "id": "cisa-component-dependency-relationship",
           "label": "Component dependency relationship",
           "label_ko": "구성요소 의존 관계",
+          "label_zh": "元件相依關係",
           "source": "auto",
           "cdxPath": "[ .dependencies[]? | .dependsOn[]? ] | length > 0"
         }
@@ -143,11 +162,13 @@
       "id": "cisa-practices",
       "name": "Practices and processes",
       "name_ko": "운영 원칙",
+      "name_zh": "實務與流程",
       "elements": [
         {
           "id": "cisa-machine-processable-data",
           "label": "Machine-processable data",
           "label_ko": "기계 판독 가능 데이터",
+          "label_zh": "機器可處理資料",
           "source": "auto",
           "cdxPath": "((.bomFormat // \"\") != \"\") or ((.spdxVersion // \"\") != \"\")"
         },
@@ -155,24 +176,28 @@
           "id": "cisa-coverage",
           "label": "Coverage",
           "label_ko": "포함 범위",
+          "label_zh": "涵蓋範圍",
           "source": "na"
         },
         {
           "id": "cisa-accommodation-of-updates",
           "label": "Accommodation of updates to SBOM data",
           "label_ko": "SBOM 데이터 갱신 수용",
+          "label_zh": "SBOM 資料更新因應機制",
           "source": "na"
         },
         {
           "id": "cisa-distribution-and-delivery",
           "label": "Distribution and delivery",
           "label_ko": "배포와 전달",
+          "label_zh": "散布與交付",
           "source": "na"
         },
         {
           "id": "cisa-explicit-unknowns",
           "label": "Explicitly identifying unknown information",
           "label_ko": "미상 정보의 명시",
+          "label_zh": "明確標示不明資訊",
           "source": "auto",
           "cdxPath": "[ (.metadata.properties // [])[] | select(((.name // \"\") | endswith(\"undeclared-fields\")) and ((.value // \"\") != \"\")) ] | length > 0"
         },
@@ -180,6 +205,7 @@
           "id": "cisa-frequency",
           "label": "Frequency",
           "label_ko": "갱신 주기",
+          "label_zh": "更新頻率",
           "source": "na"
         }
       ]

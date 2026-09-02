@@ -201,26 +201,37 @@ if [ "$LIC_CLASS" != "null" ]; then
 fi
 
 # --------------------------------------------------------
-# Localization (REPORT_LANG=ko). English is the default; only the Markdown/HTML
-# below are localized. Data and identifiers (CVE ids, package names, severities,
-# license-class names, counts, dates, URLs, bomlens:* property names) are never
-# translated. Korean swaps chrome strings from
-# docker/lib/i18n/report-strings.ko.json. The AI-verdict labels and disclaimer
-# reuse the aiprofile.* keys so this report and the AI profile never disagree.
+# Localization (REPORT_LANG=ko|zh-TW). English is the default; only the
+# Markdown/HTML below are localized. Data and identifiers (CVE ids, package
+# names, severities, license-class names, counts, dates, URLs, bomlens:*
+# property names) are never translated. A translation swaps chrome strings from
+# its docker/lib/i18n/report-strings.<lang>.json. The AI-verdict labels and
+# disclaimer reuse the aiprofile.* keys so this report and the AI profile never
+# disagree.
 # --------------------------------------------------------
-REPORT_LANG="${REPORT_LANG:-en}"; [ "$REPORT_LANG" = "ko" ] || REPORT_LANG="en"
-KO_CAT="$(dirname "$0")/i18n/report-strings.ko.json"
-if [ "$REPORT_LANG" = "ko" ] && [ ! -f "$KO_CAT" ]; then
-    echo "[risk] WARN: ko report catalog not found ($KO_CAT); using English." >&2
+REPORT_LANG="${REPORT_LANG:-en}"
+case "$REPORT_LANG" in ko|zh-TW) ;; *) REPORT_LANG="en" ;; esac
+LANG_CAT="$(dirname "$0")/i18n/report-strings.${REPORT_LANG}.json"
+if [ "$REPORT_LANG" != "en" ] && [ ! -f "$LANG_CAT" ]; then
+    echo "[risk] WARN: $REPORT_LANG report catalog not found ($LANG_CAT); using English." >&2
     REPORT_LANG="en"
 fi
-kstr() { jq -r --arg k "$1" '.[$k] // $k' "$KO_CAT"; }
+kstr() { jq -r --arg k "$1" '.[$k] // $k' "$LANG_CAT"; }
 # shellcheck disable=SC2059  # the format is a trusted catalog template, not user input
 tfmt() { local f; f="$(kstr "$1")"; shift; printf -- "$f" "$@"; }
 
 CONF_UP=$(echo "$CONF_RESULT" | tr '[:lower:]' '[:upper:]')
 
-if [ "$REPORT_LANG" = "ko" ]; then
+# CJK fallbacks inside the report's font stack. The HTML is self-contained (no
+# webfonts), so the reader's system font is all there is and Korean and
+# Traditional Chinese want different families. English keeps the stack it has
+# always shipped so its output stays byte-identical.
+case "$REPORT_LANG" in
+    zh-TW) FONT_CJK='"PingFang TC","Microsoft JhengHei","Noto Sans TC","Noto Sans CJK TC"' ;;
+    *) FONT_CJK='"Apple SD Gothic Neo","Malgun Gothic"' ;;
+esac
+
+if [ "$REPORT_LANG" != "en" ]; then
     if [ "$HAS_CONF" = "true" ]; then
         P_TITLE=$(tfmt risk.md_title_supplier "$PROJECT"); P_H1=$(kstr risk.h1_supplier)
     else
@@ -489,7 +500,7 @@ META_FORMAT=""; [ "$HAS_CONF" = "true" ] && META_FORMAT=" &middot; ${P_META_FORM
   --brand:#EA002C;--brand-2:#F47725;--th-bg:#f4f4f5;--row-hover:#fafafa;
   --radius:.375rem;--radius-card:.5rem;
   --shadow:0 1px 2px rgb(0 0 0/.04),0 2px 8px -2px rgb(0 0 0/.08);
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,${FONT_CJK},sans-serif;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
  }
  @media (prefers-color-scheme:dark){:root{

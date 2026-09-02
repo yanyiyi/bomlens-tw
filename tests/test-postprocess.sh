@@ -836,6 +836,28 @@ if [ -f "$RMD" ] && [ -f "$RHTML" ]; then
 else
     fail "ko risk report was not produced"
 fi
+# Same contract in Traditional Chinese: chrome translates, the classifier's own
+# vocabulary does not.
+( cd "$WORK/risk" && REPORT_LANG=zh-TW bash "$LIB/generate-risk-report.sh" proj_1.0 proj >/dev/null 2>&1 )
+if [ -f "$RMD" ] && [ -f "$RHTML" ]; then
+    grep -q '^| Network copyleft | Strong copyleft | Weak copyleft | Permissive | Uncategorized |$' "$RMD" \
+        && pass "zh-TW md classification header keeps every class name in English" \
+        || fail "zh-TW md header was" "$(grep -m1 'Network copyleft' "$RMD")"
+    grep -q '<html lang="zh-TW">' "$RHTML" \
+        && pass "zh-TW risk html sets lang=zh-TW" || fail "zh-TW risk html lang is not zh-TW"
+    grep -q 'PingFang TC' "$RHTML" \
+        && pass "zh-TW risk html uses a Traditional Chinese font stack" \
+        || fail "zh-TW risk html kept the Korean font stack"
+    # The web UI localizes these tier labels (網路型 Copyleft, 寬鬆式, 未分類) but the
+    # report table must not: its header has to match the English bomlens:licenseClass
+    # values a reader greps for. Mirrors the ko guard above, scoped to table rows —
+    # the prose above the table deliberately glosses them ("未分類（Uncategorized）").
+    grep -qE '^\|.*(未分類|寬鬆式)' "$RMD" \
+        && fail "a translated class name survived in the zh-TW report table" \
+        || pass "no translated class name in the zh-TW report table"
+else
+    fail "zh-TW risk report was not produced"
+fi
 # Restore the English report for any later assertion on these paths.
 ( cd "$WORK/risk" && bash "$LIB/generate-risk-report.sh" proj_1.0 proj >/dev/null 2>&1 )
 
@@ -2343,6 +2365,9 @@ grep -q "detached signature" "$WORK/sg_conformance.md" \
 REPORT_LANG=ko bash "$LIB/validate-sbom.sh" "$FIX/good-cyclonedx.json" "$WORK/sgk" "supplier" >/dev/null 2>&1
 grep -q "^## 사람이 확인할 항목" "$WORK/sgk_conformance.md" \
     && pass "the Korean report renders the section too" || fail "ko markdown has no review section"
+REPORT_LANG=zh-TW bash "$LIB/validate-sbom.sh" "$FIX/good-cyclonedx.json" "$WORK/sgz" "supplier" >/dev/null 2>&1
+grep -q "^## 需要人工確認的項目" "$WORK/sgz_conformance.md" \
+    && pass "the Traditional Chinese report renders the section too" || fail "zh-TW markdown has no review section"
 
 echo "== conformance: the 2026 SBOM minimum elements are measured on every SBOM =="
 # The baseline applies to all software, not to a subset, so its registry declares
