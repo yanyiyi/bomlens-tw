@@ -7,3 +7,9 @@ mkdocs-static-i18n==1.3.1
 # dependency and prints an unsolicited migration notice for it on every
 # build. 1.2.2 has no such dependency. Re-check before bumping past 1.2.3.
 mkdocs-redirects==1.2.2
+# Chinese word segmentation for the search index. lunr.js has no Chinese
+# tokenizer, so without this the zh-TW pages are indexed but split on
+# whitespace only -- a query for a Chinese word matches almost nothing.
+# Material picks jieba up automatically and pre-segments CJK text with
+# zero-width spaces. Affects zh-TW only; the en index is byte-identical.
+jieba==0.42.1
