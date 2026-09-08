@@ -318,7 +318,7 @@ grep -q "G7 registry evaluation failed" <<<"$BRLOG" && pass "broken registry war
 # the point is that a broken G7 registry costs the report its G7 section and
 # nothing else.
 bshape=$(jq -r '"g7=\([.checks[]|select(.id|startswith("g7-"))]|length) cisa=\([.checks[]|select(.id|startswith("cisa-"))]|length) base=\([.checks[]|select((.id|startswith("g7-")|not) and (.id|startswith("cisa-")|not))]|length) result=\(.result)"' "$WORK/conf4_conformance.json")
-[ "$bshape" = "g7=0 cisa=23 base=17 result=pass" ] && pass "base checks and result survive a broken registry" || fail "report shape '$bshape' after broken registry"
+[ "$bshape" = "g7=0 cisa=23 base=18 result=pass" ] && pass "base checks and result survive a broken registry" || fail "report shape '$bshape' after broken registry"
 
 echo "== legacy CycloneDX tools array does not false-negative the tool checks =="
 # metadata.tools as a bare array (pre-1.5 shape) used to hard-error inside the
@@ -547,7 +547,9 @@ rs=$(mprop bomlens:hf:scan:repoStatus)
 case "$rs" in *scansDone*) pass "repo-level rollup recorded verbatim (never judged)" ;; *) fail "repoStatus='$rs'" ;; esac
 bash "$LIB/assess-ai-risk.sh" "$WORK/scan.json" >/dev/null 2>&1
 [ "$(mprop bomlens:assessment:security)" = "ok" ] && pass "safe scan assesses the security axis ok" || fail "security axis='$(mprop bomlens:assessment:security)', expected ok"
-[ "$(mprop bomlens:assessment:axes)" = "license,security" ] && pass "axes record license,security" || fail "axes='$(mprop bomlens:assessment:axes)'"
+# This fixture declares no training data, so the trainingData axis rides along;
+# what this line checks is that the security axis is recorded beside the license.
+[ "$(mprop bomlens:assessment:axes)" = "license,security,trainingData" ] && pass "axes record license,security" || fail "axes='$(mprop bomlens:assessment:axes)'"
 run_scan dangerous
 [ "$(mprop bomlens:hf:scan:status)" = "unsafe" ] && pass "a dangerous pickle import reads unsafe" || fail "scan status='$(mprop bomlens:hf:scan:status)', expected unsafe"
 iss=$(mprop bomlens:hf:scan:issue)
@@ -572,7 +574,143 @@ ENRICH_HF_SECURITY=false HF_TREE_CALLS="$WORK/tree-calls.txt" ENRICH_CDXGEN=fals
 [ ! -s "$WORK/tree-calls.txt" ] && pass "ENRICH_HF_SECURITY=false skips the tree lookup" || fail "the tree API was called despite the gate"
 [ "$(mprop bomlens:hf:scan:status)" = "" ] && pass "no scan status is stamped when the lookup is off" || fail "scan status stamped despite the gate"
 bash "$LIB/assess-ai-risk.sh" "$WORK/scan.json" >/dev/null 2>&1
-[ "$(mprop bomlens:assessment:axes)" = "license" ] && pass "the security axis is omitted, not guessed, when unavailable" || fail "axes='$(mprop bomlens:assessment:axes)'"
+[ "$(mprop bomlens:assessment:axes)" = "license,trainingData" ] && pass "the security axis is omitted, not guessed, when unavailable" || fail "axes='$(mprop bomlens:assessment:axes)'"
+
+echo "== model card: limitations come from the card's own list, or not at all =="
+# The generator harvests limitations with a regex over the whole README
+# (limitation[s]?[:\s]+([^.]+)), taking whatever follows the word up to the first
+# full stop. Measured on three real cards that produced: a heading fragment
+# ("and Biases - **Factual reliability"), a sentence about what the model does
+# WELL (from a "Performance and Limitations" section), and a paragraph of usage
+# advice. All three were displayed to the reader as the model's stated
+# limitations. The fixture carries the third.
+mk_card_stub() {  # $1 = card file to serve, or "" for a repo with no card
+    cat > "$WORK/hfstub/huggingface_hub.py" <<STUB
+class _S:
+    def __init__(self, rfilename, sha=None):
+        self.rfilename = rfilename
+        self.lfs = {"sha256": sha} if sha else None
+
+
+class _Info:
+    def __init__(self, **kw):
+        self.__dict__.update(kw)
+
+
+MODEL = _Info(siblings=[_S("model.safetensors", "a" * 64)], gated=False, private=False,
+              tags=["fill-mask"], card_data={"license": "apache-2.0"})
+
+
+class HfApi:
+    def model_info(self, mid, files_metadata=False):
+        return MODEL
+
+    def dataset_info(self, did, files_metadata=False):
+        raise RuntimeError("404 not found")
+
+
+def hf_hub_download(repo_id, filename):
+    card = "$1"
+    if not card or filename != "README.md":
+        raise RuntimeError("404 not found")
+    return card
+STUB
+}
+lims() { jq -r '[([.metadata.component // empty] + [.components[]?])[] | select(.type=="machine-learning-model") | .modelCard.considerations.technicalLimitations // []] | .[0] | join("|")' "$1"; }
+
+mk_card_stub "$FIX/model-card-limitations.md"
+cp "$FIX/aibom-owasp-1_7.json" "$WORK/card.json"
+ENRICH_CDXGEN=false PYTHONPATH="$WORK/hfstub" \
+    bash "$LIB/enrich-aibom.sh" "$WORK/card.json" google-bert/bert-base-uncased >/dev/null 2>&1
+got=$(lims "$WORK/card.json")
+case "$got" in
+    "Factual reliability."*"Modality. Text-only"*"Bias."*)
+        pass "a limitations section's bullets replace the harvested fragment" ;;
+    *) fail "limitations from the card list" "$got" ;;
+esac
+case "$got" in
+    *'**'*) fail "markdown emphasis is stripped from a limitation" "$got" ;;
+    *) pass "markdown emphasis is stripped from a limitation" ;;
+esac
+
+# A heading that names a second subject ("Performance and Limitations") opens with
+# prose about the model's strengths, and nothing in the text says where that stops.
+# Nothing is claimed rather than the wrong thing: an empty field reads as "not
+# documented", which is true.
+mk_card_stub "$FIX/model-card-mixed-heading.md"
+cp "$FIX/aibom-owasp-1_7.json" "$WORK/card.json"
+ENRICH_CDXGEN=false PYTHONPATH="$WORK/hfstub" \
+    bash "$LIB/enrich-aibom.sh" "$WORK/card.json" google-bert/bert-base-uncased >/dev/null 2>&1
+[ -z "$(lims "$WORK/card.json")" ] \
+    && pass "a mixed-subject heading yields no limitations rather than its opening sentence" \
+    || fail "mixed heading" "$(lims "$WORK/card.json")"
+
+# No card to check against: only what is visibly not a statement is dropped.
+mk_card_stub ""
+cp "$FIX/aibom-owasp-1_7.json" "$WORK/card.json"
+jq '(.components[] | select(.type=="machine-learning-model") | .modelCard.considerations.technicalLimitations) = ["and Biases - **Factual reliability"]' \
+    "$WORK/card.json" > "$WORK/card2.json" && mv "$WORK/card2.json" "$WORK/card.json"
+ENRICH_CDXGEN=false PYTHONPATH="$WORK/hfstub" \
+    bash "$LIB/enrich-aibom.sh" "$WORK/card.json" google-bert/bert-base-uncased >/dev/null 2>&1
+[ -z "$(lims "$WORK/card.json")" ] \
+    && pass "a fragment cut out of a heading is dropped when no card can be read" \
+    || fail "fragment kept" "$(lims "$WORK/card.json")"
+
+# "No description available" is the generator's placeholder. Carried through it
+# becomes the model's summary on screen and a filled field in the conformance report.
+desc=$(jq -r '[([.metadata.component // empty] + [.components[]?])[] | select(.type=="machine-learning-model") | .description // ""] | .[0]' "$WORK/card.json")
+[ -z "$desc" ] && pass "the placeholder description is not carried into the SBOM" || fail "description='$desc'"
+
+echo "== a model that declares no training data is not assessed as fine =="
+# The openness enrichment records an unstated training set as
+# openness:training-data=undisclosed. Before this axis existed, a permissive
+# model licence alone produced overall=ok, so a reader who looked only at the
+# verdict was told a model was fine for a product while the terms of the data it
+# learned from had never been stated. Cellpose is the case in point: BSD-3-Clause
+# code and model, CC-BY-NC training data declared nowhere a tool can read.
+cp "$FIX/aibom-owasp-1_7.json" "$WORK/td.json"
+jq 'def state($v): if .type == "machine-learning-model" then
+        .licenses = [{"license": {"id": "BSD-3-Clause"}}]
+        | .properties = (((.properties // []) | map(select(.name != "openness:training-data")))
+                         + [{"name": "openness:training-data", "value": $v}])
+      else . end;
+    .metadata.component |= state("undisclosed")
+    | .components = ((.components // []) | map(state("undisclosed")))' \
+   "$WORK/td.json" > "$WORK/td.tmp" && mv "$WORK/td.tmp" "$WORK/td.json"
+tdprop() { jq -r --arg n "$1" '[([.metadata.component // empty] + [.components[]?])[] | select(.type=="machine-learning-model") | .properties[]? | select(.name==$n) | .value] | first // ""' "$WORK/td.json"; }
+
+AI_USAGE_CONTEXT=product bash "$LIB/assess-ai-risk.sh" "$WORK/td.json" >/dev/null 2>&1
+[ "$(tdprop bomlens:assessment:trainingData)" = "review" ] \
+    && pass "undisclosed training data is assessed as review, not ok" \
+    || fail "trainingData axis='$(tdprop bomlens:assessment:trainingData)', expected review"
+[ "$(tdprop bomlens:assessment:overall)" = "review" ] \
+    && pass "a permissive licence alone no longer makes the model ok for a product" \
+    || fail "overall='$(tdprop bomlens:assessment:overall)', expected review"
+case "$(tdprop bomlens:assessment:reasons)" in
+    *"training data undisclosed"*) pass "the verdict says which fact was missing" ;;
+    *) fail "reasons='$(tdprop bomlens:assessment:reasons)'" ;;
+esac
+
+# Internal use and outputs-only are the scenarios a training set's terms do not
+# reach, so they are judged without the axis rather than warned at every run.
+AI_USAGE_CONTEXT=internal bash "$LIB/assess-ai-risk.sh" "$WORK/td.json" >/dev/null 2>&1
+[ "$(tdprop bomlens:assessment:overall)" = "ok" ] \
+    && pass "internal use is judged without the training-data axis" \
+    || fail "internal overall='$(tdprop bomlens:assessment:overall)', expected ok"
+
+# A model that states its training set is judged on the datasets themselves, so
+# the undisclosed axis must not fire on top of it.
+jq 'def state($v): if .type == "machine-learning-model" then
+        .properties = (((.properties // []) | map(select(.name != "openness:training-data")))
+                       + [{"name": "openness:training-data", "value": $v}])
+      else . end;
+    .metadata.component |= state("open-data")
+    | .components = ((.components // []) | map(state("open-data")))' \
+   "$WORK/td.json" > "$WORK/td.tmp" && mv "$WORK/td.tmp" "$WORK/td.json"
+AI_USAGE_CONTEXT=product bash "$LIB/assess-ai-risk.sh" "$WORK/td.json" >/dev/null 2>&1
+[ "$(tdprop bomlens:assessment:trainingData)" = "" ] \
+    && pass "a model that declares its training data gets no undisclosed axis" \
+    || fail "trainingData axis='$(tdprop bomlens:assessment:trainingData)', expected none"
 
 echo "== dataset tag signals and visibility feed the datasets axis =="
 # A publisher tag like "pii" is a declared risk marker; a gated repository is
@@ -1115,6 +1253,43 @@ jq '(.components[] | select(.type=="machine-learning-model")) |= del(.licenses)'
 bash "$LIB/assess-ai-risk.sh" "$WORK/as.json" >/dev/null 2>&1
 noli=$(jq -r '([.metadata.component // empty] + [.components[]?])[] | select(.type=="machine-learning-model") | .properties[] | select(.name=="bomlens:assessment:reasons") | .value' "$WORK/as.json")
 case "$noli" in *"no license declared"*) pass "a model without a license falls to review with the reason recorded" ;; *) fail "no-license reason='$noli'" ;; esac
+
+# REPORT_LANG=ko localizes the connective wording BomLens writes around the
+# reason (axis names, verdict words), never the registry's own license-family
+# name or an identifier — same split generate-risk-report.sh makes for its
+# tables. Default (unset) must stay byte-identical to the English above; that
+# is the case just tested, so this only has to prove ko diverges correctly.
+jq --arg l "CC-BY-NC-4.0" '(.components[] | select(.type=="machine-learning-model") | .licenses) = [{"license":{"name":$l}}]' \
+    "$FIX/aibom-owasp-1_7.json" > "$WORK/as_ko.json"
+REPORT_LANG=ko AI_USAGE_CONTEXT=product bash "$LIB/assess-ai-risk.sh" "$WORK/as_ko.json" >/dev/null 2>&1
+ko_reason=$(jq -r '.components[] | select(.type=="machine-learning-model") | .properties[] | select(.name=="bomlens:assessment:reasons") | .value' "$WORK/as_ko.json")
+case "$ko_reason" in
+    *"CC-BY-NC-4.0"*"제품 탑재"*"주의"*) pass "ko reason keeps the license id, localizes usage + verdict words" ;;
+    *) fail "ko reason='$ko_reason'" ;;
+esac
+case "$ko_reason" in
+    *"for product use"*|*"(caution"*) fail "ko reason still carries English connective wording" "$ko_reason" ;;
+    *) pass "no leftover English connective wording in the ko reason" ;;
+esac
+# The verdict WORD in the reason text matches the grade badge word the web UI
+# renders for "caution" (models.gradeCaution) — so the same finding never
+# reads as two different things depending on whether it is seen as a badge or
+# as reason text (this is the whole point of routing both through VW/GRADE_TONE
+# ordering rather than letting them drift independently). It sits at the close
+# of the usage-scenario parenthetical ("... 시 주의)"), not alone in its own.
+case "$ko_reason" in *"주의)"*) pass "the ko verdict word matches the web UI's caution grade label" ;; *) fail "ko reason='$ko_reason'" ;; esac
+# A model without a license, in ko: same fact, localized.
+jq '(.components[] | select(.type=="machine-learning-model")) |= del(.licenses)' "$FIX/aibom-owasp-1_7.json" > "$WORK/as_ko2.json"
+REPORT_LANG=ko bash "$LIB/assess-ai-risk.sh" "$WORK/as_ko2.json" >/dev/null 2>&1
+ko_noli=$(jq -r '([.metadata.component // empty] + [.components[]?])[] | select(.type=="machine-learning-model") | .properties[] | select(.name=="bomlens:assessment:reasons") | .value' "$WORK/as_ko2.json")
+case "$ko_noli" in *"라이선스 미선언"*"검토 필요"*) pass "ko no-license reason is fully localized" ;; *) fail "ko no-license reason='$ko_noli'" ;; esac
+# A garbage REPORT_LANG reads as English, the same normalization
+# generate-risk-report.sh applies — never aborts the assessment.
+jq '(.components[] | select(.type=="machine-learning-model")) |= del(.licenses)' "$FIX/aibom-owasp-1_7.json" > "$WORK/as_bad.json"
+REPORT_LANG=fr bash "$LIB/assess-ai-risk.sh" "$WORK/as_bad.json" >/dev/null 2>&1
+bad_reason=$(jq -r '([.metadata.component // empty] + [.components[]?])[] | select(.type=="machine-learning-model") | .properties[] | select(.name=="bomlens:assessment:reasons") | .value' "$WORK/as_bad.json")
+case "$bad_reason" in *"no license declared"*) pass "an unrecognised REPORT_LANG falls back to English" ;; *) fail "bad-lang reason='$bad_reason'" ;; esac
+
 # Dataset (data) components are assessed too; an unresolved dataset without a
 # license reads review, never a guessed verdict.
 cp "$FIX/aibom-datasets-1_7.json" "$WORK/asds.json"
@@ -1361,44 +1536,19 @@ bash "$LIB/validate-sbom.sh" "$FIX/aibom-owasp-1_7.json" "$WORK/genshape" "gensh
 gg7=$(jq '[.checks[] | select(.id|startswith("g7-"))] | length' "$WORK/genshape_conformance.json")
 [ "$gg7" -eq 51 ] && pass "the generator's own shape still gets the G7 elements" || fail "G7 checks=$gg7 on the generator shape, expected 51"
 
-echo "== G7 registry: translated labels/cluster names cover every element/cluster =="
-# Drift guard mirroring the crosswalk one: a translated report looks up
-# label_<sfx> by id and name_<sfx> by cluster id, so a new element/cluster
-# without a translation would silently render English. Fail here so no
-# language's strings can drift.
+echo "== G7 registry: Korean labels/cluster names cover every element/cluster =="
+# Drift guard mirroring the crosswalk one: the ko reports look up label_ko by id
+# and name_ko by cluster id, so a new element/cluster without a Korean string
+# would silently render English. Fail here so ko strings cannot drift.
 REG="$LIB/g7-registry.json"
-for sfx in ko zh; do
-    miss_lk=$(jq -r --arg s "$sfx" '[.clusters[].elements[] | select(has("label") and ((.["label_" + $s] // "")==""))] | length' "$REG")
-    [ "$miss_lk" = "0" ] && pass "every element with a label has a non-empty label_$sfx" || fail "$miss_lk G7 element(s) missing label_$sfx"
-    miss_nk=$(jq -r --arg s "$sfx" '[.clusters[] | select(((.name // "")=="") or ((.["name_" + $s] // "")==""))] | length' "$REG")
-    [ "$miss_nk" = "0" ] && pass "every cluster has a name and name_$sfx" || fail "$miss_nk cluster(s) missing name/name_$sfx"
-done
+miss_lk=$(jq -r '[.clusters[].elements[] | select(has("label") and ((.label_ko // "")==""))] | length' "$REG")
+[ "$miss_lk" = "0" ] && pass "every element with a label has a non-empty label_ko" || fail "$miss_lk G7 element(s) missing label_ko"
+miss_nk=$(jq -r '[.clusters[] | select(((.name // "")=="") or ((.name_ko // "")==""))] | length' "$REG")
+[ "$miss_nk" = "0" ] && pass "every cluster has a name and name_ko" || fail "$miss_nk cluster(s) missing name/name_ko"
 
-echo "== report string catalogs are valid and agree on their key set =="
+echo "== report string catalog is valid and has no unfilled placeholders in ko output =="
 CAT="$LIB/i18n/report-strings.ko.json"
-CAT_ZH="$LIB/i18n/report-strings.zh-TW.json"
 jq empty "$CAT" >/dev/null 2>&1 && pass "report-strings.ko.json is valid JSON" || fail "report-strings.ko.json is not valid JSON"
-jq empty "$CAT_ZH" >/dev/null 2>&1 && pass "report-strings.zh-TW.json is valid JSON" || fail "report-strings.zh-TW.json is not valid JSON"
-# A key present in one catalog and missing from another renders as the bare key
-# name in that language (kstr's `.[$k] // $k`), so key parity IS the gate.
-if diff <(jq -S 'keys' "$CAT") <(jq -S 'keys' "$CAT_ZH") >/dev/null 2>&1; then
-    pass "ko and zh-TW catalogs carry the same key set"
-else
-    fail "ko and zh-TW report catalogs have drifted apart"
-fi
-if diff <(jq -S '.["conformance.label_exact"] | keys' "$CAT") <(jq -S '.["conformance.label_exact"] | keys' "$CAT_ZH") >/dev/null 2>&1; then
-    pass "ko and zh-TW label_exact maps key on the same English labels"
-else
-    fail "label_exact English keys differ between ko and zh-TW"
-fi
-# Templates are filled by printf (%s, in argument order — bash printf has no
-# positional parameters) and by jq gsub (%n%/%a%/%b%/%v%). A translation that
-# drops or adds one renders a broken line, so the token profile must match.
-tok_drift=$(jq -n --slurpfile a "$CAT" --slurpfile b "$CAT_ZH" '
-    def toks: [scan("%s|%n%|%a%|%b%|%v%")] | sort;
-    [ ($a[0] | to_entries[] | select(.value | type == "string"))
-      | select((.value | toks) != (($b[0][.key] // "") | toks)) | .key ] | length')
-[ "$tok_drift" = "0" ] && pass "zh-TW templates carry the same placeholders as ko" || fail "$tok_drift zh-TW template(s) have mismatched placeholders"
 
 echo "== ko conformance report renders Korean while the JSON stays English =="
 REPORT_LANG=ko bash "$LIB/validate-sbom.sh" "$FIX/aibom-owasp-1_7.json" "$WORK/koconf" "bert-base-uncased" >/dev/null 2>&1
@@ -1435,42 +1585,106 @@ else
     fail "ko profile produced no output"
 fi
 
-echo "== zh-TW conformance report renders Chinese while the JSON stays English =="
-REPORT_LANG=zh-TW bash "$LIB/validate-sbom.sh" "$FIX/aibom-owasp-1_7.json" "$WORK/zhconf" "bert-base-uncased" >/dev/null 2>&1
-if diff <(jq 'del(.generatedAt)' "$CONF") <(jq 'del(.generatedAt)' "$WORK/zhconf_conformance.json") >/dev/null 2>&1; then
-    pass "zh-TW conformance JSON == en conformance JSON (contract stays English)"
+echo "== figshare: a published dataset item becomes a data component =="
+# Research data lives where the paper put it, which for a lot of science is a
+# repository like Figshare rather than a model hub. The mapping is a
+# transcription of fields the item already carries, so these cases exercise it
+# without the network: the reference forms a person would paste, and the shape
+# the item turns into.
+FS_PY="$LIB/scan-figshare.py"
+fs_call() {
+    python3 - "$FS_PY" "$@" <<'PYEOF'
+import importlib.util, json, sys
+spec = importlib.util.spec_from_file_location("fs", sys.argv[1])
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
+op = sys.argv[2]
+if op == "ref":
+    try:
+        item, version = mod.parse_reference(sys.argv[3])
+        print(f"{item}:{version or '-'}")
+    except mod.FigshareError:
+        print("error")
+elif op == "component":
+    item = json.load(open(sys.argv[3]))
+    print(json.dumps(mod.component(item, "test"), ensure_ascii=False))
+PYEOF
+}
+
+for pair in \
+    "33412285|33412285:-" \
+    "https://figshare.com/articles/dataset/Title/33412285|33412285:-" \
+    "https://figshare.com/articles/dataset/Title/33412285/2|33412285:2" \
+    "10.6084/m9.figshare.33413521.v1|33413521:1" \
+    "https://api.figshare.com/v2/articles/33412285|33412285:-" \
+    "not-a-reference|error"; do
+    ref="${pair%%|*}"; want="${pair##*|}"
+    got="$(fs_call ref "$ref")"
+    if [ "$got" = "$want" ]; then
+        pass "reference '$ref' reads as $want"
+    else
+        fail "reference '$ref' read as '$got', expected '$want'"
+    fi
+done
+
+# The item as the public endpoint returns it, trimmed to the fields that map.
+cat > "$WORK/fs-item.json" <<'ITEMEOF'
+{"id": 33412285, "title": "SS-Cu-Ti study dataset", "version": 1,
+ "doi": "10.25916/sut.33412285.v1", "defined_type_name": "dataset",
+ "figshare_url": "https://figshare.com/articles/dataset/x/33412285",
+ "license": {"value": 1, "name": "CC BY 4.0", "url": "https://creativecommons.org/licenses/by/4.0/"},
+ "authors": [{"full_name": "Jiawei Wang"}],
+ "files": [{"name": "a.png", "computed_md5": "7b8123ec815a365c6f4d2cd8e8796583"},
+           {"name": "b.csv", "computed_md5": "aa8123ec815a365c6f4d2cd8e8796584"}]}
+ITEMEOF
+fs_call component "$WORK/fs-item.json" > "$WORK/fs-comp.json"
+
+if jq -e '.type == "data" and .name == "SS-Cu-Ti study dataset" and .version == "v1"' \
+   "$WORK/fs-comp.json" >/dev/null; then
+    pass "the item becomes a data component with its title and version"
 else
-    fail "zh-TW conformance JSON diverged from the English JSON"
-fi
-grep -q '<html lang="zh-TW">' "$WORK/zhconf_conformance.html" && pass "zh-TW conformance HTML sets lang=zh-TW" || fail "zh-TW conformance HTML lang is not zh-TW"
-grep -q 'PingFang TC' "$WORK/zhconf_conformance.html" && pass "zh-TW conformance HTML uses a Traditional Chinese font stack" || fail "zh-TW conformance HTML kept the Korean font stack"
-grep -q 'SBOM 符合性報告' "$WORK/zhconf_conformance.html" && pass "zh-TW conformance HTML h1 is Chinese" || fail "zh-TW conformance HTML h1 not localized"
-grep -q '模型授權條款' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance MD localizes a G7 element label" || fail "zh-TW conformance MD label not localized"
-grep -q '需人工檢視' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance MD localizes a review detail" || fail "zh-TW conformance MD detail not localized"
-# Data/identifiers must survive verbatim in the zh report too.
-grep -q 'Apache-2.0' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance keeps the license id verbatim" || fail "zh-TW conformance dropped the license id"
-grep -q '✅' "$WORK/zhconf_conformance.md" && pass "zh-TW conformance keeps the status emoji" || fail "zh-TW conformance dropped the status emoji"
-# An untranslated key renders as the bare key name (kstr's `.[$k] // $k`), which
-# would read as "conformance.h1" in the middle of a report.
-if grep -qE '(^|[^a-z.])(conformance|aiprofile|risk|crosswalk|common)\.[a-z0-9_]+([^a-z.]|$)' "$WORK/zhconf_conformance.md"; then
-    fail "zh-TW conformance MD contains an unfilled catalog key"
-else
-    pass "zh-TW conformance MD has no unfilled catalog keys"
+    fail "component shape wrong: $(jq -c '{type,name,version}' "$WORK/fs-comp.json")"
 fi
 
-echo "== zh-TW AI compliance profile renders Chinese while the JSON stays English =="
-cp "$WORK/conf_bom.json" "$WORK/zhconf_bom.json" 2>/dev/null
-REPORT_LANG=zh-TW bash "$LIB/generate-ai-profile.sh" "$WORK/zhconf" "demo" >/dev/null 2>&1
-if [ -f "$WORK/zhconf_ai-profile.json" ]; then
-    grep -qE '^\| (中繼資料|模型|基礎設施) ' "$WORK/zhconf_ai-profile.md" && pass "zh-TW profile localizes cluster display names (name_zh)" || fail "zh-TW profile cluster names not localized"
-    if diff <(jq 'del(.generatedAt)' "$WORK/conf_ai-profile.json") <(jq 'del(.generatedAt)' "$WORK/zhconf_ai-profile.json") >/dev/null 2>&1; then
-        pass "zh-TW profile JSON == en profile JSON (contract stays English)"
-    else
-        fail "zh-TW profile JSON diverged from the English JSON"
-    fi
+# A CC deed is placed from its url, which is what says whether the data can be
+# used commercially at all.
+got=$(jq -r '.licenses[0].license.id // ""' "$WORK/fs-comp.json")
+[ "$got" = "CC-BY-4.0" ] && pass "the licence is placed as an SPDX id" \
+    || fail "licence read as '$got', expected CC-BY-4.0"
+
+got=$(jq -r '[.hashes[] | select(.alg == "MD5")] | length' "$WORK/fs-comp.json")
+[ "$got" = "2" ] && pass "per-file digests are carried as MD5 hashes" \
+    || fail "hashes=$got, expected 2"
+
+if jq -e '[.properties[] | select(.name == "bomlens:dataset:collectedBy") | .value] == ["figshare"]
+      and ([.properties[] | select(.name == "bomlens:dataset:doi") | .value] | length == 1)' \
+   "$WORK/fs-comp.json" >/dev/null; then
+    pass "the repository and the DOI are recorded"
 else
-    fail "zh-TW profile produced no output"
+    fail "collectedBy/doi missing: $(jq -c '[.properties[].name]' "$WORK/fs-comp.json")"
 fi
+
+# An institutional instance can offer a licence we cannot place. Guessing an
+# SPDX id there would turn "we do not know" into a claim about what is allowed.
+jq '.license = {"value": 99, "name": "Institutional terms", "url": "https://example.edu/terms"}' \
+   "$WORK/fs-item.json" > "$WORK/fs-item2.json"
+fs_call component "$WORK/fs-item2.json" > "$WORK/fs-comp2.json"
+if jq -e '.licenses[0].license.name == "Institutional terms"
+      and (.licenses[0].license.id // null) == null' "$WORK/fs-comp2.json" >/dev/null; then
+    pass "an unplaceable licence is kept verbatim, not guessed at"
+else
+    fail "unplaceable licence: $(jq -c '.licenses' "$WORK/fs-comp2.json")"
+fi
+
+# The pipeline judges a dataset it collected; the marker is what says it did.
+cp "$WORK/fs-comp.json" "$WORK/fs-bom-comp.json"
+jq -n --slurpfile c "$WORK/fs-comp.json" \
+   '{bomFormat: "CycloneDX", specVersion: "1.7", version: 1,
+     metadata: {component: $c[0]}, components: []}' > "$WORK/fs-bom.json"
+AI_USAGE_CONTEXT=product bash "$LIB/assess-ai-risk.sh" "$WORK/fs-bom.json" >/dev/null 2>&1
+got=$(jq -r '[.metadata.component.properties[] | select(.name == "bomlens:assessment:overall") | .value] | first // ""' "$WORK/fs-bom.json")
+[ -n "$got" ] && pass "a collected dataset is assessed (overall=$got)" \
+    || fail "the dataset was not assessed"
 
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"

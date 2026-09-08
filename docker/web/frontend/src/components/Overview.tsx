@@ -63,6 +63,8 @@ const ATTN_ICON: Record<AttentionItem["id"], LucideIcon> = {
   conformance: FileCheck2,
   vulns: ShieldAlert,
   review: Eye,
+  modelRisk: Cpu,
+  conformanceGap: FileCheck2,
 };
 
 /** Icon per provenance kind, so the input reads at a glance. */
@@ -311,6 +313,56 @@ export function Overview({
         </div>
       )}
 
+      {/* Zero components is the one result a reader reliably misreads: it looks
+          like "nothing to worry about" when it almost always means the scan had
+          nothing to read. The CLI says so twice in its log; before this the web
+          UI said nothing at all. An AI scan is excluded — a model SBOM legitimately
+          carries no components, the model itself being the document. */}
+      {!ai && result.sbom && result.sbom.components === 0 && (
+        <div
+          className="rounded-md border border-warning-border/60 bg-warning-surface px-4 py-3 text-warning dark:border-warning-border/20 dark:bg-warning-surface/30"
+          data-testid="zero-components"
+        >
+          <div className="text-sm font-medium">{t("result.zeroComponentsTitle")}</div>
+          <p className="mt-1 text-xs">{t("result.zeroComponentsBody")}</p>
+        </div>
+      )}
+
+      {/* What the scan warned about while it ran. The log is streamed and never
+          stored, so a result opened later had no way to say it had warned at
+          all — and these are the lines that decide how far to trust the counts. */}
+      {(result.scanWarnings?.length ?? 0) > 0 && (
+        <div
+          className="rounded-md border border-warning-border/60 bg-warning-surface px-4 py-3 text-warning dark:border-warning-border/20 dark:bg-warning-surface/30"
+          data-testid="scan-warnings"
+        >
+          <div className="text-sm font-medium">{t("result.scanWarningsTitle")}</div>
+          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-xs">
+            {result.scanWarnings?.map((w) => (
+              <li key={w} className="break-words font-mono">
+                {w.replace(/^\[WARN\]\s*/, "")}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Versions the resolver chose, not versions anyone installed. The numbers
+          in the components table look specific either way, so without this the
+          reader has no way to tell which kind they are looking at — and reads a
+          vulnerability count that was measured against a fresh install. */}
+      {result.sbom?.versionPinning === "unpinned" && (
+        <div
+          className="rounded-md border bg-muted/40 px-4 py-3 text-muted-foreground"
+          data-testid="version-pinning"
+        >
+          <div className="text-sm font-medium text-foreground">
+            {t("result.unpinnedTitle")}
+          </div>
+          <p className="mt-1 text-xs">{t("result.unpinnedBody")}</p>
+        </div>
+      )}
+
       {!ai && result.sbom?.suggestIdentifyVendored && (
         <div className="rounded-md border border-warning-border/60 bg-warning-surface px-4 py-3 text-warning dark:border-warning-border/20 dark:bg-warning-surface/30">
           <div className="text-sm font-medium">{t("result.vendoredHintTitle")}</div>
@@ -362,14 +414,15 @@ export function Overview({
             <ul className="flex flex-col gap-1">
               {attention.map((item) => {
                 const Icon = ATTN_ICON[item.id];
-                const label =
-                  item.id === "malicious"
-                    ? t("overview.attnMalicious", { count: item.count })
-                    : item.id === "conformance"
-                      ? t("overview.attnConformance", { count: item.count })
-                      : item.id === "vulns"
-                        ? t("overview.attnVulns", { count: item.count })
-                        : t("overview.attnReview", { count: item.count });
+                const ATTN_KEY: Record<AttentionItem["id"], string> = {
+                  malicious: "overview.attnMalicious",
+                  conformance: "overview.attnConformance",
+                  vulns: "overview.attnVulns",
+                  review: "overview.attnReview",
+                  modelRisk: "overview.attnModelRisk",
+                  conformanceGap: "overview.attnConformanceGap",
+                };
+                const label = t(ATTN_KEY[item.id], { count: item.count });
                 return (
                   <li key={item.id}>
                     <a
@@ -482,8 +535,11 @@ function JumpCards({
   scanId: string | null;
 }) {
   const { t } = useTranslation();
+  // Models AND datasets: the tile carries the section's name, and counting only
+  // the models left it reading "1" next to a rail badge of 4 for the same
+  // screen. Kept in step with sectionCounts.
   const modelCount = (result.sbom?.componentList ?? []).filter(
-    (c) => c.type === "machine-learning-model",
+    (c) => c.type === "machine-learning-model" || c.type === "data",
   ).length;
   const direct = result.sbom?.directCount ?? 0;
   const transitive = result.sbom?.transitiveCount ?? 0;
@@ -525,15 +581,23 @@ function JumpCards({
     ...(result.security
       ? [{ id: "vulnerabilities" as SectionId, icon: ShieldAlert, value: result.security.TOTAL }]
       : []),
-    // Only when the SBOM has a real dependency graph (flat firmware/image SBOMs
-    // have no direct/transitive split, so the tile would be a meaningless 0).
-    ...(hasDeps && depTotal > 0
+    // The rail keeps this section whenever the scan produced a dependency view,
+    // so hiding the tile made the two disagree about whether the section exists.
+    // It stays, and says what it has: a count with its split, a count alone when
+    // nothing is transitive (an AI scan's root model is not a dependency of
+    // itself), or that no relationships were recorded.
+    ...(hasDeps
       ? [
           {
             id: "dependencies" as SectionId,
             icon: GitBranch,
             value: depTotal,
-            sub: t("overview.depBreakdown", { direct, transitive }),
+            sub:
+              depTotal === 0
+                ? t("overview.depNone")
+                : transitive === 0
+                  ? undefined
+                  : t("overview.depBreakdown", { direct, transitive }),
           },
         ]
       : []),

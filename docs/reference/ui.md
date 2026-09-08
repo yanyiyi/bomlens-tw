@@ -45,6 +45,7 @@ The New scan screen is two panes. On the left, pick a source — grouped into Co
 | Docker image | enter the image name | IMAGE |
 | AI model | enter a HuggingFace model id (`org/model`) | AIBOM |
 | Model file | upload a `.gguf`, `.safetensors`, `.pt`, … (up to 8 GB) | MODELFILE |
+| Published dataset | enter a Figshare item — its page URL, its DOI, or the item number — in the same field as the model id | DATASET |
 
 Generation options are the open-source notice and the security (vulnerability) report. A scan always writes the SBOM in CycloneDX; an SPDX copy is exported afterwards from the results screen, so there is nothing to decide here. Separately, an **Advanced scan options** section gathers the toggles that change how the source is analyzed rather than which files are produced. License scan (ScanCode) scans the project's own source files for per-file license text (1st-party; it does not download the declared dependencies) and applies to source-code scans (current folder, GitHub URL, ZIP upload). File-level identification (SCANOSS) finds third-party open source copied into the tree (mainly C/C++), also for source-code scans. For firmware, the advanced option is OSV advisories. SCANOSS uses the free OSSKB service, which is rate-limited and may return nothing under frequent use, so add a token from scanoss.com for regular runs. Docker images, SBOM uploads and AI models have no advanced options. Choosing SBOM upload (ANALYZE) forces the notice and security reports on for the risk analysis, and an AI-model scan produces the notice only (it has no package CVEs, so the security report is skipped).
 
@@ -123,6 +124,12 @@ That section also shows an AI compliance profile card: a one-glance rollup of th
 ## Scan management
 
 The home screen — opened from the rail's Scan management link, the logo, or the top bar's Scan management (clock) menu — lists every past scan saved on this machine. Each scan's `{Project}_{Version}/` subfolder under the output base is one entry. A search box and scan-type filter chips (only the types that exist — Source, Container, RootFS, Firmware, AI model, SBOM) narrow the list. The type comes from what the scan was pointed at and, where that leaves it open, from the root component the SBOM declares — an analyzed supplier document reads as SBOM rather than as the Source its root usually claims to be. Three summary cards show the total scans, how many are at risk (click that card to filter to them), and the project count. The table sorts by scan, generated time, components or top severity. Click a row to re-open its results, or delete one to remove its subfolder — a prompt confirms first, because the files are removed from disk and nothing is kept to restore. This is local files only — no account, no database.
+
+## External lookup
+
+Reachable from the top bar's icon at any time, or from a Cmd/Ctrl+K search whose term looks like an advisory id — with or without a scan loaded. Type a CVE/GHSA/GO/PYSEC/RUSTSEC/OSV/GSD/MAL id, a purl, or a bare package name (which then asks for an ecosystem and version), and the server checks it live against OSV.dev: full detail for one advisory, or every known vulnerability for one package version. The URL (`#/lookup?q=…`) is a shareable link that re-runs the same lookup on open.
+
+This is the one feature that reaches outside the machine on its own initiative rather than as part of a scan — see [Local-first by design](../concepts/local-first.md) for what that means for a closed network. Set `EXTERNAL_LOOKUP=false` to remove it (the icon, the search row and the screen) entirely.
 
 ## Notes
 

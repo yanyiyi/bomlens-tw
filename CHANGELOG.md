@@ -11,6 +11,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Traditional Chinese (`zh-TW`) joins English and Korean. The web UI carries a third language button and follows a Chinese browser locale on first visit; the human-facing conformance, AI-profile and risk reports render in Chinese with `--lang zh-TW` (`REPORT_LANG=zh-TW`), and the G7 / CISA registries and the AI risk knowledge base carry their Chinese labels alongside the existing ones. The SBOM and the JSON reports stay English, as they do for Korean. The translation was machine-drafted and then reviewed by a native speaker; docs/chinese-style-guide.md records the terminology that review settled on.
 
+## [v1.11.8] - 2026-09-07
+
+### Added
+
+- The web UI can look up a CVE/GHSA/etc. advisory id, or check a package version for known vulnerabilities, on demand against OSV.dev, reachable from the top bar or from a search whose term looks like an advisory id, with or without a scan loaded, and as a shareable link. `EXTERNAL_LOOKUP=false` removes it entirely for a closed network.
+
+### Fixed
+
+- A scan started from the New scan screen that then failed left every "New scan" control (the top bar, the rail, and the error card's own button) unresponsive: the hash never moved off `#/new`, so none of them fired the navigation event the reset depended on. Clicking any of them now resets the form regardless.
+- The CLI's own scanner image, the web UI's container, and the sibling firmware/AI-model/deep-CVE images it launches reused a cached image forever once one had been pulled, even after the registry published a newer one (a stale local image once caused a scan to fail outright). Each now quietly checks for an update before a run, bounded so a slow or offline registry never delays or blocks the scan.
+- Creative Commons licenses (`CC-BY-4.0` and its variants), common on datasets and AI models, always fell to Uncategorized in the license-risk classification because it only recognized software copyleft families. Share-Alike variants now classify as weak-copyleft and plain attribution as permissive.
+
+## [v1.11.7] - 2026-09-04
+
+### Added
+
+- Modelica (`.mo`) source projects now identify the libraries declared in a package's `annotation(uses(...))` block (e.g. `uses(Modelica(version="4.0.0"))`), since cdxgen has no Modelica cataloger and previously returned zero components. Direct declarations only — no lockfile, no transitive resolution.
+- The conformance report now fails an SBOM whose OS package identifiers carry no distribution (`pkg:rpm/bind@9.11.36-16.el8_10.6` instead of `pkg:rpm/rhel/bind@...`). purl-spec requires that namespace for `rpm`, `deb` and `apk`, and vulnerability matching keys on it, so such an identifier is well formed and still matches nothing: a supplier's server SBOM passed every check with 261 identified packages and resolved zero. The check runs on CycloneDX, SPDX JSON and SPDX Tag-Value, and reports not-applicable when the SBOM carries no OS packages.
+
+- The conformance screen carries the Korean wording for every check rather than only the registry rows, and gives the reader a way through its ninety-one checks instead of one long list.
+- The AI screens fill the space their software counterparts already used, and four contrast failures on them are corrected.
+
+### Fixed
+
+- The desktop app ran whatever `main` had built that day. It pinned `ghcr.io/sktelecom/bomlens:latest` regardless of its own version, so a result could not be reproduced from the version a user reported. An installed build now pins the base and sibling images to its own version, falling back to `:latest` only when that version cannot be read. A missing tag is reported as its own pull failure rather than sending the user to look at the network.
+- The desktop app told a user who already had Docker installed to install it again. Any non-zero exit from `docker version` counted as "not installed", including the common case of an engine that is installed but not started. The two are now separated, and an engine that exists only inside WSL2 is named as something this app cannot reach rather than recommended as a fix it could never detect.
+- The result screens printed counts the scan had never measured. Checks marked as having nothing to measure reached the web UI as ordinary warnings, so an ML-BOM with no packages drew seven package-coverage rows as gaps and reported 6/8 mandatory instead of 6/6. An AI scan also labelled the root model a transitive dependency of its own SBOM.
+- The web UI offered the deep-license toggle on an image that cannot run it. The toggle is now gated on a capability the server reports and hidden when the image lacks it.
+- Source scans collected `.DS_Store`, `Thumbs.db` and their kin from any folder someone had browsed. They carry nothing an SBOM needs and are now excluded.
+- Two different license counts were both labelled "Unknown", and two different training-data axes shared a name. Each now says which one it is.
+- AI verdict badge tones follow the pipeline's own ranking, the fixed wording in assessment reason text is localized, and a model's limitations come from the card's own list rather than being inferred when the card states none.
+- The `PURL syntax` row rendered in English on the Korean report. Its label had been reworded in the code without updating the translation catalogue's exact-match key.
+
+## [v1.11.6] - 2026-09-01
+
+### Added
+
+- `GET /image-status` now reports the version baked into a firmware/AI-model/deep-CVE sibling image that is already on disk, read via `docker image inspect`. The scan form's "ready" indicator shows it, so a stale cached sibling image (one a `docker pull` never refreshed) is visible even when the app's own version is current.
+
 ## [v1.11.5] - 2026-08-31
 
 ### Added
@@ -772,7 +811,9 @@ Three changes alter what an AI-model scan writes, so a consumer of those artifac
 
 - No publicly known vulnerabilities have been reported or fixed in this project to date.
 
-[Unreleased]: https://github.com/sktelecom/bomlens/compare/v1.11.5...HEAD
+[Unreleased]: https://github.com/sktelecom/bomlens/compare/v1.11.7...HEAD
+[v1.11.7]: https://github.com/sktelecom/bomlens/releases/tag/v1.11.7
+[v1.11.6]: https://github.com/sktelecom/bomlens/releases/tag/v1.11.6
 [v1.11.5]: https://github.com/sktelecom/bomlens/releases/tag/v1.11.5
 [v1.11.4]: https://github.com/sktelecom/bomlens/releases/tag/v1.11.4
 [v1.11.3]: https://github.com/sktelecom/bomlens/releases/tag/v1.11.3

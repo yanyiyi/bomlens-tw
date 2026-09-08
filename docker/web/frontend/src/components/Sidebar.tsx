@@ -30,6 +30,10 @@ interface SidebarProps {
   homeHref: string;
   /** Hash for the New scan screen. */
   newHref: string;
+  /** Reset to a blank New scan form, in addition to the `#/new` navigation
+   *  `newHref` already carries — needed when a scan started from `#/new`
+   *  fails, leaving the hash unchanged so the link's navigation is a no-op. */
+  onNewScan?: () => void;
 }
 
 /** Shared row shape for every rail link — global block and sections alike. */
@@ -66,6 +70,7 @@ export function Sidebar({
   onToggleCollapsed,
   homeHref,
   newHref,
+  onNewScan,
 }: SidebarProps) {
   const { t } = useTranslation();
   const groups = visibleGroups(scan);
@@ -105,11 +110,12 @@ export function Sidebar({
       <ul className="mb-2 flex flex-col gap-0.5 border-b border-sidebar-border pb-2">
         {[
           { href: homeHref, icon: Clock, label: t("nav.recentScans") },
-          { href: newHref, icon: Plus, label: t("shell.newScan") },
-        ].map(({ href, icon: Icon, label }) => (
+          { href: newHref, icon: Plus, label: t("shell.newScan"), onClick: onNewScan },
+        ].map(({ href, icon: Icon, label, onClick }) => (
           <li key={href}>
             <a
               href={href}
+              onClick={onClick}
               title={label}
               className={cn(RAIL_ROW, RAIL_ROW_IDLE, collapsed && "justify-center")}
             >
@@ -162,9 +168,21 @@ export function Sidebar({
                           // the count at foreground contrast there, like the label.
                           active ? "text-foreground" : "text-muted-foreground",
                         )}
+                        // Every badge sits in the same place in the same type,
+                        // but they are not the same kind of number: components
+                        // is a count, conformance is passed-over-mandatory, and
+                        // dependencies is a direct/transitive split. Say which,
+                        // for the two that are not plain counts.
                         title={
                           section.id === "dependencies"
                             ? t("nav.depSplitTitle")
+                            : section.id === "conformance"
+                              ? t("nav.conformanceSplitTitle")
+                              : undefined
+                        }
+                        aria-label={
+                          section.id === "conformance"
+                            ? t("nav.conformanceSplitTitle")
                             : undefined
                         }
                       >

@@ -62,6 +62,18 @@ SPDX_SPEC_VERSIONS="${SPDX_SPEC_VERSIONS:-SPDX-2.2 SPDX-2.3 SPDX-3.0}"
 # there.
 PURL_SYNTAX_REGEX='^pkg:[a-z][a-z0-9.+-]*(/[A-Za-z0-9._%~@+-]+)+(@[A-Za-z0-9._%~+:-]+)?(\?[A-Za-z0-9._%~+=&:,/-]+)?(#[A-Za-z0-9._%~+/-]+)?$'
 
+# OS package identifiers carry the distribution in the namespace slot
+# (pkg:rpm/rhel/bind@..., pkg:deb/debian/curl@...). purl-spec makes that
+# namespace required for these types, and vulnerability matching keys on it, so
+# an identifier without it is syntactically well formed and matches nothing: a
+# server SBOM measured this way reported 261 packages and resolved zero.
+# PURL_SYNTAX_REGEX cannot catch it because the namespace is optional there,
+# which is correct for npm and pypi. The second pattern asks whether a
+# segment ending in '/' follows the type; '@?#' are excluded from the segment so
+# a version, qualifier or subpath is never mistaken for a namespace.
+OS_PURL_TYPE_REGEX='^pkg:(rpm|deb|apk)/'
+OS_PURL_NS_REGEX='^pkg:(rpm|deb|apk)/[^/@?#]+/'
+
 if [ -z "$SBOM" ] || [ ! -f "$SBOM" ]; then
     echo "[validate] SBOM file not found: $SBOM" >&2
     exit 1
@@ -117,7 +129,9 @@ cdx_checks() {
        --argjson fieldmin "$FIELD_MIN_PCT" \
        --argjson cap "$MISSING_CAP" \
        --arg okvers "${1:-$CYCLONEDX_SPEC_VERSIONS}" \
-       --arg purlre "$PURL_SYNTAX_REGEX" "
+       --arg purlre "$PURL_SYNTAX_REGEX" \
+       --arg osre "$OS_PURL_TYPE_REGEX" \
+       --arg osnsre "$OS_PURL_NS_REGEX" "
     $PCT_DEF
     ([.components[]?]) as \$c
     | (\$c|length) as \$tot
@@ -157,6 +171,8 @@ cdx_checks() {
     | ([ \$file[] | select(((.hashes // []) | length) == 0) | (.name // \"(unnamed)\") ]) as \$miss_fid
     | ([ \$c[] | select((.purl // \"\") | startswith(\"pkg:generic\")) | (.name // .purl) ]) as \$generic
     | ([ \$c[] | (.purl // empty) | select(test(\$purlre) | not) ]) as \$badpurl
+    | ([ \$c[] | (.purl // empty) | select(test(\$osre)) ]) as \$os_purl
+    | ([ \$os_purl[] | select(test(\$osnsre) | not) ]) as \$os_nons
     | (\$okvers | split(\" \")) as \$vers
     | ((.specVersion // \"\") | tostring) as \$sv
     | ((\$c | map(select((.licenses // []) | length > 0)) | length)) as \$lic_ok
@@ -236,6 +252,13 @@ cdx_checks() {
        {id:\"purl-syntax\", label:\"PURL syntax (pkg:type/[namespace/]name)\", required:true,
         status:(if (\$badpurl|length)==0 then \"pass\" else \"fail\" end),
         detail:\"\(\$badpurl|length) malformed\", missing:(\$badpurl[0:\$cap])},
+       {id:\"os-purl-namespace\", label:\"OS package PURL distribution (pkg:rpm/<distro>/name)\", required:true,
+        source:(if (\$os_purl|length)==0 then \"na\" else \"auto\" end),
+        naKind:(if (\$os_purl|length)==0 then \"not-applicable\" else \"\" end),
+        status:(if (\$os_nons|length)==0 then \"pass\" else \"fail\" end),
+        detail:(if (\$os_purl|length)==0 then \"no OS package identifiers\"
+                else \"\(\$os_nons|length) without distribution\" end),
+        missing:(\$os_nons[0:\$cap])},
        {id:\"transitive\", label:\"Transitive dependencies (graph edges)\", required:true,
         source:(if \$tot==0 then \"na\" else \"auto\" end),
         naKind:(if \$tot==0 then \"not-applicable\" else \"\" end),
@@ -365,8 +388,8 @@ registry_checks() {
             "{id:" + (.id|@json)
             + ",label:" + (.label|@json)
             # Carried on the check itself, not only looked up when this file
-            # renders a translation: a consumer of the JSON contract (the web
-            # UI) has no registry to look it up in.
+            # renders Korean: a consumer of the JSON contract (the web UI) has no
+            # registry to look it up in.
             + ",label_ko:" + ((.label_ko // "")|@json)
             + ",label_zh:" + ((.label_zh // "")|@json)
             + ",required:" + ((.required // false)|tojson)
@@ -456,7 +479,9 @@ spdx_json_checks() {
        --argjson hashmin "$HASH_MIN_PCT" \
        --argjson cap "$MISSING_CAP" \
        --arg okvers "$SPDX_SPEC_VERSIONS" \
-       --arg purlre "$PURL_SYNTAX_REGEX" "
+       --arg purlre "$PURL_SYNTAX_REGEX" \
+       --arg osre "$OS_PURL_TYPE_REGEX" \
+       --arg osnsre "$OS_PURL_NS_REGEX" "
     $PCT_DEF
     ([.packages[]?]) as \$p
     | (\$p|length) as \$tot
@@ -470,6 +495,8 @@ spdx_json_checks() {
                        and (([.externalRefs[]? | select(.referenceType==\"cpe23Type\")]|length)>0)) ] | length) as \$cpe_only
     | ([ \$p[] | .externalRefs[]? | select((.referenceLocator // \"\")|startswith(\"pkg:generic\")) | .referenceLocator ]) as \$generic
     | ([ \$p[] | .externalRefs[]? | select(.referenceType==\"purl\") | (.referenceLocator // \"\") | select(test(\$purlre) | not) ]) as \$badpurl
+    | ([ \$p[] | .externalRefs[]? | select(.referenceType==\"purl\") | (.referenceLocator // \"\") | select(test(\$osre)) ]) as \$os_purl
+    | ([ \$os_purl[] | select(test(\$osnsre) | not) ]) as \$os_nons
     | (\$okvers | split(\" \")) as \$vers
     | (.spdxVersion // \"\") as \$sv
     | ((\$p | map(select(((.licenseConcluded // \"NOASSERTION\") != \"NOASSERTION\") or ((.licenseDeclared // \"NOASSERTION\") != \"NOASSERTION\"))) | length)) as \$lic_ok
@@ -514,6 +541,13 @@ spdx_json_checks() {
        {id:\"purl-syntax\", label:\"PURL syntax (pkg:type/[namespace/]name)\", required:true,
         status:(if (\$badpurl|length)==0 then \"pass\" else \"fail\" end),
         detail:\"\(\$badpurl|length) malformed\", missing:(\$badpurl[0:\$cap])},
+       {id:\"os-purl-namespace\", label:\"OS package PURL distribution (pkg:rpm/<distro>/name)\", required:true,
+        source:(if (\$os_purl|length)==0 then \"na\" else \"auto\" end),
+        naKind:(if (\$os_purl|length)==0 then \"not-applicable\" else \"\" end),
+        status:(if (\$os_nons|length)==0 then \"pass\" else \"fail\" end),
+        detail:(if (\$os_purl|length)==0 then \"no OS package identifiers\"
+                else \"\(\$os_nons|length) without distribution\" end),
+        missing:(\$os_nons[0:\$cap])},
        {id:\"transitive\", label:\"Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)\", required:true,
         source:(if \$tot==0 then \"na\" else \"auto\" end),
         naKind:(if \$tot==0 then \"not-applicable\" else \"\" end),
@@ -542,7 +576,7 @@ spdx_tv_checks() {
     # so a well-formed Tag-Value SBOM — where pkg:generic is always 0 — never got a
     # conformance report. Capture the count and emit exactly one integer.
     g() { local n; n=$(grep -cE "$1" "$SBOM" 2>/dev/null) || true; printf '%s' "${n:-0}"; }
-    local ts tools names vers purls generic deps lics hashes verpat specok purlok
+    local ts tools names vers purls generic deps lics hashes verpat specok purlok os_purls os_ns_ok
     ts=$(g '^Created:'); tools=$(g '^Creator: ?Tool:')
     names=$(g '^PackageName:'); vers=$(g '^PackageVersion:')
     purls=$(g 'ExternalRef: ?PACKAGE-MANAGER purl'); generic=$(g 'purl +pkg:generic')
@@ -550,11 +584,17 @@ spdx_tv_checks() {
     verpat=$(printf '%s' "$SPDX_SPEC_VERSIONS" | sed 's/\./\\./g; s/ /|/g')
     specok=$(g "^SPDXVersion: *($verpat) *\$")
     purlok=$(g 'ExternalRef: ?PACKAGE-MANAGER purl +pkg:[a-z][a-z0-9.+-]*/[^ ]+ *$')
+    # Same question on the Tag-Value side: how many OS identifiers carry a
+    # distribution, out of those that should. Counted, not listed, like every
+    # other row here.
+    os_purls=$(g 'ExternalRef: ?PACKAGE-MANAGER purl +pkg:(rpm|deb|apk)/')
+    os_ns_ok=$(g 'ExternalRef: ?PACKAGE-MANAGER purl +pkg:(rpm|deb|apk)/[^/@?#]+/')
     jq -cn \
        --argjson ts "$ts" --argjson tools "$tools" --argjson names "$names" \
        --argjson vers "$vers" --argjson purls "$purls" --argjson generic "$generic" \
        --argjson deps "$deps" --argjson lics "$lics" --argjson hashes "$hashes" \
-       --argjson specok "$specok" --argjson purlok "$purlok" --arg okvers "$SPDX_SPEC_VERSIONS" '
+       --argjson specok "$specok" --argjson purlok "$purlok" \
+       --argjson osp "$os_purls" --argjson osnsok "$os_ns_ok" --arg okvers "$SPDX_SPEC_VERSIONS" '
     [
       {id:"spec-version", label:"Spec version (\($okvers|split(" ")|join("/")))", required:true, status:(if $specok>0 then "pass" else "fail" end), detail:"\($specok) accepted SPDXVersion line(s)", missing:[]},
       {id:"timestamp", label:"Timestamp (Created:)", required:true, status:(if $ts>0 then "pass" else "fail" end), detail:"\($ts) found", missing:[]},
@@ -564,6 +604,7 @@ spdx_tv_checks() {
       {id:"purl", label:"PURL external refs present", required:true, status:(if $purls>0 and $purls>=$names then "pass" else "fail" end), detail:"\($purls) purl ref(s) for \($names) package(s)", missing:[]},
       {id:"no-generic", label:"Traceable PURL (no pkg:generic, advisory)", required:false, status:(if $generic==0 then "pass" else "warn" end), detail:"\($generic) untraceable", missing:[]},
       {id:"purl-syntax", label:"PURL syntax (pkg:type/[namespace/]name)", required:true, status:(if $purls<=$purlok then "pass" else "fail" end), detail:"\($purls - $purlok) malformed", missing:[]},
+      {id:"os-purl-namespace", label:"OS package PURL distribution (pkg:rpm/<distro>/name)", required:true, source:(if $osp==0 then "na" else "auto" end), naKind:(if $osp==0 then "not-applicable" else "" end), status:(if $osp<=$osnsok then "pass" else "fail" end), detail:(if $osp==0 then "no OS package identifiers" else "\($osp - $osnsok) without distribution" end), missing:[]},
       {id:"transitive", label:"Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)", required:true, status:(if $deps>0 or $names==0 then "pass" else "fail" end), detail:(if $deps==0 and $names==0 then "nothing to relate" else "\($deps) relationship(s)" end), missing:[]},
       {id:"license", label:"License present (recommended)", required:false, status:(if $lics>0 then "pass" else "warn" end), detail:"\($lics) license field(s)", missing:[]},
       {id:"hash", label:"Checksums present (recommended)", required:false, status:(if $hashes>0 then "pass" else "warn" end), detail:"\($hashes) checksum(s)", missing:[]}
@@ -582,9 +623,18 @@ case "$FORMAT" in
         # The model can sit in either place: the AIBOM generator leaves it in
         # components[] and fills metadata.component with its scan job, while a
         # spec-shaped AI SBOM names the model as the document's own component.
+        # A dataset scan carries no model at all — the item IS the document — and
+        # is emitted at 1.7 for the same reason: `data` components and their
+        # governance are what the AI clusters are written against. It qualifies on
+        # the marker the dataset collectors stamp, so an ordinary SBOM that happens
+        # to carry a `data` component is not swept in.
         IS_AI=false
         if jq -e '([.metadata.component // empty] + [.components[]?])
-                  | map(select(.type=="machine-learning-model")) | length > 0' "$SBOM" >/dev/null 2>&1; then
+                  | map(select(.type == "machine-learning-model"
+                               or (.type == "data"
+                                   and ((.properties // [])
+                                        | any(.name == "bomlens:dataset:collectedBy")))))
+                  | length > 0' "$SBOM" >/dev/null 2>&1; then
             IS_AI=true
         fi
         # Whether a registry applies to THIS SBOM is the registry's own statement
@@ -684,6 +734,81 @@ fi
 # automated source (source "na") are counted separately as review items — a
 # well-formed AIBOM should not read as "30 warnings" just because a dozen G7
 # elements are checkable only by a human.
+# Korean wording for every check, carried alongside the English contract.
+#
+# Registry rows ship label_ko with their elements. The checks this file writes
+# itself do not: their labels carry a threshold ("PURL coverage (>= 90%)") or a
+# spec version, so they cannot be looked up whole and are matched by pattern
+# against the same catalog the reports use. Details are matched the same way.
+#
+# This runs regardless of REPORT_LANG. The reader's language is chosen in the
+# client, long after the scan, so shipping only one language's wording is what
+# left the conformance screen showing English prose under a Korean heading for
+# the seventeen format checks.
+KO_CATALOG="${REPORT_STRINGS_KO:-$(dirname "$0")/i18n/report-strings.ko.json}"
+KO_REG="${G7_REGISTRY:-$(dirname "$0")/g7-registry.json}"
+KO_REG_CISA="${CISA_REGISTRY:-$(dirname "$0")/cisa-registry.json}"
+[ -f "$KO_REG_CISA" ] || KO_REG_CISA="$KO_REG"
+if [ -f "$KO_CATALOG" ] && [ -f "$KO_REG" ]; then
+    if KO_JOINED=$(printf '%s' "$CHECKS" | jq -c --slurpfile cat "$KO_CATALOG" \
+            --slurpfile reg "$KO_REG" --slurpfile reg2 "$KO_REG_CISA" '
+
+      ($cat[0]) as $C
+      | (([ ($reg[0], $reg2[0]) | .clusters[].elements[] | select(.label_ko != null) | {(.id): .label_ko} ] | add) // {}) as $RK
+      | def llabel($id; $en):
+          if ($RK[$id] != null) then $RK[$id]
+          elif ($en|test("^Spec version \\(CycloneDX ")) then ($C["conformance.label.spec_cdx"] | gsub("%v%"; ($en|capture("^Spec version \\(CycloneDX (?<v>.+)\\)$").v)))
+          elif ($en|test("^Spec version \\(")) then ($C["conformance.label.spec_other"] | gsub("%v%"; ($en|capture("^Spec version \\((?<v>.+)\\)$").v)))
+          elif ($en|test("^PURL coverage ")) then ($C["conformance.label.purl"] | gsub("%n%"; ($en|capture("(?<n>[0-9]+)").n)))
+          elif ($en|test("^License coverage ")) then ($C["conformance.label.license"] | gsub("%n%"; ($en|capture("(?<n>[0-9]+)").n)))
+          elif ($en|test("^Hash coverage ")) then ($C["conformance.label.hash"] | gsub("%n%"; ($en|capture("(?<n>[0-9]+)").n)))
+          # These four capture the threshold from ">= N%" rather than the first
+          # run of digits: "SHA-512 checksum coverage" would otherwise report 512.
+          elif ($en|test("^SHA-512 checksum coverage ")) then ($C["conformance.label.sha512"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
+          elif ($en|test("^Component creator coverage ")) then ($C["conformance.label.creator"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
+          elif ($en|test("^Component filename coverage ")) then ($C["conformance.label.filename"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
+          elif ($en|test("^Source or distribution URI coverage ")) then ($C["conformance.label.artifact_uri"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
+          elif ($en|test("^File component identifier coverage ")) then ($C["conformance.label.file_identifier"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
+          else ($C["conformance.label_exact"][$en] // $en) end;
+        def ldetail($d):
+          if $d=="present" then $C["conformance.detail.present"]
+          elif $d=="not present in the SBOM" then $C["conformance.detail.not_present"]
+          elif $d=="requires human review (no automated source)" then $C["conformance.detail.review"]
+          elif $d=="no packages to measure" then $C["conformance.detail.no_packages"]
+          elif $d=="no package components (file inventory only)" then $C["conformance.detail.files_only"]
+          elif $d=="no file components" then $C["conformance.detail.no_files"]
+          elif $d=="nothing to measure" then $C["conformance.detail.nothing"]
+          elif $d=="requires inspecting the delivered files (no automated source in this scan)" then $C["conformance.detail.file_props_review"]
+          elif $d=="no machine-learning-model components" then $C["conformance.detail.no_models"]
+          elif $d=="not CycloneDX or SPDX" then $C["conformance.detail.not_cdx_spdx"]
+          elif $d=="could not evaluate" then $C["conformance.detail.could_not_eval"]
+          elif $d=="no components" then $C["conformance.detail.no_subject_components"]
+          elif ($d|test("^[0-9]+/[0-9]+ component\\(s\\)$")) then ($d|capture("^(?<a>[0-9]+)/(?<b>[0-9]+)")) as $m | ($C["conformance.detail.subject_components"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
+          elif ($d|test("^[0-9]+/[0-9]+ model component\\(s\\)$")) then ($d|capture("^(?<a>[0-9]+)/(?<b>[0-9]+)")) as $m | ($C["conformance.detail.model_components"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
+          elif ($d|test("^[0-9]+ tool\\(s\\)$")) then ($C["conformance.detail.tool"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ edge\\(s\\)$")) then ($C["conformance.detail.edge"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ untraceable$")) then ($C["conformance.detail.untraceable"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ malformed$")) then ($C["conformance.detail.malformed"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif $d=="no OS package identifiers" then $C["conformance.detail.no_os_purls"]
+          elif ($d|test("^[0-9]+ without distribution$")) then ($C["conformance.detail.no_distro"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ found$")) then ($C["conformance.detail.found"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ accepted SPDXVersion line\\(s\\)$")) then ($C["conformance.detail.spdxver"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ package\\(s\\)$")) then ($C["conformance.detail.package"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^names=[0-9]+, versions=[0-9]+$")) then ($d|capture("names=(?<a>[0-9]+), versions=(?<b>[0-9]+)")) as $m | ($C["conformance.detail.names_versions"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
+          elif ($d|test("^[0-9]+ purl ref\\(s\\) for [0-9]+ package\\(s\\)$")) then ($d|capture("^(?<a>[0-9]+) purl ref\\(s\\) for (?<b>[0-9]+)")) as $m | ($C["conformance.detail.purl_refs"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
+          elif ($d|test("^[0-9]+ relationship\\(s\\)$")) then ($C["conformance.detail.relationship"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ license field\\(s\\)$")) then ($C["conformance.detail.license_field"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          elif ($d|test("^[0-9]+ checksum\\(s\\)$")) then ($C["conformance.detail.checksum"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
+          else $d end;
+      map(.label_ko = (if (.label_ko // "") != "" then .label_ko else llabel(.id; .label) end)
+          | .detail_ko = ldetail(.detail))
+    ' 2>/dev/null); then
+        CHECKS="$KO_JOINED"
+    else
+        echo "[validate] WARN: Korean labels unavailable; the report stays English." >&2
+    fi
+fi
+
 RESULT=$(echo "$CHECKS" | jq -r 'if any(.[]; .required and .status=="fail") then "fail" else "pass" end')
 N_FAIL=$(echo "$CHECKS" | jq '[.[] | select(.required and .status=="fail")] | length')
 # no-generic is advisory (untraceable-component visibility), counted on its own
@@ -748,7 +873,7 @@ G7_CLUSTERS='[]'
 if echo "$CHECKS" | jq -e 'any(.[]; .id|startswith("g7-"))' >/dev/null 2>&1; then
     REG_FILE="${G7_REGISTRY:-$(dirname "$0")/g7-registry.json}"
     G7_CLUSTERS=$(echo "$CHECKS" | jq -c --slurpfile reg "$REG_FILE" '
-      ([ $reg[0].clusters[] | {(.id): {name: .name, name_ko: (.name_ko // .name), name_zh: (.name_zh // .name)}} ] | add) as $names
+      ([ $reg[0].clusters[] | {(.id): {name: .name, name_ko: (.name_ko // .name)}} ] | add) as $names
       | ([ $reg[0].clusters[].id ]) as $order
       | [ .[] | select(.id|startswith("g7-")) ]
       | group_by(.cluster)
@@ -756,7 +881,6 @@ if echo "$CHECKS" | jq -e 'any(.[]; .id|startswith("g7-"))' >/dev/null 2>&1; the
       | map({ cluster: (.[0].cluster // "other"),
               name:    ($names[(.[0].cluster // "")].name // (.[0].cluster // "other")),
               name_ko: ($names[(.[0].cluster // "")].name_ko // (.[0].cluster // "other")),
-              name_zh: ($names[(.[0].cluster // "")].name_zh // (.[0].cluster // "other")),
               total:   length,
               present: (map(select(.status=="pass"))|length),
               gap:     (map(select(.status=="warn" and ((.source//"")!="na")))|length),
@@ -791,32 +915,25 @@ jq -n \
 ' > "$JSON"
 
 # --------------------------------------------------------
-# Localization (REPORT_LANG=ko|zh-TW). The JSON above is NEVER localized — it is
-# an English contract the web layer and CI consume. Only the human-facing
-# Markdown and HTML below are localized. English (the default) renders the exact
-# inline literals it always did (RCHECKS/RXW = the English CHECKS/XW_SUMMARY,
-# every chrome var = its English literal), so its output stays byte-identical.
-# A translation swaps the chrome strings from its
-# docker/lib/i18n/report-strings.<lang>.json and the per-row label/detail text
-# (element labels via the registries' label_<sfx> fields).
+# Localization (REPORT_LANG=ko or zh-TW). The JSON above is NEVER localized — it is an
+# English contract the web layer and CI consume. Only the human-facing Markdown
+# and HTML below are localized. English (the default) renders the exact inline
+# literals it always did (RCHECKS/RXW = the English CHECKS/XW_SUMMARY, every
+# chrome var = its English literal), so its output stays byte-identical. Korean
+# swaps the chrome strings from docker/lib/i18n/report-strings.ko.json and the
+# per-row label/detail text (element labels via g7-registry.json label_ko).
 # --------------------------------------------------------
 REPORT_LANG="${REPORT_LANG:-en}"
-case "$REPORT_LANG" in ko|zh-TW) ;; *) REPORT_LANG="en" ;; esac
+case "$REPORT_LANG" in en|ko|zh-TW) ;; *) REPORT_LANG="en" ;; esac
 LANG_CAT="$(dirname "$0")/i18n/report-strings.${REPORT_LANG}.json"
 if [ "$REPORT_LANG" != "en" ] && [ ! -f "$LANG_CAT" ]; then
     echo "[validate] WARN: $REPORT_LANG report catalog not found ($LANG_CAT); using English." >&2
     REPORT_LANG="en"
 fi
-# The registry sibling-field suffix for the language (label_ko / label_zh).
-# Empty for English, which reads the base field.
-case "$REPORT_LANG" in
-    ko) L_SFX="_ko" ;;
-    zh-TW) L_SFX="_zh" ;;
-    *) L_SFX="" ;;
-esac
-# kstr KEY -> the localized string for KEY (or KEY itself if missing, so a gap is visible).
+LANG_CAT="$(dirname "$0")/i18n/report-strings.${REPORT_LANG}.json"
+# kstr KEY -> the selected-language string for KEY (or KEY itself if missing).
 kstr() { jq -r --arg k "$1" '.[$k] // $k' "$LANG_CAT"; }
-# tfmt KEY ARGS... -> the localized template for KEY, filled with printf (%s placeholders).
+# tfmt KEY ARGS... -> the selected-language template for KEY, filled with printf (%s placeholders).
 # shellcheck disable=SC2059  # the format is a trusted catalog template, not user input
 tfmt() { local f; f="$(kstr "$1")"; shift; printf -- "$f" "$@"; }
 
@@ -836,89 +953,49 @@ fi
 HTML_LANG="en"
 RCHECKS="$CHECKS"
 RXW="$XW_SUMMARY"
-# CJK fallbacks inside the report's font stack. The HTML is self-contained (no
-# webfonts — the CSP allows inline style and nothing else), so whatever the
-# reader's system supplies is all there is, and Korean and Traditional Chinese
-# want different families. English keeps the stack it has always shipped so its
-# output stays byte-identical.
-case "$REPORT_LANG" in
-    zh-TW) FONT_CJK='"PingFang TC","Microsoft JhengHei","Noto Sans TC","Noto Sans CJK TC"' ;;
-    *) FONT_CJK='"Apple SD Gothic Neo","Malgun Gothic"' ;;
-esac
 
 if [ "$REPORT_LANG" != "en" ]; then
     HTML_LANG="$REPORT_LANG"
     REG="${G7_REGISTRY:-$(dirname "$0")/g7-registry.json}"
     # Registry rows are labelled from the registry that declares them, so a
-    # baseline added later is translated by shipping label_<sfx> with its
-    # elements and nothing here needs to know its id prefix. The catalog below
-    # stays for the checks this file writes itself, whose labels carry a
-    # threshold or a spec version and so cannot be looked up whole.
+    # baseline added later is translated by shipping label_ko with its elements
+    # and nothing here needs to know its id prefix. The catalog below stays for
+    # the checks this file writes itself, whose labels carry a threshold or a
+    # spec version and so cannot be looked up whole.
     REG_CISA="${CISA_REGISTRY:-$(dirname "$0")/cisa-registry.json}"
     [ -f "$REG_CISA" ] || REG_CISA="$REG"
     # Localize per-row label + detail into a render copy (status/missing/guidance/
     # evidence/regulations untouched, so the render loops below are unchanged).
-    RCHECKS=$(printf '%s' "$CHECKS" | jq -c --slurpfile cat "$LANG_CAT" --slurpfile reg "$REG" --slurpfile reg2 "$REG_CISA" --arg sfx "$L_SFX" '
-      ($cat[0]) as $C
-      | (([ ($reg[0], $reg2[0]) | .clusters[].elements[] | select(.["label" + $sfx] != null) | {(.id): .["label" + $sfx]} ] | add) // {}) as $RK
-      | def llabel($id; $en):
-          if ($RK[$id] != null) then $RK[$id]
-          elif ($en|test("^Spec version \\(CycloneDX ")) then ($C["conformance.label.spec_cdx"] | gsub("%v%"; ($en|capture("^Spec version \\(CycloneDX (?<v>.+)\\)$").v)))
-          elif ($en|test("^Spec version \\(")) then ($C["conformance.label.spec_other"] | gsub("%v%"; ($en|capture("^Spec version \\((?<v>.+)\\)$").v)))
-          elif ($en|test("^PURL coverage ")) then ($C["conformance.label.purl"] | gsub("%n%"; ($en|capture("(?<n>[0-9]+)").n)))
-          elif ($en|test("^License coverage ")) then ($C["conformance.label.license"] | gsub("%n%"; ($en|capture("(?<n>[0-9]+)").n)))
-          elif ($en|test("^Hash coverage ")) then ($C["conformance.label.hash"] | gsub("%n%"; ($en|capture("(?<n>[0-9]+)").n)))
-          # These four capture the threshold from ">= N%" rather than the first
-          # run of digits: "SHA-512 checksum coverage" would otherwise report 512.
-          elif ($en|test("^SHA-512 checksum coverage ")) then ($C["conformance.label.sha512"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
-          elif ($en|test("^Component creator coverage ")) then ($C["conformance.label.creator"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
-          elif ($en|test("^Component filename coverage ")) then ($C["conformance.label.filename"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
-          elif ($en|test("^Source or distribution URI coverage ")) then ($C["conformance.label.artifact_uri"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
-          elif ($en|test("^File component identifier coverage ")) then ($C["conformance.label.file_identifier"] | gsub("%n%"; ($en|capture(">= (?<n>[0-9]+)%").n)))
-          else ($C["conformance.label_exact"][$en] // $en) end;
-        def ldetail($d):
-          if $d=="present" then $C["conformance.detail.present"]
-          elif $d=="not present in the SBOM" then $C["conformance.detail.not_present"]
-          elif $d=="requires human review (no automated source)" then $C["conformance.detail.review"]
-          elif $d=="no packages to measure" then $C["conformance.detail.no_packages"]
-          elif $d=="no package components (file inventory only)" then $C["conformance.detail.files_only"]
-          elif $d=="no file components" then $C["conformance.detail.no_files"]
-          elif $d=="nothing to measure" then $C["conformance.detail.nothing"]
-          elif $d=="requires inspecting the delivered files (no automated source in this scan)" then $C["conformance.detail.file_props_review"]
-          elif $d=="no machine-learning-model components" then $C["conformance.detail.no_models"]
-          elif $d=="not CycloneDX or SPDX" then $C["conformance.detail.not_cdx_spdx"]
-          elif $d=="could not evaluate" then $C["conformance.detail.could_not_eval"]
-          elif $d=="no components" then $C["conformance.detail.no_subject_components"]
-          elif ($d|test("^[0-9]+/[0-9]+ component\\(s\\)$")) then ($d|capture("^(?<a>[0-9]+)/(?<b>[0-9]+)")) as $m | ($C["conformance.detail.subject_components"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
-          elif ($d|test("^[0-9]+/[0-9]+ model component\\(s\\)$")) then ($d|capture("^(?<a>[0-9]+)/(?<b>[0-9]+)")) as $m | ($C["conformance.detail.model_components"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
-          elif ($d|test("^[0-9]+ tool\\(s\\)$")) then ($C["conformance.detail.tool"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ edge\\(s\\)$")) then ($C["conformance.detail.edge"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ untraceable$")) then ($C["conformance.detail.untraceable"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ malformed$")) then ($C["conformance.detail.malformed"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ found$")) then ($C["conformance.detail.found"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ accepted SPDXVersion line\\(s\\)$")) then ($C["conformance.detail.spdxver"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ package\\(s\\)$")) then ($C["conformance.detail.package"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^names=[0-9]+, versions=[0-9]+$")) then ($d|capture("names=(?<a>[0-9]+), versions=(?<b>[0-9]+)")) as $m | ($C["conformance.detail.names_versions"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
-          elif ($d|test("^[0-9]+ purl ref\\(s\\) for [0-9]+ package\\(s\\)$")) then ($d|capture("^(?<a>[0-9]+) purl ref\\(s\\) for (?<b>[0-9]+)")) as $m | ($C["conformance.detail.purl_refs"]|gsub("%a%";$m.a)|gsub("%b%";$m.b))
-          elif ($d|test("^[0-9]+ relationship\\(s\\)$")) then ($C["conformance.detail.relationship"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ license field\\(s\\)$")) then ($C["conformance.detail.license_field"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          elif ($d|test("^[0-9]+ checksum\\(s\\)$")) then ($C["conformance.detail.checksum"]|gsub("%n%";($d|capture("(?<n>[0-9]+)").n)))
-          else $d end;
-      map(.label = llabel(.id; .label) | .detail = ldetail(.detail)
-          | (if (.reviewGuide["how" + $sfx] // "") != "" then .reviewGuide.how = .reviewGuide["how" + $sfx] else . end))
-    ') || RCHECKS="$CHECKS"
+    # The Korean label and detail were computed once when the checks were built
+    # (see the localization join above) and ride on the rows as label_ko /
+    # detail_ko. Rendering is then a swap, so the report and the JSON can never
+    # disagree about the wording.
+    if [ "$REPORT_LANG" = "ko" ]; then
+        RCHECKS=$(printf '%s' "$CHECKS" | jq -c '
+          map((if (.label_ko // "") != "" then .label = .label_ko else . end)
+              | (if (.detail_ko // "") != "" then .detail = .detail_ko else . end)
+              | (if (.reviewGuide.how_ko // "") != "" then .reviewGuide.how = .reviewGuide.how_ko else . end))
+        ') || RCHECKS="$CHECKS"
+    else
+        RCHECKS=$(printf '%s' "$CHECKS" | jq -c '
+          map((if (.label_zh // "") != "" then .label = .label_zh else . end)
+              | (if (.detail_zh // "") != "" then .detail = .detail_zh else . end)
+              | (if (.reviewGuide.how_zh // "") != "" then .reviewGuide.how = .reviewGuide.how_zh else . end))
+        ') || RCHECKS="$CHECKS"
+    fi
     # Crosswalk: swap the framework display titles and the disclaimer for their
-    # translated wording from the crosswalk file itself (same convention as the
-    # G7 registry's label_<sfx>). The `source` line stays verbatim — a
-    # regulation's citation is an identifier, not prose. The JSON contract keeps
-    # the English title, so this touches the render copy only.
+    # Korean wording from the crosswalk file itself (same convention as the G7
+    # registry's label_ko). The `source` line stays verbatim — a regulation's
+    # citation is an identifier, not prose. The JSON contract keeps the English
+    # title, so this touches the render copy only.
+    L_SFX="_$([ "$REPORT_LANG" = "zh-TW" ] && printf zh || printf ko)"
     RXW=$(printf '%s' "$XW_SUMMARY" | jq -c --slurpfile x "$XWALK_FILE" --arg sfx "$L_SFX" '
       (($x[0].frameworks) // {}) as $F
       | .disclaimer = ($x[0]["disclaimer" + $sfx] // .disclaimer)
       | .frameworks |= map(.title = ($F[.id]["title" + $sfx] // .title))') || RXW="$XW_SUMMARY"
 fi
 
-# Chrome strings: English literals by default (byte-identical), catalog otherwise.
+# Chrome strings: English literals by default (byte-identical), catalog for ko.
 if [ "$REPORT_LANG" != "en" ]; then
     C_MD_TITLE=$(tfmt conformance.md_title "$PROJECT")
     C_MD_GEN=$(tfmt conformance.md_generated "$GEN_AT")
@@ -1000,11 +1077,11 @@ fi
     # advisory G7 elements after, each under its own heading and reason.
     md_rows() {   # $1: "submission" | "g7"
         echo "$RCHECKS" | jq -r --arg yes "$C_YES" --arg no "$C_NO" --arg kind "$1" \
-            --arg sfx "$L_SFX" '
+            --arg lang "$REPORT_LANG" '
             [ .[] | select(if $kind=="g7" then (.id|startswith("g7-")) else ((.id|startswith("g7-"))|not) end) ][] |
             # Same idea as the HTML: the regulatory references sit with the
             # requirement instead of being reprinted as their own table.
-            (((.regulations // []) | map(.["short" + $sfx] + " " + .ref)) as $refs
+            (((.regulations // []) | map((if $lang=="ko" then .short_ko else .short end) + " " + .ref)) as $refs
              | if ($refs|length) > 0 then " — " + ($refs|join(" · ")) else "" end) as $reftext |
             "| \(if .status=="pass" then "✅" elif .status=="fail" then "❌" elif (.naKind // "")=="not-applicable" then "—" elif (.source // "")=="na" then "🔍" else "⚠️" end) | \((.label + $reftext) | gsub("[|\n]"; " ")) | "
             + (if $kind=="g7" then "" else "\(if .required then $yes else $no end) | " end)
@@ -1105,7 +1182,7 @@ fi
   --brand:#EA002C;--brand-2:#F47725;--th-bg:#f4f4f5;--row-hover:#fafafa;--review:#2563eb;
   --radius:.375rem;--radius-card:.5rem;
   --shadow:0 1px 2px rgb(0 0 0/.04),0 2px 8px -2px rgb(0 0 0/.08);
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,${FONT_CJK},sans-serif;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
  }
  @media (prefers-color-scheme:dark){:root{
@@ -1194,7 +1271,7 @@ HTMLHEAD
     html_rows() {   # $1: "submission" | "g7"
         echo "$RCHECKS" | jq -r --arg yes "$C_YES" --arg no "$C_NO" \
             --arg fix "$C_FIX_SUMMARY" --arg chk "$C_CHECK_SUMMARY" --arg ref "$C_REF" --arg kind "$1" \
-            --arg sfx "$L_SFX" '
+            --arg lang "$REPORT_LANG" '
             [ .[] | select(if $kind=="g7" then (.id|startswith("g7-")) else ((.id|startswith("g7-"))|not) end) ]
             | to_entries[] | .key as $i | .value |
             (if (.naKind // "")=="not-applicable" then "s-na"
@@ -1208,7 +1285,7 @@ HTMLHEAD
             # mapped row verbatim; here they cost one line and stay next to the
             # status the reader is already looking at.
             "<td>" + (.label|@html) +
-            (((.regulations // []) | map(.["short" + $sfx] + " " + .ref)) as $refs
+            (((.regulations // []) | map((if $lang=="ko" then .short_ko else .short end) + " " + .ref)) as $refs
              | if ($refs|length) > 0
                then "<br><span class=\"meta\">" + (($refs|join(" · "))|@html) + "</span>"
                else "" end) + "</td>" +
@@ -1241,8 +1318,8 @@ HTMLHEAD
     if [ "$G7_CLUSTERS" != "[]" ]; then
         echo "<h2>${C_H2_CLUSTERS}</h2>"
         echo "<div class=\"table-wrap\"><table><tr><th>${C_TH_CLUSTER}</th><th>${C_TH_PRESENT}</th><th>${C_TH_GAP}</th><th>${C_TH_REVIEWCNT}</th><th>${C_TH_TOTAL}</th></tr>"
-        echo "$G7_CLUSTERS" | jq -r --arg sfx "$L_SFX" '.[] |
-            "<tr><td>" + (.["name" + $sfx]|@html) + "</td>"
+        echo "$G7_CLUSTERS" | jq -r --arg lang "$REPORT_LANG" '.[] |
+            "<tr><td>" + ((if $lang=="ko" then .name_ko else .name end)|@html) + "</td>"
             + "<td>" + (.present|tostring) + "</td><td>" + (.gap|tostring) + "</td>"
             + "<td>" + (.review|tostring) + "</td><td>" + (.total|tostring) + "</td></tr>"'
         echo "$G7_CLUSTERS" | jq -r --arg total "$C_TH_TOTAL" '

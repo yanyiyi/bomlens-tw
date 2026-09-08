@@ -138,6 +138,10 @@ def fake_stream(args, on_log, on_progress=None, cancel=None, container=None, env
     return 0
 server._stream_cmd = fake_stream
 server._sibling_image_present = lambda image: True
+# This section tests dispatch/allowlisting, not the background refresh (that has
+# its own section below with a fake docker on PATH) — stub it to a no-op so an
+# "already present" image never shells out to a real `docker pull` here.
+server.refresh_sibling_image_quietly = lambda *a, **k: None
 
 rc = server.run_sibling_scan(
     "ghcr.io/sktelecom/bomlens-aibom:1.5.0", "AIBOM", run_out,
@@ -570,6 +574,66 @@ else
     fail "sibling dispatch guard failed (see assertion above)"
 fi
 
+echo "== safe_extract_zip rejects members that are unsafe once bind-mounted onto Windows =="
+# safe_extract_zip already rejected zip-slip (absolute/../ paths). It did NOT
+# reject a member name containing a character Windows forbids in a path
+# (backslash, colon, ...) -- on Linux those are just odd-looking literal
+# filename characters, not separators, so "..\\evil.txt" extracted harmlessly
+# INSIDE the destination directory. Verified end to end in this session on a
+# real Windows host with Docker Desktop file sharing: those characters get
+# silently DROPPED once the tree reaches the Windows side, so two differently
+# -named members can collide onto the same Windows filename -- and instead of
+# a clean overwrite, the host-visible file ends up holding both members'
+# content appended together, silently, with no error anywhere. Must now fail
+# closed at extraction time instead.
+if SBOM_OUTPUT_DIR="$OUT" python3 - "$ROOT_DIR" <<'PY'
+import sys, os, zipfile, tempfile
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+
+def build_zip(path, members):
+    with zipfile.ZipFile(path, "w") as z:
+        for name, content in members.items():
+            zi = zipfile.ZipInfo(name)  # bypasses writestr's own os.sep-based rewrite
+            z.writestr(zi, content)
+
+with tempfile.TemporaryDirectory() as tmp:
+    # Windows-illegal characters embedded in an otherwise-plausible member name.
+    hostile = os.path.join(tmp, "hostile.zip")
+    build_zip(hostile, {
+        "normal.txt": "ok",
+        "..\\..\\evil-backslash.txt": "x",
+    })
+    dest = os.path.join(tmp, "dest1"); os.makedirs(dest)
+    try:
+        server.safe_extract_zip(hostile, dest)
+        raise AssertionError("expected ValueError for a backslash-containing member name")
+    except ValueError as e:
+        assert "not Windows-safe" in str(e), e
+
+    colon = os.path.join(tmp, "colon.zip")
+    build_zip(colon, {"a:b.txt": "x"})
+    dest2 = os.path.join(tmp, "dest2"); os.makedirs(dest2)
+    try:
+        server.safe_extract_zip(colon, dest2)
+        raise AssertionError("expected ValueError for a colon-containing member name")
+    except ValueError as e:
+        assert "not Windows-safe" in str(e), e
+
+    # A normal archive must still extract without complaint (no regression).
+    clean = os.path.join(tmp, "clean.zip")
+    build_zip(clean, {"package.json": "{}", "src/index.js": "1"})
+    dest3 = os.path.join(tmp, "dest3"); os.makedirs(dest3)
+    server.safe_extract_zip(clean, dest3)  # raises on failure
+    assert os.path.isfile(os.path.join(dest3, "package.json"))
+    assert os.path.isfile(os.path.join(dest3, "src", "index.js"))
+PY
+then
+    pass "safe_extract_zip rejects Windows-illegal member names, still extracts clean archives"
+else
+    fail "safe_extract_zip Windows-safety check failed (see assertion above)"
+fi
+
 echo "== a per-feature image can be pulled ahead of time, with progress =="
 
 # Firmware/AI/deep-CVE each live in their own image, pulled on the feature's first
@@ -735,6 +799,10 @@ server._self_container_id = lambda: "selfcid000000"
 server.docker_cli_present = lambda: True
 server.docker_capable = lambda: True
 server.spdx_convert_capable = lambda: False
+# Same no-op as the run_sibling_scan dispatch tests above: this section is not
+# about the background refresh, so an "already present" scanner image must not
+# shell out to a real `docker pull` here.
+server.refresh_sibling_image_quietly = lambda *a, **k: None
 
 bom = server.OUTPUT_DIR + "/run_1/run_1_bom.json"
 spdx = server.OUTPUT_DIR + "/run_1/run_1_bom.spdx.json"
@@ -927,6 +995,27 @@ c_kind=$(curl -s -o /dev/null -w '%{http_code}' -F "file=@$WORK/sample.zip" "$BA
 [ "$c_kind" = "400" ] && pass "unknown upload kind rejected (400)" || fail "bogus kind returned $c_kind (expected 400)"
 c_ext=$(curl -s -o /dev/null -w '%{http_code}' -F "kind=zip" -F "file=@$WORK/payload.txt" "$BASE/upload?kind=zip")
 [ "$c_ext" = "415" ] && pass "wrong extension rejected (415)" || fail ".txt as zip returned $c_ext (expected 415)"
+
+# Regression: the filename sanitizer used to be an ASCII-only allowlist
+# (re.sub(r"[^A-Za-z0-9._-]", "_", ...)), so a Korean filename — the common
+# case for this product's users, not an edge case — came back as a run of
+# underscores. It must now only strip what is genuinely unsafe (Windows-
+# illegal characters, since this upload can be bind-mounted back onto a
+# Windows host) while preserving non-ASCII scripts.
+ko_resp=$(curl -fsS -F "kind=zip" -F "file=@$WORK/sample.zip;filename=사내프로젝트.zip" "$BASE/upload?kind=zip" 2>/dev/null)
+ko_fn=$(echo "$ko_resp" | python3 -c "import sys,json;print(json.load(sys.stdin).get('filename',''))" 2>/dev/null)
+[ "$ko_fn" = "사내프로젝트.zip" ] && pass "Korean upload filename survives sanitization intact" \
+    || fail "Korean upload filename was mangled" "got '$ko_fn' from $ko_resp"
+
+# Windows-illegal characters must still be neutralized (this filename can end
+# up as a real path on a Windows host via Docker Desktop's file sharing).
+win_resp=$(curl -fsS -F "kind=zip" -F 'file=@'"$WORK"'/sample.zip;filename=a<b>c:d.zip' "$BASE/upload?kind=zip" 2>/dev/null)
+win_fn=$(echo "$win_resp" | python3 -c "import sys,json;print(json.load(sys.stdin).get('filename',''))" 2>/dev/null)
+if printf '%s' "$win_fn" | grep -qE '[<>:]'; then
+    fail "Windows-illegal characters survived sanitization" "got '$win_fn' from $win_resp"
+else
+    pass "Windows-illegal characters (<>:) are still neutralized"
+fi
 
 # Most vendors ship a firmware download as a zip, and the CLI has always taken
 # one. The upload form used to refuse the same file because the extension was
@@ -1443,6 +1532,41 @@ rm -f "$OUT"/evil_scal_1.0_* "$OUT"/evil_field_1.0_*
 
 rm -f "$OUT"/demo_1.0_* "$OUT"/flat_1.0_* "$OUT"/bad_1.0_*
 
+echo "== the root component is not a dependency of itself =="
+# An AI scan folds the root model INTO components[], unlike a software scan whose
+# root lives only in metadata. The root also keys the dependency graph, so it was
+# picked up as a transitive dependency of its own SBOM: three referenced datasets
+# were reported as "3 direct · 1 transitive" and the model carried a scope badge.
+cat > "$OUT/mlroot_1.0_bom.json" <<'JSON'
+{"bomFormat":"CycloneDX","specVersion":"1.6","version":1,
+ "metadata":{"component":{"bom-ref":"root-model","type":"machine-learning-model",
+   "name":"root-model","version":"1.0"}},
+ "components":[
+   {"bom-ref":"root-model","type":"machine-learning-model","name":"root-model","version":"1.0"},
+   {"bom-ref":"ds-a","type":"data","name":"ds-a","version":"1"},
+   {"bom-ref":"ds-b","type":"data","name":"ds-b","version":"1"}],
+ "dependencies":[{"ref":"root-model","dependsOn":["ds-a","ds-b"]},
+   {"ref":"ds-a","dependsOn":[]},{"ref":"ds-b","dependsOn":[]}]}
+JSON
+if SBOM_OUTPUT_DIR="$OUT" python3 - "$ROOT_DIR" <<'PY'
+import sys, os
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+s = server.sbom_summary("mlroot_1.0")
+assert s["directCount"] == 2, ("both datasets are direct", s)
+assert s["transitiveCount"] == 0, ("the root is not a transitive dep of itself", s)
+rows = {r["name"]: r for r in s["componentList"]}
+assert rows["ds-a"]["scope"] == "direct", rows["ds-a"]
+assert "scope" not in rows["root-model"] or not rows["root-model"]["scope"], (
+    "the root component carries no scope", rows["root-model"])
+PY
+then
+    pass "the root model is excluded from the dependency scope index"
+else
+    fail "the root model is excluded from the dependency scope index"
+fi
+rm -f "$OUT"/mlroot_1.0_*
+
 echo "== conformance checks exposure (G7 split) =="
 # Generate a real conformance report for the AI fixture, then check that
 # conformance_summary surfaces the per-check array with the G7 (g7-*) checks.
@@ -1510,6 +1634,27 @@ assert {"framework", "ref", "basis"} <= set(base_mapped[0]["regulations"][0]), b
 # client render the row in Korean without translating the contract.
 assert all("labelKo" in x for x in checks), "labelKo not exposed"
 assert any(x["labelKo"] for x in g7), "no G7 element carries its Korean label"
+# The checks this pipeline writes itself carry a threshold or a spec version in
+# their label, so they cannot be looked up whole. They are matched by pattern
+# against the same catalog the reports use, and every check now arrives with a
+# Korean label and detail. Without them a Korean reader got seventeen English
+# requirement names, each followed by an English measurement, under a Korean
+# heading.
+assert all("detailKo" in x for x in checks), "detailKo not exposed"
+assert all(x["labelKo"] for x in base), (
+    "every format check carries a Korean label",
+    [x["id"] for x in base if not x["labelKo"]])
+assert any(x["detailKo"] for x in base), "no format check carries a Korean detail"
+# Why an element could not be judged. validate-sbom.sh marks the checks with
+# nothing in this document to measure (package coverage over an ML-BOM that has
+# no packages) as naKind "not-applicable", and both CLI reports render them as
+# N/A. Dropping the field here made the UI draw them as ordinary warnings, count
+# them into the mandatory denominator (6/8 instead of 6/6) and fold them into the
+# "needs a person" tally (21 instead of 14).
+assert all("naKind" in x for x in checks), "naKind not exposed"
+na = [x for x in checks if x["naKind"] == "not-applicable"]
+assert len(na) >= 1, "an ML-BOM with no packages must mark package checks N/A"
+assert all(x["source"] == "na" for x in na), ("N/A rows carry source na", na[0])
 cisa = [x for x in checks if x["id"].startswith("cisa-")]
 assert len(cisa) >= 20, ("the 2026 minimum elements should be measured too", len(cisa))
 assert any(x["labelKo"] for x in cisa), "no CISA element carries its Korean label"
@@ -2824,6 +2969,520 @@ mkdir -p "$OUT2/spdxnone_1.0"
 echo '{"bomFormat":"CycloneDX"}' > "$OUT2/spdxnone_1.0/spdxnone_1.0_bom.json"
 code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE2/spdx-export?id=spdxnone_1.0")
 [ "$code" = "503" ] && pass "/spdx-export reports 503 when no converter is available" || fail "/spdx-export unavailable returned $code (expected 503)"
+
+echo "== concurrent scans of the same project do not share a run folder =="
+# Two scans of the same project+version resolved to the same run folder, and the
+# artifacts inside are named from project/version rather than from the folder,
+# so both containers wrote the same filenames in the same place. Post-processing
+# rewrites each artifact in place, so the moves interleaved and the surviving
+# file mixed both runs. Measured: log4j-core 2.14.1 reports 14 vulnerabilities
+# alone and 0 in both tabs when scanned twice at once.
+if python3 - "$SERVER" <<'CLAIMPY'
+import importlib.util, sys
+from datetime import datetime
+spec = importlib.util.spec_from_file_location("server", sys.argv[1])
+server = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(server)
+
+claim = server.claim_run_id
+FIXED = datetime(2026, 9, 3, 14, 0, 0)
+
+# Nothing in flight: the plain prefix, exactly as before.
+assert claim("app_1.0", set()) == "app_1.0"
+
+# One in flight: the second scan is pushed onto its own folder.
+active = {"app_1.0"}
+second = claim("app_1.0", active, now=FIXED)
+assert second != "app_1.0", second
+assert second.startswith("app_1.0_"), second
+
+# Three tabs at once. The timestamp is second-resolution, so the second and
+# third would collide on it alone — which is the case this exists for, and the
+# one a two-tab test would pass straight through.
+active = set()
+ids = []
+for _ in range(3):
+    got = claim("race_1", active, now=FIXED)
+    active.add(got)          # the caller registers under the same lock
+    ids.append(got)
+assert len(set(ids)) == 3, ids
+
+# A finished scan of another project is irrelevant.
+assert claim("other_2.0", {"app_1.0"}) == "other_2.0"
+
+# ?timestamp=true still opts in explicitly, with nothing in flight.
+forced = claim("app_1.0", set(), now=FIXED, force_suffix=True)
+assert forced.startswith("app_1.0_"), forced
+assert forced != "app_1.0"
+
+# Every id has to survive the path barrier the write side applies.
+for rid in ids + [second, forced]:
+    assert server.scan_id_ok(rid), rid
+print("ok")
+CLAIMPY
+then
+    pass "a run folder is claimed per concurrent scan, three-way collision included"
+else
+    fail "concurrent scans still resolve to the same run folder"
+fi
+
+# The claim is released on every exit, including a client that closed the stream
+# mid-scan. A name left behind would push every later scan of that project onto
+# a suffixed folder for the life of the process.
+n_add=$(grep -c "_scan_active.add(" "$SERVER")
+n_del=$(grep -c "_scan_active.discard(" "$SERVER")
+if [ "$n_add" = "1" ] && [ "$n_del" -ge "2" ]; then
+    pass "the claim is released on the early-return path and in the finally"
+else
+    fail "claim/release are unbalanced (add=$n_add, discard=$n_del)"
+fi
+
+echo "== sibling image refresh: an already-present image is re-pulled quietly =="
+# _sibling_image_present only means the tag was pulled at SOME point; the sibling
+# firmware/aibom/deep-cve image (and the base scanner image, for on-demand SPDX)
+# can otherwise sit on a stale `:latest` layer forever. run_sibling_scan /
+# convert_bom_to_spdx now call refresh_sibling_image_quietly(image, on_log) in
+# that case, real `docker pull`, bounded by a STALL timeout (not elapsed time) so
+# it never meaningfully delays a scan. A fake `docker` on PATH stands in for the
+# daemon; _SIBLING_REFRESH_STALL_SECS shortens the stall bound so a simulated
+# stalled pull gives up in ~1s instead of the real-world 12s default.
+FAKEDOCKER="$WORK/fakedockerbin"; mkdir -p "$FAKEDOCKER"
+FAKE_DOCKER_LOG="$WORK/fakedocker.log"
+cat > "$FAKEDOCKER/docker" <<'STUB'
+#!/usr/bin/env bash
+echo "docker $*" >> "${FAKE_DOCKER_LOG:-/dev/null}"
+case "${1:-}" in
+  pull)
+    case "${FAKE_DOCKER_PULL_MODE:-uptodate}" in
+      uptodate)
+        echo "Status: Image is up to date for ${2:-image}"
+        exit 0 ;;
+      fail)
+        echo "Error response from daemon: pull access denied" >&2
+        exit 1 ;;
+      stall)
+        sleep 30
+        exit 0 ;;
+      partial)
+        # One real layer-status line (matches server.PullProgress's format), then
+        # nothing — a download that started but stopped making progress.
+        echo "17a39c0ba978: Downloading"
+        sleep 30
+        exit 0 ;;
+    esac
+    ;;
+  run) exit 0 ;;
+  *) exit 0 ;;
+esac
+STUB
+chmod +x "$FAKEDOCKER/docker"
+
+# Case 1: the fake pull reports up to date immediately -> refresh finishes in a
+# fraction of a second, and the scan proceeds all the way to the sibling `docker
+# run`. _sibling_image_present is stubbed (this is not a test of the presence
+# check itself), but refresh_sibling_image_quietly runs FOR REAL against the
+# fake docker on PATH.
+if SBOM_OUTPUT_DIR="$OUT" PATH="$FAKEDOCKER:$PATH" FAKE_DOCKER_LOG="$FAKE_DOCKER_LOG" \
+   FAKE_DOCKER_PULL_MODE=uptodate python3 - "$ROOT_DIR" <<'PY'
+import os, sys, time
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+
+server._self_container_id = lambda: "selfcid000000"
+server._sibling_image_present = lambda image: True
+
+run_out = server.OUTPUT_DIR + "/run_1"
+logs = []
+started = time.monotonic()
+rc = server.run_sibling_scan(
+    "ghcr.io/sktelecom/bomlens-aibom:1.5.0", "AIBOM", run_out,
+    logs.append, model_id="openai/clip",
+)
+elapsed = time.monotonic() - started
+assert rc == 0, (rc, logs)
+assert elapsed < 5, "an up-to-date refresh must not meaningfully delay the scan (%.1fs)" % elapsed
+assert any("launching" in ln for ln in logs), logs
+STUB_LOG = os.environ["FAKE_DOCKER_LOG"]
+with open(STUB_LOG) as fh:
+    calls = fh.read()
+assert "docker pull ghcr.io/sktelecom/bomlens-aibom:1.5.0" in calls, calls
+assert "docker run" in calls, "the scan must still reach the sibling docker run"
+PY
+then
+    pass "an up-to-date fake pull finishes fast and the scan reaches the sibling docker run"
+else
+    fail "up-to-date refresh case failed (see assertion above)"
+fi
+
+# Case 2: the fake pull hangs with NO output at all (offline / blocked network).
+# With the stall bound shortened to ~1s, refresh_sibling_image_quietly must give
+# up quickly and the scan must still proceed — the refresh is best-effort and
+# must never be the thing that fails a scan.
+: > "$FAKE_DOCKER_LOG"
+if SBOM_OUTPUT_DIR="$OUT" PATH="$FAKEDOCKER:$PATH" FAKE_DOCKER_LOG="$FAKE_DOCKER_LOG" \
+   FAKE_DOCKER_PULL_MODE=stall _SIBLING_REFRESH_STALL_SECS=1 python3 - "$ROOT_DIR" <<'PY'
+import os, sys, time
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+assert server._SIBLING_REFRESH_STALL_SECS == 1.0, server._SIBLING_REFRESH_STALL_SECS
+
+server._self_container_id = lambda: "selfcid000000"
+server._sibling_image_present = lambda image: True
+
+run_out = server.OUTPUT_DIR + "/run_1"
+logs = []
+started = time.monotonic()
+rc = server.run_sibling_scan(
+    "ghcr.io/sktelecom/bomlens-aibom:1.5.0", "AIBOM", run_out,
+    logs.append, model_id="openai/clip",
+)
+elapsed = time.monotonic() - started
+assert rc == 0, (rc, logs)
+assert elapsed < 10, "a fully stalled refresh must give up quickly, not hang (%.1fs)" % elapsed
+assert any("skipped" in ln for ln in logs), logs
+assert any("launching" in ln for ln in logs), logs
+PY
+then
+    pass "a fully stalled fake pull is given up on quickly and the scan still proceeds"
+else
+    fail "stalled refresh case failed (see assertion above)"
+fi
+
+# Case 3: the fake pull prints one real layer line (a download actually started)
+# and then stalls — same outcome as case 2 (the scan must proceed), and this
+# also exercises the PullProgress reader path inside the refresh.
+: > "$FAKE_DOCKER_LOG"
+if SBOM_OUTPUT_DIR="$OUT" PATH="$FAKEDOCKER:$PATH" FAKE_DOCKER_LOG="$FAKE_DOCKER_LOG" \
+   FAKE_DOCKER_PULL_MODE=partial _SIBLING_REFRESH_STALL_SECS=1 python3 - "$ROOT_DIR" <<'PY'
+import os, sys, time
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+
+server._self_container_id = lambda: "selfcid000000"
+server._sibling_image_present = lambda image: True
+
+run_out = server.OUTPUT_DIR + "/run_1"
+logs = []
+started = time.monotonic()
+rc = server.run_sibling_scan(
+    "ghcr.io/sktelecom/bomlens-deep-cve:1.5.0", "IMAGE", run_out,
+    logs.append, target_image="ghcr.io/library/nginx:1.25",
+)
+elapsed = time.monotonic() - started
+assert rc == 0, (rc, logs)
+assert elapsed < 10, "a stalled-after-progress refresh must give up quickly too (%.1fs)" % elapsed
+assert any("launching" in ln for ln in logs), logs
+PY
+then
+    pass "a fake pull that starts and then stalls still lets the scan proceed"
+else
+    fail "partial-progress refresh case failed (see assertion above)"
+fi
+
+# Case 4: the fake pull exits immediately with a non-zero code (a rejected pull,
+# not a stall) — also best-effort, also must not block the scan.
+: > "$FAKE_DOCKER_LOG"
+if SBOM_OUTPUT_DIR="$OUT" PATH="$FAKEDOCKER:$PATH" FAKE_DOCKER_LOG="$FAKE_DOCKER_LOG" \
+   FAKE_DOCKER_PULL_MODE=fail python3 - "$ROOT_DIR" <<'PY'
+import os, sys, time
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+
+server._self_container_id = lambda: "selfcid000000"
+server._sibling_image_present = lambda image: True
+
+run_out = server.OUTPUT_DIR + "/run_1"
+logs = []
+started = time.monotonic()
+rc = server.run_sibling_scan(
+    "ghcr.io/sktelecom/bomlens-firmware:1.5.0", "FIRMWARE", run_out,
+    logs.append, upload_file=server.UPLOAD_DIR + "/tok/fw.bin",
+)
+elapsed = time.monotonic() - started
+assert rc == 0, (rc, logs)
+assert elapsed < 5, "an immediately-failing pull must not delay the scan (%.1fs)" % elapsed
+assert any("skipped" in ln for ln in logs), logs
+PY
+then
+    pass "a fake pull that exits with an error is skipped without blocking the scan"
+else
+    fail "failing-pull refresh case failed (see assertion above)"
+fi
+
+# convert_bom_to_spdx's sibling scanner-image path takes the same refresh branch;
+# confirm it also runs to completion with a real (fake) docker pull on PATH.
+: > "$FAKE_DOCKER_LOG"
+if SBOM_OUTPUT_DIR="$OUT" PATH="$FAKEDOCKER:$PATH" FAKE_DOCKER_LOG="$FAKE_DOCKER_LOG" \
+   FAKE_DOCKER_PULL_MODE=uptodate python3 - "$ROOT_DIR" <<'PY'
+import os, sys, time
+sys.path.insert(0, os.path.join(sys.argv[1], "docker", "web"))
+import server
+
+captured = {}
+def fake_stream(args, on_log, **kw):
+    captured["args"] = args
+    return 0
+server._stream_cmd = fake_stream
+server._sibling_image_present = lambda image: True
+server._self_container_id = lambda: "selfcid000000"
+server.docker_cli_present = lambda: True
+server.docker_capable = lambda: True
+server.spdx_convert_capable = lambda: False
+
+bom = server.OUTPUT_DIR + "/run_1/run_1_bom.json"
+spdx = server.OUTPUT_DIR + "/run_1/run_1_bom.spdx.json"
+started = time.monotonic()
+rc = server.convert_bom_to_spdx(bom, spdx, False, lambda ln: None)
+elapsed = time.monotonic() - started
+assert rc == 0, rc
+assert elapsed < 5, "an up-to-date refresh must not meaningfully delay SPDX export (%.1fs)" % elapsed
+assert "--entrypoint" in captured["args"], captured["args"]
+PY
+then
+    pass "the on-demand SPDX sibling also refreshes an already-present scanner image"
+else
+    fail "SPDX sibling refresh case failed (see assertion above)"
+fi
+
+echo "== external vulnerability lookup (GET /advisory, GET /package-advisories) =="
+# Three dedicated server instances so these tests never touch the real
+# api.osv.dev: one backed by a canned stub (success paths + input validation,
+# which must 400 before any request would be dispatched), one with the
+# feature off, one pointed at an address that refuses the connection outright
+# (the offline path, distinct from "OSV said no").
+cat > "$WORK/osv-stub.py" <<'STUBPY'
+import json, sys
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+PORT = int(sys.argv[1])
+VULNS = {
+    "CVE-TEST-CVSS3": {
+        "id": "CVE-TEST-CVSS3", "summary": "cvss3 test", "details": "d" * 50,
+        "severity": [{"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"}],
+        "references": [{"url": "https://example.com/%d" % i} for i in range(20)],
+        "aliases": ["GHSA-xxxx"], "modified": "2024-01-01T00:00:00Z", "published": "2023-01-01T00:00:00Z",
+        "affected": [{"package": {"ecosystem": "npm", "name": "foo"},
+                      "ranges": [{"type": "SEMVER", "events": [{"introduced": "0"}, {"fixed": "1.0.0"}]}]}],
+    },
+    "CVE-TEST-DBSEV": {
+        "id": "CVE-TEST-DBSEV", "summary": "db severity test",
+        "database_specific": {"severity": "CRITICAL"},
+        "severity": [{"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L"}],
+    },
+    "CVE-TEST-CVSS4": {
+        "id": "CVE-TEST-CVSS4", "summary": "cvss4 only",
+        "severity": [{"type": "CVSS_V4",
+                      "score": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:H/VI:H/VA:H/SC:N/SI:N/SA:N"}],
+    },
+    "CVE-TEST-LONG": {
+        "id": "CVE-TEST-LONG", "summary": "long test", "details": "x" * 5000,
+        "references": [{"url": "https://example.com/%d" % i} for i in range(50)],
+    },
+}
+QUERY = {
+    "pkg-with-more-pages": {"vulns": [VULNS["CVE-TEST-CVSS3"]], "next_page_token": "abc"},
+    "pkg-clean": {"vulns": []},
+}
+
+class Handler(BaseHTTPRequestHandler):
+    def _send(self, code, body):
+        b = json.dumps(body).encode()
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(b)))
+        self.end_headers()
+        self.wfile.write(b)
+
+    def do_GET(self):
+        if self.path.startswith("/v1/vulns/"):
+            v = VULNS.get(self.path[len("/v1/vulns/"):])
+            self._send(200, v) if v else self._send(404, {"code": 5, "message": "not found"})
+        else:
+            self._send(404, {})
+
+    def do_POST(self):
+        length = int(self.headers.get("Content-Length", "0"))
+        body = json.loads(self.rfile.read(length) or b"{}")
+        name = (body.get("package") or {}).get("name")
+        self._send(200, QUERY.get(name, {"vulns": []}))
+
+    def log_message(self, fmt, *args):
+        pass
+
+ThreadingHTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
+STUBPY
+
+OSVSTUB_PORT=$((PORT + 2))
+python3 "$WORK/osv-stub.py" "$OSVSTUB_PORT" > "$WORK/osv-stub.log" 2>&1 &
+OSVSTUB_PID=$!
+disown "$OSVSTUB_PID" 2>/dev/null || true
+
+PORT3=$((PORT + 3)); BASE3="http://127.0.0.1:${PORT3}"; OUT3="$WORK/out3"; mkdir -p "$OUT3"
+OSV_API_BASE="http://127.0.0.1:${OSVSTUB_PORT}" SBOM_OUTPUT_DIR="$OUT3" UI_PORT="$PORT3" \
+    python3 "$SERVER" > "$WORK/server3.log" 2>&1 &
+SRV3_PID=$!
+disown "$SRV3_PID" 2>/dev/null || true
+
+PORT4=$((PORT + 4)); BASE4="http://127.0.0.1:${PORT4}"; OUT4="$WORK/out4"; mkdir -p "$OUT4"
+EXTERNAL_LOOKUP=false OSV_API_BASE="http://127.0.0.1:1" SBOM_OUTPUT_DIR="$OUT4" UI_PORT="$PORT4" \
+    python3 "$SERVER" > "$WORK/server4.log" 2>&1 &
+SRV4_PID=$!
+disown "$SRV4_PID" 2>/dev/null || true
+
+PORT5=$((PORT + 5)); BASE5="http://127.0.0.1:${PORT5}"; OUT5="$WORK/out5"; mkdir -p "$OUT5"
+OSV_API_BASE="http://127.0.0.1:1" SBOM_OUTPUT_DIR="$OUT5" UI_PORT="$PORT5" \
+    python3 "$SERVER" > "$WORK/server5.log" 2>&1 &
+SRV5_PID=$!
+disown "$SRV5_PID" 2>/dev/null || true
+
+cleanup_osv() {
+    for p in "$OSVSTUB_PID" "$SRV3_PID" "$SRV4_PID" "$SRV5_PID"; do
+        [ -n "$p" ] && kill "$p" 2>/dev/null
+    done
+}
+trap 'cleanup_osv; cleanup2; cleanup' EXIT
+
+ready3=0
+for _ in $(seq 1 30); do
+    if curl -fsS "$BASE3/capabilities" >/dev/null 2>&1; then ready3=1; break; fi
+    kill -0 "$SRV3_PID" 2>/dev/null || { echo "[ERROR] lookup server exited early:"; cat "$WORK/server3.log"; exit 1; }
+    sleep 0.3
+done
+[ "$ready3" = 1 ] && pass "OSV-stub-backed server is up" || { fail "OSV-stub-backed server did not become ready" "$(tail -5 "$WORK/server3.log")"; exit 1; }
+for base in "$BASE4" "$BASE5"; do
+    ok=0
+    for _ in $(seq 1 30); do
+        if curl -fsS "$base/capabilities" >/dev/null 2>&1; then ok=1; break; fi
+        sleep 0.3
+    done
+    [ "$ok" = 1 ] || { fail "server at $base did not become ready"; exit 1; }
+done
+
+echo "-- input validation (400 before any OSV request is made) --"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE3/advisory?id=../../etc/passwd")
+[ "$code" = "400" ] && pass "/advisory rejects a traversal id" || fail "/advisory traversal id returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE3/advisory?id=")
+[ "$code" = "400" ] && pass "/advisory rejects an empty id" || fail "/advisory empty id returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE3/advisory?id=CVE-$(printf '1%.0s' $(seq 1 70))")
+[ "$code" = "400" ] && pass "/advisory rejects an id over 64 chars" || fail "/advisory long id returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' -G "$BASE3/advisory" --data-urlencode $'id=CVE-2021-44228\r\nX-Injected: 1')
+[ "$code" = "400" ] && pass "/advisory rejects an id with CR/LF" || fail "/advisory CRLF id returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE3/advisory?id=UNKNOWN-1234")
+[ "$code" = "400" ] && pass "/advisory rejects an id with an unrecognized prefix" || fail "/advisory unknown-prefix id returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE3/package-advisories?ecosystem=bogus&name=lodash&version=4.17.20")
+[ "$code" = "400" ] && pass "/package-advisories rejects an unknown ecosystem slug" || fail "/package-advisories bogus ecosystem returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' "$BASE3/package-advisories?ecosystem=npm&name=lodash")
+[ "$code" = "400" ] && pass "/package-advisories rejects a missing required parameter" || fail "/package-advisories missing version returned $code (expected 400)"
+code=$(curl -s -o /dev/null -w '%{http_code}' -G "$BASE3/package-advisories" --data-urlencode "ecosystem=npm" --data-urlencode $'name=lo\x01dash' --data-urlencode "version=1.0.0")
+[ "$code" = "400" ] && pass "/package-advisories rejects a control character in name" || fail "/package-advisories control-char name returned $code (expected 400)"
+
+echo "-- disabled feature: 403 with no OSV request ever attempted --"
+if curl -fsS "$BASE4/capabilities" 2>/dev/null | python3 -c "import sys,json;assert json.load(sys.stdin)['externalLookup'] is False" 2>/dev/null; then
+    pass "/capabilities reports externalLookup false when EXTERNAL_LOOKUP=false"
+else
+    fail "/capabilities externalLookup should be false"
+fi
+code=$(curl -s --max-time 3 -o /dev/null -w '%{http_code}' "$BASE4/advisory?id=CVE-2021-44228")
+[ "$code" = "403" ] && pass "/advisory is disabled (403) and OSV_API_BASE (unreachable) is never contacted" || fail "/advisory disabled returned $code (expected 403)"
+code=$(curl -s --max-time 3 -o /dev/null -w '%{http_code}' "$BASE4/package-advisories?ecosystem=npm&name=lodash&version=4.17.20")
+[ "$code" = "403" ] && pass "/package-advisories is disabled (403)" || fail "/package-advisories disabled returned $code (expected 403)"
+
+echo "-- offline: connection refused surfaces as 503, fast --"
+code=$(curl -s --max-time 3 -o "$WORK/osv-offline-body" -w '%{http_code}' "$BASE5/advisory?id=CVE-2021-44228")
+if [ "$code" = "503" ] && grep -q '"offline"' "$WORK/osv-offline-body"; then
+    pass "/advisory reports offline (503) when OSV cannot be reached, well under the timeout"
+else
+    fail "/advisory offline path returned $code" "$(cat "$WORK/osv-offline-body")"
+fi
+
+echo "-- successful lookups against the OSV stub --"
+body=$(curl -fsS "$BASE3/advisory?id=CVE-TEST-CVSS3" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['found'] is True, d
+assert d['severity'] == 'CRITICAL', d
+assert d['cvss'] == 9.8, d
+assert d['cvssVector'] == 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H', d
+assert d['source'] == 'osv', d
+assert len(d['refs']) == 12, d
+"; then
+    pass "/advisory computes a CVSS 3.1 base score from OSV's vector"
+else
+    fail "/advisory CVSS_V3 score computation failed" "$body"
+fi
+
+body=$(curl -fsS "$BASE3/advisory?id=CVE-TEST-DBSEV" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['severity'] == 'CRITICAL', d
+assert d['cvss'] is None, d
+"; then
+    pass "/advisory prefers database_specific.severity over a computed score"
+else
+    fail "/advisory database_specific.severity priority failed" "$body"
+fi
+
+body=$(curl -fsS "$BASE3/advisory?id=CVE-TEST-CVSS4" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['severity'] == 'UNKNOWN', d
+assert d['cvss'] is None, d
+assert d['cvssVector'].startswith('CVSS:4.0'), d
+"; then
+    pass "/advisory leaves cvss null for a CVSS_V4-only vector, but keeps the vector"
+else
+    fail "/advisory CVSS_V4-only handling failed" "$body"
+fi
+
+body=$(curl -fsS "$BASE3/advisory?id=CVE-2099-00000" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d == {'id': 'CVE-2099-00000', 'found': False, 'source': 'osv'}, d
+"; then
+    pass "/advisory turns an OSV 404 into a normal found:false result, not an error"
+else
+    fail "/advisory 404 handling failed" "$body"
+fi
+
+body=$(curl -fsS "$BASE3/advisory?id=CVE-TEST-LONG" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert len(d['description']) == 600, len(d['description'])
+assert len(d['refs']) == 12, len(d['refs'])
+"; then
+    pass "/advisory caps description and refs length"
+else
+    fail "/advisory length caps failed" "$body"
+fi
+
+body=$(curl -fsS "$BASE3/package-advisories?ecosystem=npm&name=pkg-with-more-pages&version=1.0.0" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d['found'] is True, d
+assert len(d['items']) == 1, d
+assert d['truncated'] is True, d
+"; then
+    pass "/package-advisories reports truncated:true when OSV returns a next_page_token"
+else
+    fail "/package-advisories truncation flag failed" "$body"
+fi
+
+body=$(curl -fsS "$BASE3/package-advisories?ecosystem=npm&name=pkg-clean&version=1.0.0" 2>/dev/null)
+if echo "$body" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+assert d == {'found': False, 'items': [], 'truncated': False}, d
+"; then
+    pass "/package-advisories reports found:false with no vulnerabilities"
+else
+    fail "/package-advisories clean-package handling failed" "$body"
+fi
 
 echo ""
 echo "Results: ${PASS} passed, ${FAIL} failed"

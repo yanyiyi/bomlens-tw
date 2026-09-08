@@ -269,5 +269,76 @@ else
 fi
 
 echo
+echo "== language detection: what counts as a Python project =="
+# The defect: detection looked for requirements.txt and pyproject.toml only, so a
+# project shipping setup.py -- still how a lot of scientific Python is packaged --
+# came out "unknown". That did two things at once: it sent the tree to the
+# all-in-one image instead of the Python one, and it told the user no manifest was
+# found while the scan went on to resolve dependencies anyway. On Cellpose the
+# wrong image found 46 components; the Python one finds 113, with the
+# vulnerabilities the sparse run reported as none.
+# shellcheck source=../docker/lib/source-detect.sh
+. "$ROOT_DIR/docker/lib/source-detect.sh"
+LANGDIR="$(mktemp -d)"
+trap 'rm -rf "$LANGDIR"' EXIT
+
+for manifest in requirements.txt pyproject.toml setup.py setup.cfg Pipfile; do
+    rm -rf "${LANGDIR:?}/proj" && mkdir -p "$LANGDIR/proj"
+    : > "$LANGDIR/proj/$manifest"
+    got="$(detect_lang "$LANGDIR/proj")"
+    if [ "$got" = "python" ]; then
+        pass "$manifest detects as python"
+    else
+        fail "$manifest detects as '$got'" "a Python project would be scanned with the wrong image"
+    fi
+done
+
+# A tree with no manifest at all still has to read as unknown: that is what the
+# all-in-one image and the vendored-code suggestion are for.
+rm -rf "${LANGDIR:?}/proj" && mkdir -p "$LANGDIR/proj"
+: > "$LANGDIR/proj/main.c"
+got="$(detect_lang "$LANGDIR/proj")"
+[ "$got" = "unknown" ] && pass "a tree with no manifest stays unknown" \
+    || fail "a manifest-less tree detects as '$got'"
+
+# Detection stays per-language: a Python manifest beside another language's is
+# "mixed", not python, so the all-in-one image is chosen as before.
+rm -rf "${LANGDIR:?}/proj" && mkdir -p "$LANGDIR/proj"
+: > "$LANGDIR/proj/setup.py"
+: > "$LANGDIR/proj/go.mod"
+got="$(detect_lang "$LANGDIR/proj")"
+[ "$got" = "mixed" ] && pass "setup.py beside another language reads as mixed" \
+    || fail "a mixed tree detects as '$got'"
+
+echo "== --model routes a Figshare item to the dataset path =="
+# One option takes both AI inputs a person is handed a link to, so the reference
+# itself decides which path runs. The server applies the same rule on the string
+# it receives, which is what keeps the CLI and the UI from disagreeing about
+# what a given input means.
+route_rule=$(awk '/^    case "\$MODEL" in$/,/^    esac$/' "$SCRIPT")
+if printf '%s' "$route_rule" | grep -q '\*figshare\*) MODE="DATASET"'; then
+    pass "a reference carrying figshare selects DATASET"
+else
+    fail "the model reference is not routed by its content" "rule: ${route_rule:-not found}"
+fi
+if printf '%s' "$route_rule" | grep -q '\*)          MODE="AIBOM"'; then
+    pass "every other reference stays on the model path"
+else
+    fail "the default model route changed"
+fi
+if grep -q 'DATASET) VOL=.*ENVV="-e DATASET_REF' "$SCRIPT"; then
+    pass "the dataset path passes the reference and needs no opt-in image"
+else
+    fail "DATASET does not hand the reference to the container"
+fi
+# The server has to read the same string the same way, or a reference that works
+# in the CLI would be refused in the browser.
+if grep -q '"figshare" in target.lower()' "$ROOT_DIR/docker/web/server.py"; then
+    pass "the web server applies the same rule to the same field"
+else
+    fail "the server does not route a Figshare reference"
+fi
+
+echo
 echo "== summary: $PASS passed, $FAIL failed =="
 [ "$FAIL" -eq 0 ]

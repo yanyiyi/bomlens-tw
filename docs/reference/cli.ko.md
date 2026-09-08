@@ -27,7 +27,7 @@ BomLens의 전체 옵션과 분석 모드, CI/CD 통합 방법, 트러블슈팅�
 | `--branch <ref>` | 기본 브랜치 | `--git` 대상의 브랜치, 태그, 커밋 (별칭 `--ref`) |
 | `--firmware` | false | `--target` 파일을 펌웨어 모드로 강제 (opt-in 펌웨어 이미지) |
 | `--analyze <sbom>` | — | 공급사 SBOM 검증·분석 (별칭 `--sbom`). CycloneDX/SPDX. `--target`와 배타 |
-| `--model <owner/name>` | — | HuggingFace 모델의 AI SBOM(CycloneDX 1.7 ML-BOM)을 OWASP AIBOM Generator로 생성(opt-in `bomlens-aibom` 이미지; 모델 카드 메타데이터를 네트워크로 가져옴). `--target`/`--analyze`/`--git`/`--merge`와 배타 |
+| `--model <참조>` | — | AI SBOM(CycloneDX 1.7 ML-BOM)을 생성한다. HuggingFace 모델 ID(`조직/모델`)는 OWASP AIBOM Generator로 처리한다(opt-in `bomlens-aibom` 이미지; 모델 카드 메타데이터를 네트워크로 가져옴). Figshare 항목은 페이지 주소나 DOI, 항목 번호로 주면 공개 항목 조회로 데이터셋으로 기술하며 계정도 별도 이미지도 필요 없다. 이름에 "figshare"가 없는 기관 DOI는 다른 DOI와 구분할 수 없으므로 항목 주소를 준다. `--target`/`--analyze`/`--git`/`--merge`와 배타 |
 | `--model-file <경로>` | — | AI 모델 파일 하나를 읽어 그 헤더만으로 기술한다. GGUF, safetensors, PyTorch(`.pt`/`.pth`/`.ckpt`), pickle, npz, npy, ONNX를 인식한다. 오프라인으로 동작하고 HuggingFace 계정이 필요 없어 공개하지 않은 모델도 스캔할 수 있다. 채울 수 있는 정보는 형식마다 다르다. GGUF는 이름과 라이선스, 아키텍처를 담고 있지만 safetensors는 대개 텐서 정보만 있으며, 파일이 선언하지 않은 값은 추측하지 않고 비워 둔다. `--target`에 `.gguf`나 `.safetensors`, `.pt` 같은 경로를 주면 이 방식으로 읽는다. `--target`/`--analyze`/`--git`와 배타 |
 | `--license <spdx-id>` | — | 프로젝트를 배포하는 배포 라이선스(예: `Apache-2.0`). SBOM 루트 컴포넌트에 기록하고, 조건이 충돌하는 의존성을 표시하는 데 쓴다. 소스 스캔으로는 알아낼 수 없어(cdxgen이 maven과 gradle에서 루트 라이선스를 비워 둔다) 지정하지 않으면 충돌 판정을 내리지 않는다. SBOM에 이미 있는 루트 라이선스(공급사가 선언한 값)는 덮어쓰지 않는다 |
 | `--sbom-author <name>` | — | 이 SBOM을 생성한 주체. 스캔을 실행하는 조직이나 사람을 가리키며, 도구도 소프트웨어를 만든 쪽도 아니다. `metadata.authors`에 정식 명칭으로 기록하고 약어는 쓰지 않는다. 스캔으로는 알아낼 수 없는 값이라 지정하지 않으면 자리표시자를 채우지 않고 필드를 빼 둔다 |
@@ -66,7 +66,7 @@ BomLens의 전체 옵션과 분석 모드, CI/CD 통합 방법, 트러블슈팅�
 | `SBOM_OUTPUT_DIR` | `~/sbom-output` | 데스크톱 앱과 웹 UI의 산출물 베이스(CLI는 대신 `--output-dir` 사용). 스캔마다 그 아래 `{Project}_{Version}/` 하위 폴더에 저장 |
 | `SBOM_UI_MOUNT_DIR` | — | CLI 인자를 받지 않는 Windows 실행 파일 `sbom-ui.bat`용: 웹 UI의 디렉터리 경로 입력에 읽기 전용 대상으로 추가할 폴더 하나(`--ui --mount`의 더블클릭 대응). `& ^ | < >` 가 없는 경로를 쓸 것 — 런처는 이런 문자가 있으면 잘못된 마운트를 Docker에 넘기는 대신 거부한다 |
 | `SBOM_LANG` | 시스템 로캘 | Windows 런처와 데스크톱 앱의 언어. `en` 또는 `ko`. 한국어가 아니면 영어로 표시된다 |
-| `SBOM_PULL` | `missing` | Windows 런처의 다운로드 동작. `missing`은 이미지가 없을 때만, `always`는 매번 레지스트리를 다시 확인(새 `:latest` 반영), `never`는 네트워크를 전혀 쓰지 않음 |
+| `SBOM_PULL` | `missing` | 스캐너 이미지 다운로드 정책. `scan-sbom.sh`와 Windows 런처 모두에 적용된다. `missing`(기본)은 이미지가 없을 때만 받고, 이미 있으면 백그라운드에서 조용히 최신 여부를 확인한다(시간 상한을 두고 최선을 다하는 방식이라, 확인이 멎거나 오프라인이면 그냥 포기하고 로컬 이미지로 진행한다). `always`는 매번 멈춰서 다시 받고, 실패하면 실행 자체를 중단한다. `never`는 네트워크를 전혀 쓰지 않고, 이미지가 없으면 실행을 중단한다 |
 | `SBOM_IMAGE_TAR` | — | `docker save`로 만든 이미지 tar 경로. Windows 런처가 pull 대신 이 파일을 불러온다. 스크립트 옆에 `bomlens-image.tar`가 있으면 자동으로 사용한다. `SBOM_PULL=never`와 함께 쓰면 완전 오프라인 설치가 된다 |
 | `CVE_BIN_TOOL_MODE` | `auto` | 펌웨어 CVE 매칭 방식. `auto`는 번들 CVE 데이터베이스가 있으면 그걸 쓰고, 없으면 네트워크에 닿을 때 NVD에서 내려받음. `offline`은 번들 데이터베이스로만 매칭. `online`은 항상 네트워크에서 갱신. `components-only`는 CVE 매칭을 건너뛰고 구성요소만 담은 SBOM을 생성 |
 | `CVE_BIN_TOOL_HOME` | `/opt/cve-bin-tool-home` | 번들 cve-bin-tool CVE 데이터베이스 위치. cve-bin-tool은 캐시를 `HOME` 기준으로 잡으므로 `$CVE_BIN_TOOL_HOME/.cache/cve-bin-tool/cve.db`를 읽음 |
@@ -90,6 +90,7 @@ BomLens의 전체 옵션과 분석 모드, CI/CD 통합 방법, 트러블슈팅�
 | `TRUSCA_PROJECT_ID` | — | TRUSCA 프로젝트 id(UUID). `trusca`일 때 필수 |
 | `TRUSCA_REF` | `main` | ingest ref 라벨 |
 | `TRUSCA_RELEASE` | `--version` 값 | ingest release 라벨 |
+| `EXTERNAL_LOOKUP` | `true` | `--ui`와 함께: 웹 UI의 CVE·패키지 조회 기능을 켠다. 필요할 때 osv.dev로 조회한다. 폐쇄망에서는 `false`로 끈다 |
 
 Windows에서는 명령 프롬프트에서 설정한 환경변수가 더블클릭 실행에는 적용되지 않습니다.
 그래서 런처는 `UI_PORT`, `SBOM_LANG`, `SBOM_PULL`, `SBOM_IMAGE_TAR`, `SBOM_SCANNER_IMAGE`,

@@ -33,8 +33,12 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
+import urllib.error
 import urllib.parse
+import urllib.request
 import zipfile
+from collections import OrderedDict
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -597,6 +601,14 @@ def scanoss_capable():
     return shutil.which("scanoss-py") is not None
 
 
+def deep_license_capable():
+    """Deep license detection (scancode) is only built in with SBOM_DEEP_LICENSE.
+    Unlike firmware/aibom/deep-cve there is no sibling image for it — a source
+    tree has to be mounted where the scan already runs, not in a second
+    container — so this is the whole offer: no sibling fallback to check."""
+    return shutil.which("scancode") is not None
+
+
 def aibom_capable():
     """AI-model SBOM generation (OWASP AIBOM Generator) lives only in the opt-in
     bomlens-aibom image — mirror scan-aibom.sh's detection."""
@@ -610,6 +622,13 @@ def docker_capable():
     # "socket not mounted" error branch even on hosts that DO have Docker).
     # Inside the image the mount path is fixed; server-env only.
     return os.path.exists(os.environ.get("SBOM_DOCKER_SOCK", "/var/run/docker.sock"))
+
+
+def external_lookup_capable():
+    """CVE/package lookups against OSV.dev (GET /advisory, /package-advisories)
+    can be turned off for an air-gapped run. Same on-by-default, "false" string
+    disables convention as SECURITY_ENRICH/DEEP_CVE in docker/lib/scan-security.sh."""
+    return os.environ.get("EXTERNAL_LOOKUP", "true") != "false"
 
 
 def docker_cli_present():
@@ -738,6 +757,9 @@ def scanmeta(run_id):
 # Row caps so a huge SBOM/scan can't bloat the SSE 'done' payload. The counts
 # (sbom.components, severity totals) stay exact; only the detail lists are capped.
 MAX_COMPONENT_ROWS = 2000
+# Warning lines kept per scan. More than this and the screen stops being a
+# summary; the full log is still streamed while the scan runs.
+MAX_SCAN_WARNINGS = 12
 MAX_VULN_ROWS = 2000
 MAX_VULN_REFS = 12  # reference links per CVE in the detail view
 MAX_VULN_DESC = 600  # description chars per CVE (keeps the SSE payload bounded)
@@ -1001,6 +1023,14 @@ def _scope_index(data):
     refs = set(adjacency)
     for targets in adjacency.values():
         refs.update(targets)
+    # The root component is not a dependency of itself. It is in `refs` only
+    # because it keys the graph. A software scan never showed this: its root
+    # lives in metadata, not components[], so nothing matched the stray entry.
+    # An AI scan folds the root model INTO the component list, so the model was
+    # labelled a transitive dependency of its own SBOM ("3 direct · 1 transitive"
+    # for three datasets).
+    if meta_ref:
+        refs.discard(meta_ref)
     return {ref: ("direct" if ref in direct else "transitive") for ref in refs}, True
 
 
@@ -1022,7 +1052,17 @@ def sbom_summary(run_id):
     # other scan the root is the scanned project itself, which is not one of its
     # own components and must stay out of the count.
     _root = _as_dict(_as_dict(data.get("metadata")).get("component"))
-    if _root.get("type") == "machine-learning-model":
+    # A dataset scan is the same shape one level over: the published item IS the
+    # document, components[] is empty, and without folding it in the scan reports
+    # nothing at all. It qualifies on the marker the dataset collectors stamp, so
+    # an ordinary SBOM that happens to carry a `data` root is not swept in.
+    _root_collected = any(
+        _as_dict(p).get("name") == "bomlens:dataset:collectedBy"
+        for p in _as_list(_root.get("properties"))
+    )
+    if _root.get("type") == "machine-learning-model" or (
+        _root.get("type") == "data" and _root_collected
+    ):
         comps = [_root] + comps
     risk_by_purl, risk_by_nv = _component_risk_index(run_id)
     scope_by_ref, has_deps = _scope_index(data)
@@ -1360,6 +1400,19 @@ def sbom_summary(run_id):
         # CycloneDX root component type — drives the honest scan-kind subtitle and
         # works on re-open too, where the scan MODE isn't stored.
         "componentType": meta_comp.get("type"),
+        # Whether the scanned tree pinned the versions this SBOM reports, from
+        # detect-version-pinning.sh. "unpinned" means the resolver picked what was
+        # newest at scan time, so the versions shown are a fresh install's answer
+        # rather than what is on the reader's machine — and the vulnerability
+        # count carries the same gap. Absent when the tree could not be judged.
+        "versionPinning": next(
+            (
+                p.get("value")
+                for p in _as_list(meta_comp.get("properties"))
+                if _as_dict(p).get("name") == "bomlens:source:versionPinning"
+            ),
+            None,
+        ),
         "directCount": direct_count,
         "transitiveCount": transitive_count,
         "eolCount": eol_count,
@@ -1508,15 +1561,25 @@ def conformance_summary(run_id):
             # badge how each element was satisfied. Dropped here => dropped from UI.
             "cluster": str(c.get("cluster") or ""),
             "source": str(c.get("source") or ""),
-            # The translated labels the registry declares for this element. The
-            # JSON contract stays English — that is deliberate and tested — so
-            # the translations ride alongside rather than replacing it, and a
-            # client rendering in Korean or Traditional Chinese picks them up.
-            # Empty for the checks the scripts write themselves, whose labels
-            # carry a threshold or a spec version and so cannot be looked up
-            # whole.
+            # The Korean label the registry declares for this element. The JSON
+            # contract stays English — that is deliberate and tested — so the
+            # translation rides alongside rather than replacing it, and a client
+            # rendering in Korean picks it up. Empty for the checks the scripts
+            # write themselves, whose labels carry a threshold or a spec version
+            # and so cannot be looked up whole.
             "labelKo": str(c.get("label_ko") or ""),
             "labelZh": str(c.get("label_zh") or ""),
+            # The detail line in Korean ("측정할 패키지 없음"), written by the same
+            # join that fills label_ko. Without it a Korean reader got a Korean
+            # requirement name followed by an English measurement.
+            "detailKo": str(c.get("detail_ko") or ""),
+            # Why an element is unjudgeable: "not-applicable" means this document
+            # holds nothing to measure (an ML-BOM has no packages, so package
+            # coverage says nothing about it). validate-sbom.sh sets it and the
+            # CLI reports render those rows as N/A; without it here the UI drew
+            # them as ordinary warnings and counted them into the mandatory
+            # denominator and the "needs a person" tally.
+            "naKind": str(c.get("naKind") or ""),
         }
         # Any check can carry a regulatory-crosswalk mapping (validate-sbom.sh
         # joins docker/lib/regulation-crosswalk.json by check id): the named
@@ -1535,7 +1598,7 @@ def conformance_summary(run_id):
                 # "BSI TR-03183-2 Section 5.2.2" instead of the framework id.
                 "short": str(r.get("short") or r.get("framework") or ""),
                 "short_ko": str(r.get("short_ko") or r.get("short") or r.get("framework") or ""),
-                "short_zh": str(r.get("short_zh") or r.get("short") or r.get("framework") or ""),
+                "shortZh": str(r.get("short_zh") or r.get("short") or r.get("framework") or ""),
             }
             for r in (c.get("regulations") or [])
             if isinstance(r, dict)
@@ -1564,12 +1627,11 @@ def conformance_summary(run_id):
         if isinstance(rg, dict):
             how = str(rg.get("how") or "")[:MAX_GUIDANCE_SNIPPET]
             how_ko = str(rg.get("how_ko") or "")[:MAX_GUIDANCE_SNIPPET]
-            how_zh = str(rg.get("how_zh") or "")[:MAX_GUIDANCE_SNIPPET]
             rg_url = str(rg.get("docUrl") or "")
             if not rg_url.startswith("https://"):
                 rg_url = ""
-            if how or how_ko or how_zh:
-                row["reviewGuide"] = {"how": how, "howKo": how_ko, "howZh": how_zh, "docUrl": rg_url}
+            if how or how_ko:
+                row["reviewGuide"] = {"how": how, "howKo": how_ko, "docUrl": rg_url}
         checks.append(row)
     out = {
         "result": data.get("result", "unknown"),
@@ -1726,13 +1788,11 @@ def ai_profile_summary(run_id):
                 "reasons": [str(r) for r in (m.get("reasons") or [])][:MAX_ASSESS_REASONS],
                 "summary": str(m.get("summary") or ""),
                 "summary_ko": str(m.get("summary_ko") or ""),
-                "summary_zh": str(m.get("summary_zh") or ""),
                 "conditions": [
                     {
                         "id": str(cond.get("id") or ""),
                         "label": str(cond.get("label") or ""),
                         "label_ko": str(cond.get("label_ko") or ""),
-                        "label_zh": str(cond.get("label_zh") or ""),
                     }
                     for cond in (m.get("conditions") or [])
                     if isinstance(cond, dict)
@@ -1743,7 +1803,6 @@ def ai_profile_summary(run_id):
             "usageContext": str(assess.get("usageContext") or ""),
             "disclaimer": str(assess.get("disclaimer") or ""),
             "disclaimer_ko": str(assess.get("disclaimer_ko") or ""),
-            "disclaimer_zh": str(assess.get("disclaimer_zh") or ""),
             "counts": {
                 k: int(raw_counts.get(k) or 0)
                 for k in ("ok", "conditional", "caution", "review")
@@ -1875,6 +1934,9 @@ def scan_detail(run_id):
         # UI can offer "re-scan with the same settings". None for pre-feature
         # scans that have no sidecar.
         "scanConfig": scanmeta(run_id),
+        # Warnings the scan emitted, recovered from the same sidecar so a
+        # re-opened result says what a live one said.
+        "scanWarnings": (scanmeta(run_id) or {}).get("warnings") or [],
     }
 
 
@@ -1974,14 +2036,37 @@ def extract_file_part(rfile, length, boundary, dest_path):
             pending += chunk
 
 
+# Characters Windows forbids in a filename/path component, plus backslash.
+# zipfile.namelist() always reports members with forward slashes (the ZIP
+# spec's own separator), so a member's zip-internal path never contains a
+# backslash on its own -- but nothing stops a member's NAME (a path
+# component between slashes) from containing one: extracting on Linux
+# treats it as a literal character, not a separator, so "..\\evil.txt" is
+# one harmless-looking filename here. It only becomes dangerous once this
+# tree is bind-mounted back onto a Windows host: verified end to end in this
+# session that Docker Desktop's Windows file-sharing silently DROPS these
+# characters rather than rejecting them, so two differently-named members
+# (e.g. "a:b.txt" and "ab.txt") can collide onto the same Windows filename
+# -- and instead of one cleanly overwriting the other, the host-visible file
+# ends up holding both members' content APPENDED together, silently, with
+# no error anywhere in the pipeline.
+_WINDOWS_ILLEGAL_PATH_CHARS = re.compile(r'[<>:"|?*\\\x00-\x1f]')
+
+
 def safe_extract_zip(zip_path, dest_dir):
-    """Extract a zip, rejecting absolute/traversal members (zip-slip)."""
+    """Extract a zip, rejecting absolute/traversal members (zip-slip) and
+    members whose name would collide once this tree reaches a Windows host."""
     dest_real = os.path.realpath(dest_dir)
     with zipfile.ZipFile(zip_path) as zf:
         for member in zf.namelist():
             target = os.path.realpath(os.path.join(dest_dir, member))
             if target != dest_real and not target.startswith(dest_real + os.sep):
                 raise ValueError("unsafe path in archive: %s" % member)
+            if _WINDOWS_ILLEGAL_PATH_CHARS.search(member):
+                raise ValueError(
+                    "archive member name is not Windows-safe: %s "
+                    "(contains a character Windows forbids in a path)" % member
+                )
         zf.extractall(dest_dir)
 
 
@@ -2417,6 +2502,12 @@ def run_sibling_scan(image, mode, out_dir, on_log, *, upload_file=None, model_id
                     on_progress=(lambda snap: on_progress({"phase": "pull", **snap}))
                     if on_progress is not None else None,
                     cancel=cancel)
+    else:
+        # Already present is not the same as current: a stale `:latest` layer
+        # from before a fix would otherwise run forever once cached. Bounded by
+        # a stall timeout (see refresh_sibling_image_quietly), so this never
+        # delays a scan by more than a few seconds on a normal or offline host.
+        refresh_sibling_image_quietly(image, on_log)
 
     on_log("[ui] launching %s in a sibling container (%s)..." % (mode.lower(), image))
     # Pass the assembled env (os.environ + extra_env) to the docker-run process so
@@ -2473,6 +2564,11 @@ def convert_bom_to_spdx(bom_path, spdx_path, stable, on_log):
     if not _sibling_image_present(image):
         on_log("[ui] pulling %s (one-time download)..." % image)
         _pull_image(image, on_log)
+    else:
+        # Same staleness concern as run_sibling_scan's sibling, just far less
+        # frequent (only when this image itself lacks syft, see the capability
+        # note above).
+        refresh_sibling_image_quietly(image, on_log)
     return _stream_cmd([
         "docker", "run", "--rm",
         "--volumes-from", self_cid,
@@ -2584,6 +2680,46 @@ _PULL_LOG_TAIL = 4096
 _pull_lock = threading.Lock()
 _pull_active = set()
 
+# Run folders currently being written. Two scans of the same project+version
+# resolve to the same folder, and the artifacts inside are named from
+# project/version rather than from the folder (entrypoint.sh), so the two
+# containers write the same filenames in the same place. Post-processing
+# rewrites each artifact in place — `jq … > tmp && mv tmp file` — so the moves
+# interleave and the surviving file is a mixture of both runs. Measured: a
+# project with log4j-core 2.14.1 reports 14 vulnerabilities when scanned alone
+# and 0 in both tabs when scanned twice at once, because a security report
+# written after the vulnerabilities were found is overwritten by the other run's
+# earlier stage.
+#
+# Only concurrency is separated here. Re-scanning a finished project still
+# overwrites, which is what the CLI does too (`--timestamp` opts out) and is a
+# product decision rather than a correctness one.
+_scan_lock = threading.Lock()
+_scan_active = set()
+
+
+def claim_run_id(prefix, active, now=None, force_suffix=False):
+    """Pick a free run folder for `prefix`, given the folders in flight.
+
+    Pure so the collision cases can be tested without a server. `active` is the
+    set of run ids currently being written; the caller adds the returned id to
+    it under the same lock, or the next request will pick the same name.
+
+    The timestamp alone is not enough: it is second-resolution, and simultaneous
+    tabs are exactly the case this exists for. Three tabs at once would give the
+    second and third the same suffix, so a counter breaks the remaining tie.
+    """
+    if not force_suffix and prefix not in active:
+        return prefix
+    stamp = (now or datetime.now()).strftime("%Y%m%d-%H%M%S")
+    base = "%s_%s" % (prefix, stamp)
+    candidate = base
+    n = 2
+    while candidate in active:
+        candidate = "%s-%d" % (base, n)
+        n += 1
+    return candidate
+
 
 def _pull_image(image, on_log, on_progress=None, cancel=None):
     """Pull an image, reporting layer progress. Returns (exit code, failure key).
@@ -2669,6 +2805,91 @@ def _sibling_image_present(image):
         return False
 
 
+# refresh_sibling_image_quietly's stall/absolute timeouts, overridable only for
+# tests (a stalled fake `docker pull` must give up in well under a second, not
+# the real-world default). Never documented; not a user-facing switch — this
+# just re-times a pull the tool already performs, it does not add a new one.
+_SIBLING_REFRESH_STALL_SECS = float(os.environ.get("_SIBLING_REFRESH_STALL_SECS", "12"))
+_SIBLING_REFRESH_MAX_SECS = float(os.environ.get("_SIBLING_REFRESH_MAX_SECS", str(45 * 60)))
+
+
+def refresh_sibling_image_quietly(image, on_log, stall_secs=None, max_secs=None):
+    """Best-effort background refresh of a sibling image already present locally.
+
+    _sibling_image_present only means the tag was pulled at SOME point; a report
+    can update this app and still run a scan against a sibling image `docker
+    pull` never refreshed since (a stale `:latest` layer cached from before a
+    fix — see _sibling_image_version's docstring, which reports that mismatch
+    but never corrects it). This re-runs `docker pull` for the same reference
+    right before use, so the very next scan runs the currently published image
+    instead of whatever was cached on first use.
+
+    Mirrors the desktop app's refreshImageInBackground (electron/lib/container.mjs
+    pullImage + BACKGROUND_REFRESH_STALL_MS): bounded by STALL, not by elapsed
+    time. An up-to-date pull prints one line and exits well under a second; an
+    offline/blocked registry never prints anything and is killed after
+    `stall_secs`. A genuinely slow-but-progressing download (real new layers)
+    resets the stall timer on every output line, so this never cuts off a real
+    refresh — `max_secs` is only a runaway backstop.
+
+    Best-effort and silent either way: this never raises, has no return value,
+    and the caller never checks one — every outcome (up to date, offline, timed
+    out, a real refresh) ends with the caller proceeding on whatever image is on
+    disk. Only a single diagnostic line goes to on_log, so a report of "the scan
+    used an old image" can be traced without a return value to plumb through.
+    """
+    if stall_secs is None:
+        stall_secs = _SIBLING_REFRESH_STALL_SECS
+    if max_secs is None:
+        max_secs = _SIBLING_REFRESH_MAX_SECS
+    if not _valid_image_ref(image):
+        return
+    try:
+        proc = subprocess.Popen(
+            ["docker", "pull", image], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            text=True, bufsize=1,
+        )
+    except OSError:
+        return
+
+    prog = PullProgress()
+    last_activity = [time.monotonic()]
+    refreshing = [False]
+
+    def _reader():
+        try:
+            for raw in proc.stdout:
+                last_activity[0] = time.monotonic()
+                for piece in raw.rstrip("\n").split("\r"):
+                    if piece and prog.feed(piece) is not None:
+                        refreshing[0] = True
+        except (OSError, ValueError):
+            pass
+
+    reader = threading.Thread(target=_reader, daemon=True)
+    reader.start()
+
+    started = time.monotonic()
+    stalled = False
+    while proc.poll() is None:
+        now = time.monotonic()
+        if now - last_activity[0] > stall_secs or now - started > max_secs:
+            stalled = True
+            proc.kill()
+            break
+        time.sleep(0.2)
+    try:
+        proc.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        pass
+    reader.join(timeout=2)
+
+    if stalled or proc.returncode != 0:
+        on_log("[ui] background refresh of %s skipped (offline or no update)" % image)
+    elif refreshing[0]:
+        on_log("[ui] refreshed %s to the latest published layers" % image)
+
+
 # Reads the version baked into a LOCALLY PRESENT sibling image, the same way
 # this container reports its own via BOMLENS_VERSION. A reporter can update the
 # app and still run a scan against a sibling image `docker pull` never
@@ -2729,6 +2950,277 @@ def _stream_cmd(args, on_log, on_progress=None, cancel=None, container=None, env
     return proc.returncode
 
 
+# ---------------------------------------------------------------------------
+# External vulnerability lookup (GET /advisory, GET /package-advisories)
+#
+# BomLens is account-free and stateless by design (no disk cache, no db), so
+# this talks to OSV.dev on every miss and keeps nothing but a short in-memory
+# TTL cache. Overridable so the No-Docker contract test can point it at a
+# stub, exactly like SBOM_DOCKER_SOCK does for the docker socket check.
+# ---------------------------------------------------------------------------
+OSV_API_BASE = os.environ.get("OSV_API_BASE", "https://api.osv.dev")
+OSV_TIMEOUT = 6
+OSV_MAX_BODY = 4 * 1024 * 1024
+OSV_USER_AGENT = "bomlens/%s (+https://github.com/sktelecom/bomlens)" % (
+    os.environ.get("BOMLENS_VERSION") or "dev"
+)
+
+_ADVISORY_ID_PREFIXES = ("CVE-", "GHSA-", "GO-", "PYSEC-", "RUSTSEC-", "OSV-", "GSD-", "MAL-")
+_ADVISORY_ID_CHARSET = re.compile(r"[A-Za-z0-9.-]+")
+
+# The web-form ecosystem slug -> the spelling OSV's schema requires. Rejecting
+# anything outside this map means the ecosystem value that reaches the OSV
+# request body is always one of these eight literals, never request input.
+_OSV_ECOSYSTEMS = {
+    "npm": "npm",
+    "pypi": "PyPI",
+    "maven": "Maven",
+    "go": "Go",
+    "cargo": "crates.io",
+    "rubygems": "RubyGems",
+    "packagist": "Packagist",
+    "nuget": "NuGet",
+}
+
+
+def _advisory_id_ok(vuln_id):
+    """CVE-2021-44228 / GHSA-.../ GO-.../ etc: a known advisory-namespace prefix,
+    the charset OSV ids are drawn from, and a length that can't smuggle a header
+    or a path through urllib.parse.quote."""
+    return (
+        isinstance(vuln_id, str)
+        and 0 < len(vuln_id) <= 64
+        and _ADVISORY_ID_CHARSET.fullmatch(vuln_id) is not None
+        and vuln_id.startswith(_ADVISORY_ID_PREFIXES)
+    )
+
+
+# CVSS 3.1 Base Score, computed from OSV's own vector string.
+#
+# OSV carries the vector but never the number, and the CVSS 3.1 base equation
+# (section 7.1 of the spec) is closed-form arithmetic on metrics that vector
+# already states — nothing here is invented, only decoded.
+_CVSS31_AV = {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}
+_CVSS31_AC = {"L": 0.77, "H": 0.44}
+_CVSS31_PR_UNCHANGED = {"N": 0.85, "L": 0.62, "H": 0.27}
+_CVSS31_PR_CHANGED = {"N": 0.85, "L": 0.68, "H": 0.5}
+_CVSS31_UI = {"N": 0.85, "R": 0.62}
+_CVSS31_CIA = {"H": 0.56, "L": 0.22, "N": 0.0}
+
+
+def _cvss31_roundup(value):
+    """The spec's Roundup(): one decimal place, always rounding up at the third,
+    via integer cents so float error can't tip a .x0 either way."""
+    int_value = int(round(value * 100000))
+    if int_value % 10000 == 0:
+        return int_value / 100000
+    return (int_value // 10000 + 1) / 10.0
+
+
+def _cvss31_base_score(vector):
+    """The Base Score for a bare 'CVSS:3.x/AV:.../...' string, or None when it
+    is not a complete CVSS 3.x base vector (a temporal/environmental-only
+    string, or a metric this parses does not recognize)."""
+    if not isinstance(vector, str) or not vector.startswith("CVSS:3."):
+        return None
+    metrics = {}
+    for part in vector.split("/")[1:]:
+        k, _, v = part.partition(":")
+        if k:
+            metrics[k] = v
+    try:
+        av = _CVSS31_AV[metrics["AV"]]
+        ac = _CVSS31_AC[metrics["AC"]]
+        ui = _CVSS31_UI[metrics["UI"]]
+        scope = metrics["S"]
+        pr = (_CVSS31_PR_CHANGED if scope == "C" else _CVSS31_PR_UNCHANGED)[metrics["PR"]]
+        c = _CVSS31_CIA[metrics["C"]]
+        i = _CVSS31_CIA[metrics["I"]]
+        a = _CVSS31_CIA[metrics["A"]]
+    except KeyError:
+        return None
+    iss = 1 - ((1 - c) * (1 - i) * (1 - a))
+    if scope == "C":
+        impact = 7.52 * (iss - 0.029) - 3.25 * ((iss - 0.02) ** 15)
+    else:
+        impact = 6.42 * iss
+    if impact <= 0:
+        return 0.0
+    exploitability = 8.22 * av * ac * pr * ui
+    total = impact + exploitability
+    if scope == "C":
+        total *= 1.08
+    return _cvss31_roundup(min(total, 10.0))
+
+
+def _cvss31_severity(score):
+    """The standard CVSS 3.1 qualitative bins (spec section 5)."""
+    if score is None:
+        return "UNKNOWN"
+    if score == 0.0:
+        return "NONE"
+    if score < 4.0:
+        return "LOW"
+    if score < 7.0:
+        return "MEDIUM"
+    if score < 9.0:
+        return "HIGH"
+    return "CRITICAL"
+
+
+def _osv_cvss_vectors(vuln):
+    """(CVSS_V3 vector or '', CVSS_V4 vector or '') from OSV's severity[]."""
+    v3 = v4 = ""
+    for s in _dicts(vuln.get("severity")):
+        score = s.get("score")
+        if not isinstance(score, str):
+            continue
+        if s.get("type") == "CVSS_V3" and not v3:
+            v3 = score
+        elif s.get("type") == "CVSS_V4" and not v4:
+            v4 = score
+    return v3, v4
+
+
+def _osv_severity_cvss(vuln):
+    """(severity, cvss, cvssVector) per the priority in the module docstring
+    above _osv_advisory_view: a vendor-stated qualitative rating first, then a
+    Base Score computed from a CVSS_V3 vector, then a CVSS_V4 vector shown
+    without a computed score (no v4 calculator here), then nothing."""
+    v3, v4 = _osv_cvss_vectors(vuln)
+    ds_severity = _as_dict(vuln.get("database_specific")).get("severity")
+    if isinstance(ds_severity, str) and ds_severity.strip():
+        return ds_severity.strip().upper(), None, (v3 or v4)
+    if v3:
+        score = _cvss31_base_score(v3)
+        if score is not None:
+            return _cvss31_severity(score), score, v3
+    if v4:
+        return "UNKNOWN", None, v4
+    return "UNKNOWN", None, ""
+
+
+def _osv_advisory_view(vuln):
+    """One OSV vulnerability record, reshaped for the UI: bounded lists, a
+    decoded severity/score, and only fields OSV actually sent."""
+    severity, cvss, vector = _osv_severity_cvss(vuln)
+    affected = []
+    for a in _dicts(vuln.get("affected")):
+        pkg = _as_dict(a.get("package"))
+        entry = {"ecosystem": pkg.get("ecosystem") or "", "name": pkg.get("name") or ""}
+        ranges = _dicts(a.get("ranges"))
+        if ranges:
+            entry["ranges"] = ranges
+        versions = [str(v) for v in _as_list(a.get("versions"))]
+        if versions:
+            entry["versions"] = versions
+        affected.append(entry)
+    return {
+        "id": str(vuln.get("id") or ""),
+        "found": True,
+        "severity": severity,
+        "cvss": cvss,
+        "cvssVector": vector,
+        "title": str(vuln.get("summary") or ""),
+        "description": str(vuln.get("details") or "")[:MAX_VULN_DESC],
+        "aliases": [str(a) for a in _as_list(vuln.get("aliases"))],
+        "withdrawn": "withdrawn" in vuln,
+        "modified": str(vuln.get("modified") or ""),
+        "published": str(vuln.get("published") or ""),
+        "refs": [
+            r.get("url") for r in _dicts(vuln.get("references")) if isinstance(r.get("url"), str)
+        ][:MAX_VULN_REFS],
+        "affected": affected,
+        "source": "osv",
+    }
+
+
+class _OsvNotFound(Exception):
+    """OSV answered 404 -- a real "no such advisory", not a failure."""
+
+
+class _OsvOffline(Exception):
+    """The network itself did not work (DNS, connection refused, timeout)."""
+
+
+class _OsvUpstreamError(Exception):
+    """OSV answered, but not with a usable 2xx JSON body."""
+
+
+class _OsvNoRedirect(urllib.request.HTTPRedirectHandler):
+    """OSV_API_BASE names the exact host to talk to; a redirect off it is
+    treated as an upstream failure, never followed."""
+
+    def redirect_request(self, req, fp, code, msg, hdrs, newurl):
+        return None
+
+
+_OSV_OPENER = urllib.request.build_opener(_OsvNoRedirect)
+
+
+def _osv_call(method, path, body=None):
+    """One request to OSV_API_BASE + path. Raises _OsvNotFound / _OsvOffline /
+    _OsvUpstreamError (see above); returns the parsed JSON body otherwise."""
+    data = json.dumps(body).encode("utf-8") if body is not None else None
+    headers = {"User-Agent": OSV_USER_AGENT}
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(OSV_API_BASE + path, data=data, headers=headers, method=method)
+    try:
+        with _OSV_OPENER.open(req, timeout=OSV_TIMEOUT) as resp:
+            raw = resp.read(OSV_MAX_BODY + 1)
+    except urllib.error.HTTPError as err:
+        if err.code == 404:
+            raise _OsvNotFound() from err
+        raise _OsvUpstreamError("HTTP %s" % err.code) from err
+    except (urllib.error.URLError, OSError) as err:
+        raise _OsvOffline(str(err)) from err
+    if len(raw) > OSV_MAX_BODY:
+        raise _OsvUpstreamError("response too large")
+    try:
+        return json.loads(raw.decode("utf-8"))
+    except (UnicodeDecodeError, ValueError) as err:
+        raise _OsvUpstreamError(str(err)) from err
+
+
+# Process-memory-only TTL cache, never disk: BomLens keeps no server state
+# between requests, so the one exception (a few minutes of lookup results) has
+# to stay small and bounded rather than grow into the db this project refuses
+# to have. Keys: a normalized advisory id, or (ecosystem, name, version).
+_LOOKUP_CACHE = OrderedDict()
+_LOOKUP_CACHE_LOCK = threading.Lock()
+_LOOKUP_CACHE_MAX = 128
+_LOOKUP_CACHE_TTL = 300
+
+# OSV documents no rate limit, but an unbounded fan-out from one browser tab
+# (a component table with hundreds of rows, each firing a lookup) would still
+# be rude to a public, free service. Caps concurrent outbound calls; a request
+# that can't get a slot fails fast rather than queuing behind the other three.
+_LOOKUP_GATE = threading.BoundedSemaphore(4)
+
+
+def _lookup_cache_get(key):
+    now = time.monotonic()
+    with _LOOKUP_CACHE_LOCK:
+        hit = _LOOKUP_CACHE.get(key)
+        if hit is None:
+            return None
+        expires, value = hit
+        if expires < now:
+            del _LOOKUP_CACHE[key]
+            return None
+        _LOOKUP_CACHE.move_to_end(key)
+        return value
+
+
+def _lookup_cache_put(key, value):
+    with _LOOKUP_CACHE_LOCK:
+        _LOOKUP_CACHE[key] = (time.monotonic() + _LOOKUP_CACHE_TTL, value)
+        _LOOKUP_CACHE.move_to_end(key)
+        while len(_LOOKUP_CACHE) > _LOOKUP_CACHE_MAX:
+            _LOOKUP_CACHE.popitem(last=False)
+
+
 # Single-use private-repo tokens, stashed via POST /git-cred so the secret
 # never travels in the scan-stream querystring (which could be logged/cached).
 _GIT_CREDS = {}
@@ -2763,6 +3255,9 @@ class Handler(BaseHTTPRequestHandler):
                 # the firmware/aibom image as a SIBLING container (docker socket).
                 "firmware": firmware_usable(),
                 "scanoss": scanoss_capable(),
+                # No sibling fallback (see deep_license_capable): false hides the
+                # toggle outright rather than promising a pull that never comes.
+                "deepLicense": deep_license_capable(),
                 "docker": docker_capable(),
                 "aibom": aibom_usable(),
                 # Deep CVE matching (maven NVD-CPE via grype) offered on uploaded
@@ -2783,6 +3278,9 @@ class Handler(BaseHTTPRequestHandler):
                 # the UI can say that private/gated models resolve. A boolean only —
                 # the token itself is never exposed over the API.
                 "hfAuth": bool(os.environ.get("HF_TOKEN")),
+                # Gates GET /advisory and /package-advisories: false means those
+                # two return 403 without ever reaching OSV.dev (air-gapped run).
+                "externalLookup": external_lookup_capable(),
                 "firmwareImage": FIRMWARE_IMAGE,
                 "aibomImage": AIBOM_IMAGE,
                 "deepCveImage": DEEP_CVE_IMAGE,
@@ -2810,6 +3308,10 @@ class Handler(BaseHTTPRequestHandler):
             self._image_status(urllib.parse.parse_qs(parsed.query))
         elif path == "/pull-stream":
             self._pull_stream(urllib.parse.parse_qs(parsed.query))
+        elif path == "/advisory":
+            self._advisory(urllib.parse.parse_qs(parsed.query))
+        elif path == "/package-advisories":
+            self._package_advisories(urllib.parse.parse_qs(parsed.query))
         else:
             self._serve_static(path)
 
@@ -2923,7 +3425,15 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         safe_fn = os.path.basename(filename) or "upload.bin"
-        safe_fn = re.sub(r"[^A-Za-z0-9._-]", "_", safe_fn)
+        # Strip only what is genuinely unsafe: characters Windows forbids in a
+        # filename (this upload can be bind-mounted back onto a Windows host
+        # via Docker Desktop) and C0 control characters, plus trailing dots/
+        # spaces (Windows silently strips those, so keeping them invites a
+        # mismatch between what this server wrote and what a Windows-side
+        # tool sees). An ASCII-only allowlist used to sit here and collapsed
+        # any non-ASCII name (a Korean filename, the common case for this
+        # product's users, not an edge case) to a run of underscores.
+        safe_fn = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "_", safe_fn).strip(". ") or "upload.bin"
         lower = safe_fn.lower()
         if not lower.endswith(UPLOAD_EXTS[kind]):
             shutil.rmtree(dest_dir, ignore_errors=True)
@@ -3144,6 +3654,97 @@ class Handler(BaseHTTPRequestHandler):
         else:
             sse("done", json.dumps({"ok": False, "image": image, "reason": reason}))
 
+    # ---- external vulnerability lookup (OSV.dev) ----
+    def _advisory(self, qs):
+        if not external_lookup_capable():
+            self._send(403, json.dumps({"error": "disabled"}))
+            return
+        vuln_id = (qs.get("id") or [""])[0]
+        if not _advisory_id_ok(vuln_id):
+            self._send(400, json.dumps({"error": "invalid id"}))
+            return
+        cache_key = ("advisory", vuln_id)
+        cached = _lookup_cache_get(cache_key)
+        if cached is not None:
+            self._send(200, json.dumps(cached))
+            return
+        if not _LOOKUP_GATE.acquire(blocking=False):
+            self._send(503, json.dumps({"error": "busy"}))
+            return
+        try:
+            vuln = _osv_call("GET", "/v1/vulns/" + urllib.parse.quote(vuln_id, safe=""))
+        except _OsvNotFound:
+            result = {"id": vuln_id, "found": False, "source": "osv"}
+            _lookup_cache_put(cache_key, result)
+            self._send(200, json.dumps(result))
+            return
+        except _OsvOffline:
+            self._send(503, json.dumps({"error": "offline"}))
+            return
+        except _OsvUpstreamError:
+            self._send(502, json.dumps({"error": "upstream"}))
+            return
+        finally:
+            _LOOKUP_GATE.release()
+        if not isinstance(vuln, dict):
+            self._send(502, json.dumps({"error": "upstream"}))
+            return
+        result = _osv_advisory_view(vuln)
+        _lookup_cache_put(cache_key, result)
+        self._send(200, json.dumps(result))
+
+    def _package_advisories(self, qs):
+        if not external_lookup_capable():
+            self._send(403, json.dumps({"error": "disabled"}))
+            return
+        slug = (qs.get("ecosystem") or [""])[0]
+        name = (qs.get("name") or [""])[0]
+        version = (qs.get("version") or [""])[0]
+        ecosystem = _OSV_ECOSYSTEMS.get(slug)
+        if (
+            not ecosystem or not name or not version
+            or len(name) > 255 or len(version) > 256
+            or any(ord(c) < 0x20 for c in name) or any(ord(c) < 0x20 for c in version)
+        ):
+            self._send(400, json.dumps({"error": "invalid request"}))
+            return
+        cache_key = ("package", ecosystem, name, version)
+        cached = _lookup_cache_get(cache_key)
+        if cached is not None:
+            self._send(200, json.dumps(cached))
+            return
+        if not _LOOKUP_GATE.acquire(blocking=False):
+            self._send(503, json.dumps({"error": "busy"}))
+            return
+        try:
+            data = _osv_call(
+                "POST", "/v1/query",
+                {"package": {"name": name, "ecosystem": ecosystem}, "version": version},
+            )
+        except _OsvNotFound:
+            # /v1/query answers "nothing found" with an empty body, not a 404;
+            # this branch exists only in case that ever changes upstream.
+            data = {}
+        except _OsvOffline:
+            self._send(503, json.dumps({"error": "offline"}))
+            return
+        except _OsvUpstreamError:
+            self._send(502, json.dumps({"error": "upstream"}))
+            return
+        finally:
+            _LOOKUP_GATE.release()
+        if not isinstance(data, dict):
+            self._send(502, json.dumps({"error": "upstream"}))
+            return
+        items = [_osv_advisory_view(v) for v in _dicts(data.get("vulns"))[:MAX_VULN_ROWS]]
+        result = {
+            "found": bool(items),
+            "items": items,
+            "truncated": bool(data.get("next_page_token")),
+        }
+        _lookup_cache_put(cache_key, result)
+        self._send(200, json.dumps(result))
+
     # ---- scan stream (SSE) ----
     def _scan_stream(self, qs):
         def g(k, d=""):
@@ -3189,15 +3790,27 @@ class Handler(BaseHTTPRequestHandler):
         # other. Files inside stay named by the {prefix} (entrypoint.sh uses
         # PROJECT/VERSION), so the folder name and the file prefix can differ.
         prefix = output_prefix(project, version)
-        run_id = prefix
-        if g("timestamp") == "true":
-            run_id = "%s_%s" % (prefix, datetime.now().strftime("%Y%m%d-%H%M%S"))
+        # Claim the folder under the lock and register it in the same breath: a
+        # request that only checked would hand the same name to whatever arrived
+        # while it was deciding. Released in the `finally` below, on every exit
+        # including the client closing the stream mid-scan — a name left behind
+        # would push every later scan of that project onto a suffixed folder for
+        # the life of the process.
+        with _scan_lock:
+            run_id = claim_run_id(prefix, _scan_active,
+                                  force_suffix=g("timestamp") == "true")
+            _scan_active.add(run_id)
+        scan_claimed = run_id
         # Route through run_dir so the same path-injection barrier the read side
         # uses (scan_id_ok allowlist + realpath boundary) gates makedirs. run_id
         # already derives from the sanitized project/version, but resolving it
         # here keeps the write path traversal-safe and analyzer-visible.
         run_out = run_dir(run_id)
         if run_out is None:
+            # Claimed above, so release it here: this path returns before the
+            # try/finally that would otherwise do it.
+            with _scan_lock:
+                _scan_active.discard(scan_claimed)
             self._send(400, json.dumps({"error": "invalid run id"}))
             return
         os.makedirs(run_out, exist_ok=True)
@@ -3589,6 +4202,14 @@ class Handler(BaseHTTPRequestHandler):
                         listing = subprocess.run(["tar", "-tf", up], stdout=subprocess.PIPE, text=True)
                         if re.search(r"(^|\n)(/|.*\.\.(/|$))", listing.stdout or ""):
                             fail("unsafe path in archive"); return
+                        # Same Windows-safety check as safe_extract_zip: a tar
+                        # member name can carry a character Windows forbids in
+                        # a path (backslash, colon, ...) without tripping the
+                        # POSIX-style traversal check above.
+                        _bad = next((ln for ln in (listing.stdout or "").splitlines()
+                                     if _WINDOWS_ILLEGAL_PATH_CHARS.search(ln)), None)
+                        if _bad is not None:
+                            fail("archive member name is not Windows-safe: %s" % _bad); return
                         # Reject a symlink/hardlink member whose target escapes the
                         # extraction dir (a link "evil -> /etc" followed by "evil/x"
                         # writes through the link). The name guard above misses these
@@ -3718,24 +4339,40 @@ class Handler(BaseHTTPRequestHandler):
                 env["TARGET_FILE"] = up
 
             elif source == "ai-model":
-                # Generate an AI SBOM (CycloneDX 1.7 ML-BOM) for a HuggingFace
-                # model via the OWASP AIBOM Generator (opt-in bomlens-aibom image).
+                # One field takes both AI inputs a person is handed a link to: a
+                # HuggingFace model id, or a published research dataset on
+                # Figshare. Which path runs is decided by the reference, the same
+                # rule scan-sbom.sh applies, so the CLI and the UI never disagree
+                # about what a given string means.
                 if not target:
-                    fail("HuggingFace model id required (owner/name)"); return
-                # owner/name (optional owner), HuggingFace charset only; no traversal.
-                if not re.match(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)?$", target):
-                    fail("Unsupported model id (expected owner/name)"); return
-                mode = "AIBOM"
-                env["MODE"] = "AIBOM"
-                env["MODEL_ID"] = target
-                if aibom_capable():
-                    pass  # in-process (UI launched from the aibom image)
-                elif docker_cli_present() and docker_capable():
-                    # Heavy aibom image runs as a sibling; needs only outbound net.
-                    sibling = {"image": AIBOM_IMAGE, "model_id": target}
+                    fail("HuggingFace model id (owner/name) or Figshare item required"); return
+                if "figshare" in target.lower():
+                    # A Figshare item is read by one stdlib script in THIS image
+                    # against a public endpoint, so unlike the model path it needs
+                    # neither Docker nor the generator image. The charset is wider
+                    # than a model id (it is a URL or a DOI) and still bounded: no
+                    # whitespace, no shell bytes, no leading dash.
+                    if not re.match(r"^[A-Za-z0-9][A-Za-z0-9._:/~-]{0,300}$", target):
+                        fail("Unsupported Figshare reference (give the item URL, its DOI, "
+                             "or the item number)"); return
+                    mode = "DATASET"
+                    env["MODE"] = "DATASET"
+                    env["DATASET_REF"] = target
                 else:
-                    fail("AI-model SBOM generation requires Docker (to run the AIBOM image) "
-                         "or relaunching the UI from the AIBOM image."); return
+                    # owner/name (optional owner), HuggingFace charset only; no traversal.
+                    if not re.match(r"^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)?$", target):
+                        fail("Unsupported model id (expected owner/name)"); return
+                    mode = "AIBOM"
+                    env["MODE"] = "AIBOM"
+                    env["MODEL_ID"] = target
+                    if aibom_capable():
+                        pass  # in-process (UI launched from the aibom image)
+                    elif docker_cli_present() and docker_capable():
+                        # Heavy aibom image runs as a sibling; needs only outbound net.
+                        sibling = {"image": AIBOM_IMAGE, "model_id": target}
+                    else:
+                        fail("AI-model SBOM generation requires Docker (to run the AIBOM image) "
+                             "or relaunching the UI from the AIBOM image."); return
 
             else:
                 fail("unknown input type: %s" % source); return
@@ -3788,6 +4425,21 @@ class Handler(BaseHTTPRequestHandler):
             # from any mode), so both callbacks are always wired, not chosen by mode.
             on_cvedb_progress = lambda p: sse("progress", json.dumps({"phase": "cvedb", "percent": p}))
             on_deepcve_progress = lambda p: sse("progress", json.dumps({"phase": "deepcve", "percent": p}))
+            # Warnings the scan emitted, kept for the result screen. The log
+            # itself is streamed and never stored, so a scan re-opened later had
+            # no way to say that it had warned about anything — and these are
+            # exactly the lines that decide how far to trust the numbers
+            # ("no package manifest detected", "0 components", a sparse-result
+            # notice for C/C++ or Swift). Deduplicated and capped: a repeated
+            # line says nothing more the second time.
+            scan_warnings = []
+
+            def note_log(ln):
+                if isinstance(ln, str) and ln.lstrip().startswith("[WARN]"):
+                    text = ln.strip()
+                    if text not in scan_warnings and len(scan_warnings) < MAX_SCAN_WARNINGS:
+                        scan_warnings.append(text)
+                sse("log", json.dumps(ln))
             if sibling is not None:
                 # Firmware / AI on the permissive-only base image: run the
                 # dedicated image as a sibling container (host socket). It does
@@ -3796,7 +4448,7 @@ class Handler(BaseHTTPRequestHandler):
                 # just like an in-process scan.
                 rc = run_sibling_scan(
                     sibling["image"], env["MODE"], run_out,
-                    lambda ln: sse("log", json.dumps(ln)),
+                    note_log,
                     upload_file=sibling.get("upload_file"),
                     model_id=sibling.get("model_id"),
                     source_root=sibling.get("source_root"),
@@ -3824,7 +4476,7 @@ class Handler(BaseHTTPRequestHandler):
                             if piece:
                                 _emit_or_log(
                                     piece,
-                                    lambda ln: sse("log", json.dumps(ln)),
+                                    note_log,
                                     on_cvedb_progress,
                                     on_deepcve_progress,
                                 )
@@ -3859,7 +4511,11 @@ class Handler(BaseHTTPRequestHandler):
                 # The inputs + toggles this scan ran with (no secrets); also saved
                 # as the run-folder sidecar so a re-opened scan carries it too.
                 "scanConfig": scan_config,
+                "scanWarnings": scan_warnings,
             }
+            if scan_warnings:
+                scan_config["warnings"] = scan_warnings
+                write_scanmeta(run_out, scan_config)
             sse("done", json.dumps(done))
         except Exception as exc:  # noqa: BLE001
             # The summary helpers are defended against malformed artifacts, so a
@@ -3873,6 +4529,11 @@ class Handler(BaseHTTPRequestHandler):
                                     "sbom": None, "security": None,
                                     "conformance": None}))
         finally:
+            # Free the run folder for the next scan of this project. Every exit
+            # passes here: a finished scan, a failure, and a client that closed
+            # the stream mid-scan.
+            with _scan_lock:
+                _scan_active.discard(scan_claimed)
             # Remove uploaded/cloned/extracted trees; keep generated artifacts
             # (entrypoint wrote them into the run folder run_out).
             token_dir = upload_token_dir(token)

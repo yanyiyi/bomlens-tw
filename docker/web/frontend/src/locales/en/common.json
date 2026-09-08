@@ -49,9 +49,9 @@
     "dockerImage": "Docker image",
     "dockerHint": "Scans a local/remote Docker image (Docker socket required).",
     "dockerPlaceholder": "nginx:latest",
-    "aiModel": "AI model",
-    "aiModelPlaceholder": "google-bert/bert-base-uncased",
-    "aiModelHint": "Enter a HuggingFace model ID as 'org/model' (e.g. Qwen/Qwen2.5-0.5B) — not a collection name or a full URL. Fetches model-card metadata over the network to build a CycloneDX ML-BOM.",
+    "aiModel": "AI model or dataset",
+    "aiModelPlaceholder": "google-bert/bert-base-uncased or figshare.com/articles/.../33412285",
+    "aiModelHint": "A HuggingFace model ID as 'org/model' (e.g. Qwen/Qwen2.5-0.5B), or a Figshare item: its page URL, its DOI, or the item number. Fetched over the network to build a CycloneDX ML-BOM.",
     "aiModelUnavailable": "AI-model SBOMs need Docker running (the AIBOM image runs as a sibling container).",
     "modelUpload": "Model file",
     "modelUploadHint": "Reads the model file's own header — no HuggingFace account and no network, so a model that was never published can be scanned. What can be filled depends on the format: GGUF carries a name, a license and an architecture, while safetensors usually carries only tensor shapes. Files over 8 GB: use the CLI (--model-file), which reads them in place.",
@@ -137,6 +137,11 @@
     "aiScanBody": "Generated from HuggingFace model metadata. It centers on the model and its datasets, so it has fewer components than a typical software scan.",
     "vendoredHintTitle": "Few components found — is this C/C++ embedded source?",
     "vendoredHintBody": "Open source is often copied (vendored) into C/C++ sources that have no package manager, where a normal scan can't see it. Turn on \"Detect copied-in open source\" under Advanced scan options and run again. Only file fingerprints are sent — your source stays local.",
+    "zeroComponentsTitle": "No components were found",
+    "zeroComponentsBody": "This is a warning, not a clean result. A scan finds nothing when it has nothing to read: no dependency manifest at the top of the folder (requirements.txt, package.json, pom.xml and the like), or a scan path that points somewhere else. Check the manifest and the path, then scan again.",
+    "unpinnedTitle": "Versions were resolved at scan time",
+    "unpinnedBody": "This project states version ranges and ships no lock file, so the versions listed here are what a fresh install would fetch today — not necessarily what is installed on your machine. The vulnerability result was measured against these versions. To see the risk in your own environment, scan a manifest that pins exact versions.",
+    "scanWarningsTitle": "The scan reported these while it ran",
     "sbomDegradedTitle": "Direct dependencies only — deep resolution didn't run",
     "sbomDegradedBody": "The transitive-dependency analyzer (cdxgen) couldn't run, so this SBOM lists only direct dependencies. Make sure Docker is available and re-scan for the full dependency graph.",
     "sbomDegradedDisk": "The transitive-dependency analyzer (cdxgen) ran out of Docker disk space, so this SBOM lists only direct dependencies. Free space (e.g. \"docker system prune\") and re-scan for the full dependency graph.",
@@ -184,6 +189,10 @@
         "title": "Conformance report",
         "desc": "Format validation of the submitted SBOM."
       },
+      "aiProfile": {
+        "title": "AI compliance profile",
+        "desc": "The G7 minimum elements, licenses needing review and regulatory crosswalk, gathered for this model."
+      },
       "security": {
         "title": "Security report",
         "desc": "Known vulnerabilities (CVE) found in the components."
@@ -222,7 +231,7 @@
     "componentsCount": "{{shown}} of {{total}} components",
     "truncated": "first {{count}} rows shown",
     "noMatch": "No matching rows.",
-    "licenseNone": "Unknown",
+    "licenseNone": "No license declared",
     "filterHasVulns": "Has vulnerabilities",
     "filterDirectOnly": "Direct only",
     "filterNeedsReview": "Needs review",
@@ -280,6 +289,7 @@
     "outdatedReleasesBehind": "{{count}} releases behind",
     "outdatedLastReleased": "released {{date}}",
     "filterOutdated": "Outdated",
+    "filterLicenseUnclear": "Licence to decide",
     "columns": "Columns",
     "filters": "Filters",
     "clearFilters": "Clear filters",
@@ -306,7 +316,8 @@
     "csvCvss": "CVSS",
     "csvEpss": "EPSS",
     "csvKev": "Known exploited",
-    "csvTitle": "Title"
+    "csvTitle": "Title",
+    "artifactFiles": "({{count}} files)"
   },
   "deps": {
     "loading": "Loading dependencies…",
@@ -320,6 +331,9 @@
     "flatFallback": "This SBOM has no dependency graph; showing a flat component list.",
     "expand": "Expand",
     "collapse": "Collapse",
+    "treeLabel": "Dependency tree",
+    "expandNamed": "Expand {{name}}",
+    "collapseNamed": "Collapse {{name}}",
     "tooLarge": "The graph has {{count}} nodes (over {{cap}}); use the tree view instead.",
     "graphError": "The dependency graph could not be rendered.",
     "search": "Search packages…",
@@ -333,7 +347,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "fit": "Fit to view",
-    "savePng": "Save as PNG"
+    "savePng": "Save as PNG",
+    "legendRoot": "Scanned component"
   },
   "sourceTree": {
     "loading": "Loading source tree…",
@@ -381,7 +396,8 @@
     "HIGH": "High",
     "MEDIUM": "Medium",
     "LOW": "Low",
-    "UNKNOWN": "Unknown"
+    "UNKNOWN": "Unknown",
+    "NONE": "None"
   },
   "viewer": {
     "open": "View artifact",
@@ -428,7 +444,9 @@
     "helpDocs": "Documentation",
     "helpDemo": "Live demo",
     "helpVersion": "Version {{version}}",
-    "helpVersionUnknown": "Version not stamped in this build"
+    "helpVersionUnknown": "Version not stamped in this build",
+    "conformanceSplitTitle": "Mandatory checks passed, out of the mandatory checks measured",
+    "lookupTitle": "External vulnerability lookup"
   },
   "shell": {
     "newScan": "New scan",
@@ -441,7 +459,48 @@
     "placeholder": "Search components, CVEs…",
     "none": "No matches",
     "components": "Components",
-    "vulnerabilities": "Vulnerabilities"
+    "vulnerabilities": "Vulnerabilities",
+    "lookupGroup": "External lookup",
+    "lookupExternal": "Look up \"{{term}}\" on OSV.dev"
+  },
+  "lookup": {
+    "title": "External vulnerability lookup",
+    "subtitle": "Check a CVE/GHSA id, a purl, or a package name and version against OSV.dev, live, with nothing cached locally.",
+    "inputLabel": "CVE, GHSA, purl, or package name",
+    "inputPlaceholder": "CVE-2021-44228, pkg:npm/lodash@4.17.21, or a package name",
+    "ecosystemLabel": "Ecosystem",
+    "ecosystemPlaceholder": "Select an ecosystem",
+    "versionLabel": "Version",
+    "versionPlaceholder": "e.g. 4.17.21",
+    "submit": "Look up",
+    "searching": "Looking up…",
+    "unsupportedPurl": "Unsupported package type: {{type}}",
+    "notFound": "Not in the OSV.dev catalog",
+    "notFoundHint": "Not being listed doesn't mean it's safe; no advisory database's coverage is exhaustive.",
+    "packageClean": "No known advisories against this version",
+    "errorInvalid": "That doesn't look like a valid id, purl, or package + version.",
+    "errorOffline": "This server can't reach OSV.dev, which is normal in a closed network. Lookups will fail until it can.",
+    "errorUpstream": "OSV.dev didn't answer usably. Try again in a moment.",
+    "errorBusy": "Lookups are busy right now. Try again in a moment.",
+    "errorUnreachable": "Couldn't reach the server for this lookup.",
+    "truncated": "OSV.dev reported more advisories than are shown here.",
+    "withdrawn": "Withdrawn",
+    "aliases": "Also known as",
+    "affected": "Affected",
+    "references": "References",
+    "cvss": "CVSS",
+    "published": "Published",
+    "modified": "Modified",
+    "ecosystem": {
+      "npm": "npm",
+      "pypi": "PyPI",
+      "maven": "Maven",
+      "go": "Go",
+      "cargo": "crates.io",
+      "rubygems": "RubyGems",
+      "packagist": "Packagist",
+      "nuget": "NuGet"
+    }
   },
   "newscan": {
     "title": "What do you want to scan?",
@@ -494,7 +553,10 @@
     "topRisk": "Highest risk components",
     "topRiskOf": "{{shown}} of {{total}} with vulnerabilities",
     "topRiskAll": "All components",
-    "attnMalicious": "{{count}} known-malicious package(s) — remove and rotate credentials"
+    "attnMalicious": "{{count}} known-malicious package(s) — remove and rotate credentials",
+    "attnModelRisk": "{{count}} model or dataset needs a licence or security review",
+    "attnConformanceGap": "{{count}} conformance element(s) can be filled in",
+    "depNone": "no relationships recorded"
   },
   "models": {
     "loading": "Loading model details…",
@@ -532,6 +594,7 @@
     "assessLicense": "License",
     "assessSecurity": "File security",
     "assessDatasets": "Datasets",
+    "assessTrainingData": "Training-data terms",
     "assessNotEvaluated": "Not evaluated",
     "gradeOk": "No restriction signals",
     "gradeConditional": "Conditional use",
@@ -968,6 +1031,7 @@
     "sevDown": "Better than the previous scan",
     "delete": "Delete",
     "deleted": "Scan deleted",
+    "scanNotFound": "Scan “{{id}}” was not found. It may have been deleted.",
     "confirmDeleteTitle": "Delete this scan?",
     "confirmDeleteBody": "The output files for {{scan}} are removed from this machine. Nothing is kept elsewhere, so this cannot be undone.",
     "typeAi": "AI model",
@@ -1026,5 +1090,19 @@
       "cisa-component": "Component data",
       "cisa-practices": "Practices and processes"
     }
+  },
+  "conf": {
+    "kind": {
+      "pass": "Met",
+      "actionable": "Can be fixed",
+      "review": "Needs a person",
+      "na": "Not applicable"
+    },
+    "searchPlaceholder": "Search requirements and references",
+    "showingAll": "Showing all {{count}} checks.",
+    "showingFiltered": "Showing {{count}} of {{total}} checks.",
+    "noMatch": "No check matches this filter.",
+    "report": "Report ({{ext}})",
+    "hiddenByFilter": "{{count}} more match this search under another filter."
   }
 }

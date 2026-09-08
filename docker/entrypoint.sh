@@ -197,13 +197,14 @@ mark_sbom_degraded() {
 # shellcheck source=docker/lib/pipeline-step.sh
 . "$LIBDIR/pipeline-step.sh"
 
-# Modes whose SBOM describes an AI model rather than a software project: the
-# model-card path (AIBOM, from a HuggingFace id) and the model-file path
-# (MODELFILE, from the file itself). They share the AI post-processing — risk
-# assessment, G7 conformance, the AI profile — and skip the package-oriented
-# enrichments, which have no purl, no CPE and no release cycle to match on.
+# Modes whose SBOM describes an AI asset rather than a software project: the
+# model-card path (AIBOM, from a HuggingFace id), the model-file path
+# (MODELFILE, from the file itself) and the dataset path (DATASET, from a
+# published research item). They share the AI post-processing — risk assessment,
+# G7 conformance, the AI profile — and skip the package-oriented enrichments,
+# which have no purl, no CPE and no release cycle to match on.
 case "$SCAN_MODE" in
-    AIBOM|MODELFILE) AI_MODEL_SCAN=true ;;
+    AIBOM|MODELFILE|DATASET) AI_MODEL_SCAN=true ;;
     *) AI_MODEL_SCAN=false ;;
 esac
 
@@ -358,6 +359,17 @@ EOF
         run_optional_step enrich-aibom bash "$LIBDIR/enrich-aibom.sh" "$OUTPUT_FILE" "$MODEL_ID"
         ;;
 
+    DATASET)
+        # A published research dataset, from a Figshare item reference. The fields
+        # an SBOM wants are fields there rather than prose in a model card, and the
+        # public item endpoint needs no account, so this is one stdlib script in the
+        # base image: no generator, no opt-in image, and it works for whoever can
+        # reach the API. It writes its own metadata.component, like AIBOM.
+        if [ -z "$DATASET_REF" ]; then echo "[ERROR] DATASET_REF required for DATASET mode."; exit 1; fi
+        echo "[1/2] figshare: describe $DATASET_REF"
+        python3 "$LIBDIR/scan-figshare.py" "$DATASET_REF" "$OUTPUT_FILE" "$PROJECT_VERSION"
+        ;;
+
     MODELFILE)
         # AI model SBOM built from a model FILE rather than a HuggingFace id: the
         # file's own header is the only source. No network, no generator image —
@@ -489,7 +501,7 @@ EOF
         ;;
 
     *)
-        echo "[ERROR] Unknown MODE: $SCAN_MODE (expected SOURCE/IMAGE/BINARY/ROOTFS/FIRMWARE/AIBOM/MODELFILE/ANALYZE/MERGE/POSTPROCESS/UI)"
+        echo "[ERROR] Unknown MODE: $SCAN_MODE (expected SOURCE/IMAGE/BINARY/ROOTFS/FIRMWARE/AIBOM/MODELFILE/DATASET/ANALYZE/MERGE/POSTPROCESS/UI)"
         exit 1
         ;;
 esac
@@ -592,6 +604,39 @@ if [ "$SOURCE_SCAN" = "true" ] && [ -d "$COCOA_SRC" ] \
 fi
 
 # ========================================================
+# Modelica (.mo) library dependencies — cdxgen has no Modelica cataloger, so a
+# Modelica project (OpenModelica/Dymola sources) scans to zero components even
+# though the file itself already states what it depends on: a package's
+# annotation(uses(...)) block names each external library with its version.
+# identify-modelica.py parses that structurally, the same way identify-
+# cocoapods.sh parses Podfile.lock, for the CLI source scan (/src) and the
+# web-UI source scan (SOURCE_ROOT). No-op when the main scan already carries
+# a pkg:layer=modelica component, so this never double-counts.
+# ========================================================
+MODELICA_SRC="${SOURCE_ROOT:-/src}"
+if [ "$SOURCE_SCAN" = "true" ] && [ -d "$MODELICA_SRC" ] \
+   && find "$MODELICA_SRC" -type f -name '*.mo' 2>/dev/null | grep -q .; then
+    HAS_MODELICA=$(jq '[.components[]? | select(.properties[]? | select(.name=="bomlens:layer" and .value=="modelica"))] | length' "$OUTPUT_FILE" 2>/dev/null || echo 0)
+    if [ "${HAS_MODELICA:-0}" -eq 0 ]; then
+        echo "[INFO] Identifying Modelica library dependencies (uses() annotation)..."
+        MODELICA_SBOM="${OUT_PREFIX}_modelica.cdx.json"
+        if command -v python3 >/dev/null 2>&1 \
+           && python3 "$LIBDIR/identify-modelica.py" "$MODELICA_SRC" "$MODELICA_SBOM" "$PROJECT_VERSION"; then
+            MODELICA_N=$(jq '[.components[]?] | length' "$MODELICA_SBOM" 2>/dev/null || echo 0)
+            if [ "${MODELICA_N:-0}" -gt 0 ]; then
+                echo "[INFO] Modelica library dependencies identified: $MODELICA_N — merging into SBOM."
+                if bash "$LIBDIR/merge-sbom.sh" "${OUTPUT_FILE}.merged" "$PROJECT_NAME" "$PROJECT_VERSION" "$OUTPUT_FILE" "$MODELICA_SBOM"; then
+                    mv "${OUTPUT_FILE}.merged" "$OUTPUT_FILE"
+                else
+                    echo "[WARN] merge of Modelica components failed; keeping the original SBOM." >&2
+                    rm -f "${OUTPUT_FILE}.merged"
+                fi
+            fi
+        fi
+    fi
+fi
+
+# ========================================================
 # Common pipeline: normalize / deep-license / notice / security / sign
 # ========================================================
 ARTIFACTS=("$OUTPUT_FILE")
@@ -652,7 +697,7 @@ case "$SCAN_MODE" in
     BINARY|FIRMWARE|MODELFILE)
         run_optional_step docmeta bash "$LIBDIR/stamp-document-metadata.sh" "$OUTPUT_FILE" "$SCAN_MODE" "$TARGET_FILE"
         ;;
-    SOURCE|POSTPROCESS|ROOTFS|IMAGE|AIBOM|MERGE)
+    SOURCE|POSTPROCESS|ROOTFS|IMAGE|AIBOM|DATASET|MERGE)
         run_optional_step docmeta bash "$LIBDIR/stamp-document-metadata.sh" "$OUTPUT_FILE" "$SCAN_MODE"
         ;;
 esac
@@ -833,6 +878,16 @@ esac
 # never aborts.
 if [ ! -f "${OUT_PREFIX}_scancode.json" ] && [ -n "$SRC_TREE_DIR" ]; then
     bash "$LIBDIR/source-file-tree.sh" "$SRC_TREE_DIR" "${OUT_PREFIX}_files.json" || true
+fi
+
+# Whether the tree pinned the versions its SBOM reports. Source scans only: an
+# image or a firmware carries what is installed, so there is nothing resolved at
+# scan time to warn about. The CLI reaches this file as POSTPROCESS with
+# SOURCE_SCAN set, the web UI as SOURCE — both are the same scan and both need
+# the answer. Best-effort: an unjudgeable tree records nothing.
+if [ -n "$SRC_TREE_DIR" ] && { [ "$SCAN_MODE" = "SOURCE" ] \
+   || { [ "$SCAN_MODE" = "POSTPROCESS" ] && [ "${SOURCE_SCAN:-false}" = "true" ]; }; }; then
+    bash "$LIBDIR/detect-version-pinning.sh" "$SRC_TREE_DIR" "$OUTPUT_FILE" || true
 fi
 # Collect the file tree if any source-having mode produced one (the modes above,
 # or FIRMWARE from scan-firmware.sh).

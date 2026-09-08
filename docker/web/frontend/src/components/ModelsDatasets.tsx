@@ -28,12 +28,19 @@ import { loadSbom } from "@/lib/sbomGraph";
 import { cn } from "@/lib/utils";
 
 /** Badge tone per pipeline grade — the grade word itself is always shown, so
- *  the color is a reinforcement, never the only signal. */
-const GRADE_TONE: Record<AssessmentGrade, "positive" | "high" | "critical" | "info"> = {
+ *  the color is a reinforcement, never the only signal.
+ *
+ *  The tone ordering has to track the pipeline's own severity ranking
+ *  (assess-ai-risk.sh: caution > review > conditional > ok — a known blocker
+ *  outranks an unknown, which outranks a condition, which outranks a clear
+ *  signal). Get that ordering wrong here and the two readings disagree: a
+ *  reader sees "review" rendered milder than "conditional" and reasonably
+ *  concludes it's the safer of the two, when the pipeline ranks it worse. */
+const GRADE_TONE: Record<AssessmentGrade, "positive" | "medium" | "high" | "critical"> = {
   ok: "positive",
-  conditional: "high",
+  conditional: "medium",
+  review: "high",
   caution: "critical",
-  review: "info",
 };
 
 /** A stamped grade as word + tone (verbatim from the SBOM property). */
@@ -84,7 +91,7 @@ export function ModelsDatasets({
       </ErrorState>
     );
   }
-  if (data.models.length === 0) {
+  if (data.models.length === 0 && data.datasets.length === 0) {
     return (
       <EmptyState icon={Boxes} hint={t("models.emptyHint")}>
         {t("models.empty")}
@@ -139,6 +146,11 @@ export function ModelsDatasets({
                       <span className="font-mono">{d.name}</span>
                       {d.version && (
                         <span className="text-muted-foreground">@{d.version}</span>
+                      )}
+                      {d.collectedBy && (
+                        <Badge variant="outline" className="ml-1.5 align-middle">
+                          {d.collectedBy}
+                        </Badge>
                       )}
                       {d.url && (
                         <a
@@ -231,6 +243,7 @@ function AssessmentBlock({
     { key: "license", label: t("models.assessLicense"), grade: a.license },
     { key: "security", label: t("models.assessSecurity"), grade: a.security },
     { key: "datasets", label: t("models.assessDatasets"), grade: a.datasets },
+    { key: "trainingData", label: t("models.assessTrainingData"), grade: a.trainingData },
   ];
 
   return (
@@ -311,8 +324,11 @@ function ModelCardView({ model: m }: { model: ModelCard }) {
             {m.version ? <span className="text-muted-foreground"> {m.version}</span> : null}
           </span>
           {m.assessment && <GradeBadge grade={m.assessment.overall} />}
+          {/* Outlined, not filled: a licence id is a fact about the model, and
+              in the same grey fill as the verdict beside it the two read as one
+              kind of thing. */}
           {m.licenses.map((l) => (
-            <Badge key={l} variant="muted">
+            <Badge key={l} variant="outline">
               {l}
             </Badge>
           ))}
@@ -332,7 +348,7 @@ function ModelCardView({ model: m }: { model: ModelCard }) {
           </p>
         )}
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid max-w-4xl grid-cols-2 gap-4 sm:grid-cols-4">
           {m.architecture && <Field label={t("models.architecture")}>{m.architecture}</Field>}
           {m.task && <Field label={t("models.task")}>{m.task}</Field>}
           {m.supplier && <Field label={t("models.supplier")}>{m.supplier}</Field>}

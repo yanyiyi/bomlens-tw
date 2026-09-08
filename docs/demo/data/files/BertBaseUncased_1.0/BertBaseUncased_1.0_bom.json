@@ -543,7 +543,6 @@
         }
       ],
       "bom-ref": "pkg:huggingface/google-bert/bert-base-uncased@86b5e093",
-      "description": "No description available",
       "externalReferences": [
         {
           "comment": "Model repository",
@@ -617,11 +616,6 @@
         ]
       },
       "modelCard": {
-        "considerations": {
-          "technicalLimitations": [
-            "You can use the raw model for either masked language modeling or next sentence prediction, but it's mostly intended to be fine-tuned on a downstream task"
-          ]
-        },
         "modelParameters": {
           "datasets": [
             {
@@ -721,15 +715,15 @@
         },
         {
           "name": "cdx:huggingface:downloads",
-          "value": "73085822"
+          "value": "58675189"
         },
         {
           "name": "cdx:huggingface:downloadsAllTime",
-          "value": "3205931023"
+          "value": "3211798095"
         },
         {
           "name": "cdx:huggingface:likes",
-          "value": "2805"
+          "value": "2951"
         },
         {
           "name": "cdx:huggingface:gated",
@@ -818,7 +812,7 @@
         "value": "unknown-to-author"
       }
     ],
-    "timestamp": "2026-08-31T23:05:46+00:00",
+    "timestamp": "2026-09-05T03:24:39+00:00",
     "tools": {
       "components": [
         {
@@ -834,12 +828,12 @@
           "name": "BomLens",
           "publisher": "SK Telecom",
           "type": "application",
-          "version": "1.11.5"
+          "version": "1.11.7"
         }
       ]
     }
   },
-  "serialNumber": "urn:uuid:4e9931e6-fa52-412d-acb4-bce0643af16f",
+  "serialNumber": "urn:uuid:4787424d-f05d-432b-898b-585f8adbc606",
   "specVersion": "1.7",
   "version": 1
 }

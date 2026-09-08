@@ -10,14 +10,39 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import http from "node:http";
+import { createRequire } from "node:module";
 import net from "node:net";
 import os from "node:os";
 import path from "node:path";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export const DEFAULT_IMAGE =
-  process.env.SBOM_SCANNER_IMAGE ?? "ghcr.io/sktelecom/bomlens:latest";
+// 이 앱이 배포된 버전. package.json은 asar 루트에 있고 이 파일은 그 아래 lib/에 있으므로,
+// 패키징된 앱에서도 상대 경로가 그대로 성립한다. 읽지 못하면 null(개발 실행 등).
+function readAppVersion(req = createRequire(import.meta.url)) {
+  try {
+    const v = req("../package.json")?.version;
+    return typeof v === "string" && v.trim() !== "" ? v.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+// 앱이 받아 쓸 이미지 태그.
+//
+// 왜 `:latest`가 아닌가: 그 태그는 릴리스가 아니라 main 최신 빌드를 가리킨다. 릴리스 앱이
+// 그것을 받으면 사용자가 설치한 버전과 실제로 도는 스캐너가 어긋나고, 앱이 백그라운드로
+// 다시 받으므로 같은 앱이 날마다 다른 스캐너를 돌리게 된다. 그러면 사용자가 신고한 결과를
+// 버전으로 재현할 수 없고, 릴리스 검증이 데스크톱 앱 경로를 보증하지 못한다.
+//
+// 버전을 읽지 못하는 실행(소스에서 띄운 개발 앱)에서만 `:latest`로 돌아간다.
+export const APP_VERSION = readAppVersion();
+
+export function imageRef(name, { version = APP_VERSION } = {}) {
+  return `ghcr.io/sktelecom/${name}:${version ?? "latest"}`;
+}
+
+export const DEFAULT_IMAGE = process.env.SBOM_SCANNER_IMAGE ?? imageRef("bomlens");
 
 // 데스크톱 앱이 띄운 UI 컨테이너 식별 라벨. 앱이 강제 종료되면 --rm 컨테이너도 살아남는데,
 // 다음 기동 때 이 라벨로 고아를 찾아 정리한다(cleanupOrphans).
@@ -44,12 +69,11 @@ export class ContainerError extends Error {
 // Opt-in scan images the base UI container launches as SIBLING containers (via
 // the mounted host Docker socket) for firmware and AI-model inputs — the GPL
 // firmware tools and the heavy aibom deps can't live in the permissive-only
-// base image. Kept in sync with server.py's SBOM_FIRMWARE_IMAGE / SBOM_AIBOM_IMAGE
-// defaults; passed into the container as env so both sides agree on the refs.
-export const FIRMWARE_IMAGE =
-  process.env.SBOM_FIRMWARE_IMAGE ?? "ghcr.io/sktelecom/bomlens-firmware:latest";
-export const AIBOM_IMAGE =
-  process.env.SBOM_AIBOM_IMAGE ?? "ghcr.io/sktelecom/bomlens-aibom:latest";
+// base image. Passed into the container as env so both sides agree on the refs, and
+// pinned to the app's own version for the same reason DEFAULT_IMAGE is: a sibling left
+// on `:latest` drifts away from the base image the app just launched.
+export const FIRMWARE_IMAGE = process.env.SBOM_FIRMWARE_IMAGE ?? imageRef("bomlens-firmware");
+export const AIBOM_IMAGE = process.env.SBOM_AIBOM_IMAGE ?? imageRef("bomlens-aibom");
 
 // 결과 저장 폴더. 두 엔진(Rancher/Docker Desktop) 모두 기본 공유하는 홈 디렉터리 아래.
 // SBOM_OUTPUT_DIR로 베이스를 바꿀 수 있다(실행별 하위 폴더는 server.py가 그 아래에 만든다).
@@ -96,7 +120,7 @@ function engineMount() {
 // 코드 규약: -1 = spawn 실패(바이너리 없음), -2 = 타임아웃. 둘을 구분해야 "Docker 미설치"와
 // "데몬이 응답하지 않음"을 갈라 안내할 수 있다. 타임아웃이 없으면 방화벽에 걸린 데몬 호출이
 // 살아있어 보이는 창에서 영원히 멈춘다.
-function run(cmd, args, { timeoutMs, ...opts } = {}) {
+export function run(cmd, args, { timeoutMs, ...opts } = {}) {
   return new Promise((resolve) => {
     const child = spawn(cmd, args, { stdio: ["ignore", "pipe", "pipe"], ...opts });
     let out = "";
@@ -208,22 +232,53 @@ export function ping(port) {
 const VERSION_TIMEOUT_MS = 10_000;
 const INFO_TIMEOUT_MS = 20_000;
 const QUICK_TIMEOUT_MS = 15_000;
+const WSL_DOCKER_TIMEOUT_MS = 8_000;
 
-export async function dockerStatus() {
-  let version = await run(dockerBin, ["version"], { timeoutMs: VERSION_TIMEOUT_MS });
-  // code -1은 spawn 실패(PATH에 없음)다. 이때만 알려진 설치 경로를 뒤져 한 번 더 시도한다.
-  if (version.code === -1 && dockerBin === "docker") {
-    const probed = resolveDockerBin();
+// Windows 전용: 네이티브 docker.exe를 끝내 못 찾았을 때, WSL2 배포판 안에는 Docker(docker-ce
+// 등)가 떠 있는지 확인한다. 데스크톱 앱은 이 조합을 지원하지 않는다 — engineMount()가 붙이는
+// 마운트는 Windows 쪽에 나와 있는 유닉스 소켓/명명 파이프를 전제하는데, WSL2 안의 docker-ce는
+// 그걸 Windows 쪽에 내놓지 않는다. 그래도 "설치 안 됨"과 "WSL2에는 있지만 이 앱은 못 씀"은
+// 사용자에게 완전히 다른 다음 행동을 요구하므로 구분해서 돌려준다.
+// run/resolveDockerBin/자기 자신을 주입받아, 실제 프로세스를 띄우지 않고도 단위 테스트할 수
+// 있게 한다(resolveDockerBin과 같은 원칙).
+export async function detectWsl2Docker({ runImpl = run, platform = process.platform } = {}) {
+  if (platform !== "win32") return false;
+  const r = await runImpl("wsl.exe", ["--", "docker", "info"], { timeoutMs: WSL_DOCKER_TIMEOUT_MS });
+  return r.code === 0;
+}
+
+export async function dockerStatus({
+  runImpl = run,
+  resolveDockerBinImpl = resolveDockerBin,
+  detectWsl2DockerImpl = detectWsl2Docker,
+} = {}) {
+  let version = await runImpl(dockerBin, ["version"], { timeoutMs: VERSION_TIMEOUT_MS });
+  // 바이너리를 못 찾은 것(-1)뿐 아니라, 찾긴 했는데 그 실행이 실패한 경우(예: 설치된 docker.exe가
+  // 있지만 엔진이 꺼져 있어 명명 파이프에 못 붙는 경우, Windows에서는 이게 타임아웃이 아니라
+  // 수 초 안에 code 1로 끝난다)에도 알려진 설치 경로를 한 번 더 뒤진다. 안 그러면 "PATH의
+  // docker"는 못 찾았지만 Rancher Desktop/Docker Desktop은 설치돼 있는 흔한 경우를 "미설치"로
+  // 오분류해 이미 설치한 걸 또 설치하라고 안내하게 된다.
+  if (version.code !== 0 && !version.timedOut && dockerBin === "docker") {
+    const probed = resolveDockerBinImpl();
     if (probed) {
       dockerBin = probed;
-      version = await run(dockerBin, ["version"], { timeoutMs: VERSION_TIMEOUT_MS });
+      version = await runImpl(dockerBin, ["version"], { timeoutMs: VERSION_TIMEOUT_MS });
     }
   }
   // 타임아웃은 "바이너리는 있는데 데몬이 응답하지 않는" 상태다. 미설치로 오분류하면
   // 사용자에게 엉뚱한 설치 안내를 띄우게 된다.
   if (version.timedOut) return { installed: true, running: false };
-  if (version.code !== 0) return { installed: false, running: false };
-  const info = await run(dockerBin, ["info"], { timeoutMs: INFO_TIMEOUT_MS });
+  // -1은 위 재탐색까지 마친 뒤에도 spawn 자체가 실패했다는 뜻 — 정말 못 찾은 것이다. 그 밖의
+  // 0이 아닌 코드는 docker 바이너리는 실행됐지만(설치는 돼 있지만) 엔진에 못 붙었다는 뜻이므로
+  // "미설치"가 아니라 "미실행"이다.
+  if (version.code === -1) {
+    // 네이티브로는 못 찾았다 — WSL2 안에 있는지 마지막으로 확인해서 "설치 안내"와
+    // "이 앱은 WSL2를 못 씁니다" 안내를 갈라 준다.
+    const wsl2Only = await detectWsl2DockerImpl({ runImpl });
+    return { installed: false, running: false, wsl2Only };
+  }
+  if (version.code !== 0) return { installed: true, running: false };
+  const info = await runImpl(dockerBin, ["info"], { timeoutMs: INFO_TIMEOUT_MS });
   return { installed: true, running: info.code === 0 };
 }
 

@@ -65,6 +65,10 @@ export interface ModelAssessment {
   license?: AssessmentGrade;
   security?: AssessmentGrade;
   datasets?: AssessmentGrade;
+  /** Stamped when the model states no training data at all, in a usage the
+   *  terms of that data would reach. Absent when it declares its datasets —
+   *  those are judged on the `datasets` axis instead. */
+  trainingData?: AssessmentGrade;
   /** The usage the verdict was graded against, when one was specified. */
   usageContext?: UsageContext;
   /** Human-readable grounds, split from the "; "-joined property value. */
@@ -81,6 +85,9 @@ export interface DatasetRef {
   hasIntegrity: boolean;
   /** Upstream datasets this one derives from, as the card declares them. */
   sources: string[];
+  /** The repository the pipeline read this dataset from ("huggingface",
+   *  "figshare"). Absent for a dataset a model card only named. */
+  collectedBy?: string;
   /** The repository could not be read, so everything but the name is missing. */
   unresolved: boolean;
   /** Pipeline-stamped overall grade for this dataset (`bomlens:assessment:overall`). */
@@ -194,6 +201,7 @@ function readAssessment(one: (key: string) => string | undefined): ModelAssessme
     license: grade(one("bomlens:assessment:license")),
     security: grade(one("bomlens:assessment:security")),
     datasets: grade(one("bomlens:assessment:datasets")),
+    trainingData: grade(one("bomlens:assessment:trainingData")),
     usageContext: usageContext(one("bomlens:assessment:usageContext")),
     reasons: splitReasons(one("bomlens:assessment:reasons")),
   };
@@ -252,6 +260,7 @@ function readDataComponent(c: Obj): DatasetRef | null {
     licenses: readLicenses(c.licenses),
     hasIntegrity: arr(c.hashes).length > 0,
     sources: all("bomlens:dataset:sourceDataset"),
+    collectedBy: one("bomlens:dataset:collectedBy"),
     unresolved: all("bomlens:dataset:unresolved").length > 0,
     assessment: grade(one("bomlens:assessment:overall")),
     signals: grade(one("bomlens:assessment:signals")),
@@ -342,7 +351,10 @@ export function parseModelCards(sbom: unknown): AiModelData {
   for (const m of models) {
     for (const d of m.datasets) if (!byName.has(d.name)) byName.set(d.name, d);
   }
-  for (const c of components) {
+  // A dataset scan describes one item and has no components[] at all, so the
+  // root is folded in here for the same reason a model root is folded in above.
+  const dataComponents = obj(root).type === "data" ? [obj(root), ...components] : components;
+  for (const c of dataComponents) {
     if (c.type !== "data") continue;
     const ds = readDataComponent(c);
     if (!ds) continue;

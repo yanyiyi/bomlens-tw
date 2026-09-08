@@ -195,9 +195,16 @@ Options:
                          archive being extracted and scanned as source.
   --analyze <sbom>       Validate + analyze a supplier SBOM (alias: --sbom).
                          CycloneDX or SPDX; mutually exclusive with --target.
-  --model <owner/name>   Generate an AI SBOM (CycloneDX 1.7 ML-BOM) for a
-                         HuggingFace model via the OWASP AIBOM Generator (opt-in
-                         image; fetches model-card metadata over the network).
+  --model <ref>          Generate an AI SBOM (CycloneDX 1.7 ML-BOM) for a
+                         HuggingFace model given as owner/name, via the OWASP
+                         AIBOM Generator (opt-in image; fetches model-card
+                         metadata over the network).
+                         A Figshare item is taken here too — its page URL, its
+                         DOI, or the item number — and is described as a dataset
+                         from the public item endpoint: no account, no opt-in
+                         image. An institutional DOI that does not carry
+                         "figshare" cannot be told apart from any other DOI, so
+                         give the item URL for those.
                          Mutually exclusive with --target/--analyze/--git/--merge.
   --model-file <path>    Read one AI model FILE (GGUF, safetensors, PyTorch,
                          pickle, npz, npy, ONNX) and describe it from its own
@@ -291,6 +298,10 @@ Environment:
   COSIGN_KEY             Signing key for --sign
   SBOM_OUTPUT_FLAT       Set to 1 to write artifacts flat in the output base
                          (no per-run subfolder), matching the pre-isolation layout
+  SBOM_PULL              missing (default): refresh an already-present image in
+                         the background, bounded; an absent one is pulled as
+                         usual. always: block and re-pull every run. never:
+                         touch no network; fail if the image is absent
   SBOM_SCANNER_IMAGE     Override the scanner image
   SBOM_FIRMWARE_IMAGE    Override the firmware image
   SBOM_AIBOM_IMAGE       Override the AI SBOM (OWASP AIBOM Generator) image
@@ -308,6 +319,9 @@ Environment:
   TRUSCA_PROJECT_ID      Target TRUSCA project id (UUID, required for trusca)
   TRUSCA_REF             Ingest ref label (default: main)
   TRUSCA_RELEASE         Ingest release label (default: --version value)
+  EXTERNAL_LOOKUP        With --ui: enable the web UI's CVE/package lookup
+                         against OSV.dev (default: true; set false for
+                         air-gapped runs)
 
 Architecture: source SBOM generation uses cdxgen's per-language images
 (on-demand); this tool orchestrates + post-processes.
@@ -325,6 +339,94 @@ docker_check() {
     command -v docker &>/dev/null || { echo "[ERROR] Docker not installed."; echo "  https://www.docker.com/products/docker-desktop/"; exit 1; }
     docker info >/dev/null 2>&1 || { echo "[ERROR] Docker daemon not running. Start Docker Desktop and retry."; exit 1; }
 }
+
+# `docker run` only auto-pulls an image that is entirely ABSENT locally; once a
+# floating tag like `:latest` has been pulled once, it is reused forever even
+# after the registry publishes a newer image. That is what broke a real demo:
+# a stale cached bomlens:latest predated docker/lib/scan-figshare.py, and the
+# scan failed with "python3: can't open file scan-figshare.py" until someone
+# thought to `docker pull` by hand. ensure_image_fresh closes that gap for an
+# image that IS already present, honoring SBOM_PULL (missing/always/never;
+# see --help), without turning every run into a blocking network call — see
+# _refresh_image_quietly for how the wait is bounded. Ported from
+# electron/lib/container.mjs's refreshImageInBackground() (Node); this is the
+# bash equivalent for the CLI path.
+#
+# $1: image ref (e.g. $POSTPROCESS_IMAGE, $RUN_IMAGE)
+ensure_image_fresh() {
+    local img="$1"
+    case "$SBOM_PULL" in
+        never)
+            if ! docker image inspect "$img" >/dev/null 2>&1; then
+                echo "[ERROR] Image not found and SBOM_PULL=never (no network is touched): $img"
+                echo "        Pull it once first, or unset SBOM_PULL to let this run pull it:"
+                echo "          docker pull $img"
+                exit 1
+            fi
+            return 0
+            ;;
+        always)
+            echo "[INFO] Pulling $img (SBOM_PULL=always)..."
+            if ! docker pull "$img"; then
+                echo "[ERROR] Failed to pull $img."
+                exit 1
+            fi
+            return 0
+            ;;
+    esac
+    # missing (default): an absent image is left to `docker run`'s own implicit
+    # pull, unchanged. Only a PRESENT image is worth refreshing.
+    docker image inspect "$img" >/dev/null 2>&1 || return 0
+    _refresh_image_quietly "$img"
+}
+
+# Stall-bounded, silent `docker pull` for an image already present locally. A
+# real transfer keeps writing new lines to the log, which resets the idle
+# clock; an offline host or a blocked registry produces no output at all and
+# is killed once idle for _SBOM_PULL_STALL_SECS seconds. _SBOM_PULL_MAX_SECS
+# is a last-resort cap against a connection that trickles just enough to never
+# look stalled. Both are internal test knobs (not documented CLI/env surface).
+# Failure here — offline, killed, whatever — is silently ignored: this check
+# is a bonus freshness probe, not the scan's critical path, and the local
+# image is used either way.
+#
+# $1: image ref
+_refresh_image_quietly() {
+    local img="$1" stall max log pid elapsed idle last size
+    stall="${_SBOM_PULL_STALL_SECS:-12}"
+    max="${_SBOM_PULL_MAX_SECS:-2700}"
+    log="$(mktemp)" || return 0
+    docker pull "$img" >"$log" 2>&1 &
+    pid=$!
+    elapsed=0; idle=0; last=0
+    while kill -0 "$pid" 2>/dev/null; do
+        sleep 1
+        elapsed=$((elapsed + 1))
+        size=$(wc -c <"$log" 2>/dev/null | tr -d ' ')
+        [ -n "$size" ] || size=0
+        if [ "$size" != "$last" ]; then
+            idle=0; last=$size
+        else
+            idle=$((idle + 1))
+        fi
+        if [ "$idle" -ge "$stall" ] || [ "$elapsed" -ge "$max" ]; then
+            kill "$pid" 2>/dev/null || true
+            break
+        fi
+    done
+    wait "$pid" 2>/dev/null || true
+    rm -f "$log"
+    return 0
+}
+
+# missing (default): docker run's implicit pull covers an absent image
+# unchanged; when the image is already present, ensure_image_fresh quietly
+# refreshes it (bounded, best-effort). always: unconditional blocking pull,
+# fails loudly if it can't complete. never: never touches the network at all,
+# fails loudly if the image is absent (same contract as scripts/sbom-ui.bat).
+# Declared here, before the first ensure_image_fresh caller below, so an
+# unset SBOM_PULL is never read as empty by that call.
+SBOM_PULL="${SBOM_PULL:-missing}"
 
 # ========================================================
 # Web UI mode
@@ -368,12 +470,14 @@ if [ "$UI_MODE" = "true" ]; then
     # to keep a secret, so it comes from the environment that launched the tool.
     HF_FLAGS=()
     if [ -n "$HF_TOKEN" ]; then HF_FLAGS=(-e HF_TOKEN); fi
+    ensure_image_fresh "$POSTPROCESS_IMAGE"
     exec "${DOCKER_ENV[@]}" docker run --rm "${TTY_FLAGS[@]}" -p "${UI_BIND_ADDRESS}:${UI_PORT}:8080" \
         -v "$(hostpath "$UI_BASE")":/src -v "$(hostpath "$UI_BASE")":/host-output \
         "${MOUNT_FLAGS[@]}" "${HF_FLAGS[@]}" \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -e MODE=UI -e UI_PORT=8080 -e SBOM_UI_HOST_DIR="$(hostpath "$UI_BASE")" \
-        -e SBOM_UI_SCAN_ROOTS="$SCAN_ROOTS" "$POSTPROCESS_IMAGE"
+        -e SBOM_UI_SCAN_ROOTS="$SCAN_ROOTS" -e EXTERNAL_LOOKUP="$EXTERNAL_LOOKUP" \
+        "$POSTPROCESS_IMAGE"
 fi
 [ "${#UI_MOUNTS[@]}" -eq 0 ] || { echo "[ERROR] --mount requires --ui."; exit 1; }
 
@@ -434,6 +538,11 @@ FETCH_LICENSE="${FETCH_LICENSE:-true}"
 # EPSS + CISA KEV enrichment defaults on, but the host setting must reach the
 # post-process container so SECURITY_ENRICH=false works for air-gapped runs.
 SECURITY_ENRICH="${SECURITY_ENRICH:-true}"
+# Web UI's CVE/package lookup (GET /advisory, /package-advisories) talks to
+# OSV.dev on demand; same default-on, host-setting-must-reach-the-container
+# story as SECURITY_ENRICH, but read directly by server.py rather than by
+# entrypoint.sh (see docker/web/server.py's external_lookup_capable()).
+EXTERNAL_LOOKUP="${EXTERNAL_LOOKUP:-true}"
 
 # Normalize the report language: only en (default), ko or zh-TW reach the
 # container, always in that exact spelling — the value becomes a catalog
@@ -990,13 +1099,27 @@ elif [ -n "$MODEL" ]; then
     [ -z "$ANALYZE_SBOM" ] || { echo "[ERROR] --model is mutually exclusive with --analyze."; exit 1; }
     [ -z "$GIT_URL" ]     || { echo "[ERROR] --model is mutually exclusive with --git."; exit 1; }
     [ "$FORCE_FIRMWARE" != "true" ] || { echo "[ERROR] --model cannot be combined with --firmware."; exit 1; }
-    MODE="AIBOM"
+    # Research data is published where the paper put it, which for a great deal
+    # of science is Figshare rather than a model hub. Both are "the thing I was
+    # handed a link to", so one option takes both and the reference decides which
+    # path runs. An institutional DOI carrying no "figshare" (10.25916/sut.…)
+    # cannot be told apart from any other DOI: give the item url for those.
+    case "$MODEL" in
+        *figshare*) MODE="DATASET" ;;
+        *)          MODE="AIBOM" ;;
+    esac
     case "${USAGE_CONTEXT:-}" in
         ""|internal|product|redistribute|outputs-only) : ;;
         *) echo "[ERROR] --usage must be one of: internal, product, redistribute, outputs-only."; exit 1 ;;
     esac
     # Default the project name to the model's last segment (owner/name -> name).
-    [ -n "$PROJECT_NAME" ] || PROJECT_NAME="${MODEL##*/}"
+    # A Figshare reference has no such name, so the item number stands in until
+    # the fetch replaces the root component with the item's real title.
+    if [ "$MODE" = "DATASET" ]; then
+        [ -n "$PROJECT_NAME" ] || PROJECT_NAME="figshare-$(printf '%s' "$MODEL" | tr -cd '0-9' | tail -c 12)"
+    else
+        [ -n "$PROJECT_NAME" ] || PROJECT_NAME="${MODEL##*/}"
+    fi
 elif [ -n "$MODEL_FILE" ]; then
     # AI model SBOM read from the file itself. Base image, no network: the whole
     # step is one stdlib Python script inside the container.
@@ -1155,8 +1278,8 @@ elif [ "$FORCE_FIRMWARE" = "true" ]; then
     echo "[ERROR] --firmware requires '--target <firmware-file>'."; exit 1
 fi
 
-if [ -n "${USAGE_CONTEXT:-}" ] && [ "$MODE" != "AIBOM" ] && [ "$MODE" != "MODELFILE" ]; then
-    echo "[ERROR] --usage applies to AI model scans only (use it with --model or --model-file)."; exit 1
+if [ -n "${USAGE_CONTEXT:-}" ] && [ "$MODE" != "AIBOM" ] && [ "$MODE" != "MODELFILE" ] && [ "$MODE" != "DATASET" ]; then
+    echo "[ERROR] --usage applies to AI model and dataset scans only (use it with --model or --model-file)."; exit 1
 fi
 
 if [ "$FORCE_FIRMWARE" = "true" ] && [ "$MODE" != "FIRMWARE" ]; then
@@ -1178,9 +1301,9 @@ fi
 # every mode; the risk report still renders from the notice, as it does in the
 # UI. Announce the skip only when the user actually asked (--security / --all),
 # so an ordinary --model run stays quiet instead of explaining a default.
-if { [ "$MODE" = "AIBOM" ] || [ "$MODE" = "MODELFILE" ]; } && [ "$GENERATE_SECURITY" = "true" ]; then
+if { [ "$MODE" = "AIBOM" ] || [ "$MODE" = "MODELFILE" ] || [ "$MODE" = "DATASET" ]; } && [ "$GENERATE_SECURITY" = "true" ]; then
     [ "$SECURITY_REQUESTED" = "true" ] && \
-        echo "[INFO] Skipping the security report: an AI model has no package dependencies to scan."
+        echo "[INFO] Skipping the security report: this input has no package dependencies to scan."
     GENERATE_SECURITY="false"
 fi
 
@@ -1329,6 +1452,7 @@ if [ "$MODE" = "SOURCE" ]; then
     # scanned tree (/src) is never written to.
     # pp_env/cosign_run intentionally expand to several -e KEY=VAL tokens, so the
     # word splitting SC2046 flags here is required, not a bug.
+    ensure_image_fresh "$POSTPROCESS_IMAGE"
     export_scan_secrets
     # shellcheck disable=SC2046
     eval "$DOCKER_MSYS"docker run --rm \
@@ -1359,6 +1483,9 @@ else
                 # own environment instead. AIBOM only — no other mode needs it.
                 [ -n "$HF_TOKEN" ] && ENVV="$ENVV -e HF_TOKEN"
                 RUN_IMAGE="$AIBOM_IMAGE" ;;
+        # Base image: reading a Figshare item is one stdlib Python script and one
+        # public API call, so this needs neither the generator image nor an account.
+        DATASET) VOL="-v \"$(hostpath "$OUTPUT_HOST_DIR")\":/host-output"; ENVV="-e DATASET_REF=\"$MODEL\"" ;;
         ANALYZE)
             if [ -z "$ANALYZE_SBOM" ]; then
                 # A Yocto build directory with no SPDX document: the build tree is
@@ -1402,6 +1529,7 @@ else
             echo "[WARN] --deep-cve does not apply to the $MODE image; running without grype." >&2
         fi
     fi
+    ensure_image_fresh "$RUN_IMAGE"
     # VOL/ENVV/pp_env/cosign_run intentionally expand to multiple tokens (-v, -e
     # pairs), so the word splitting SC2046 flags here is required, not a bug.
     export_scan_secrets
@@ -1463,7 +1591,7 @@ if [ "$GENERATE_ONLY" = "true" ]; then
     # checks on a supplier SBOM) and AIBOM (the G7 minimum-element checklist).
     # It used to be announced for ANALYZE only, so an AI-model scan produced the
     # G7 report and never mentioned it.
-    if [ "$MODE" = "ANALYZE" ] || [ "$MODE" = "AIBOM" ]; then
+    if [ "$MODE" = "ANALYZE" ] || [ "$MODE" = "AIBOM" ] || [ "$MODE" = "DATASET" ]; then
         summary_line "Conformance:" "${P}_conformance.json" "${P}_conformance.md" "${P}_conformance.html" \
             || note_missing "conformance report"
     fi

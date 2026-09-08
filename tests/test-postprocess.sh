@@ -551,6 +551,53 @@ lclass() { jq -r --arg n "$1" '.components[] | select(.name==$n)
 [ "$(lclass bare-lib)" = "uncategorized" ] && pass "no license info -> uncategorized" || fail "bare-lib class='$(lclass bare-lib)', expected uncategorized"
 [ "$(lclass dual-lib)" = "strong-copyleft" ] && pass "dual license (GPL-2.0-only OR MIT) -> strongest wins" || fail "dual-lib class='$(lclass dual-lib)', expected strong-copyleft"
 [ "$(lclass mixed-lib)" = "uncategorized" ] && pass "MIT + unknown -> uncategorized (unknown outranks confirmed-permissive)" || fail "mixed-lib class='$(lclass mixed-lib)', expected uncategorized"
+# An exception clause exists to permit linking the bare license forbids, so a GPL
+# carrying one must not be labelled with the obligation it lifts. jakarta/javax APIs
+# and OpenJDK ship this way, so mislabelling it is a common false alarm. Its own
+# fixture, so the counts the risk-report assertions below read stay put.
+cat > "$WORK/lcx.json" <<'JSON'
+{"bomFormat":"CycloneDX","specVersion":"1.6","components":[
+ {"type":"library","name":"cpe-lib","version":"1.0","licenses":[{"license":{"id":"GPL-2.0-with-classpath-exception"}}]},
+ {"type":"library","name":"cpe-with-lib","version":"1.0","licenses":[{"license":{"id":"GPL-2.0-only WITH Classpath-exception-2.0"}}]},
+ {"type":"library","name":"bare-gpl-lib","version":"1.0","licenses":[{"license":{"id":"GPL-3.0-only"}}]},
+ {"type":"library","name":"with-noise-lib","version":"1.0","licenses":[{"license":{"name":"Bespoke-1.0 WITH Vendor-exception"}}]}
+]}
+JSON
+bash "$LIB/normalize-sbom.sh" "$WORK/lcx.json" >/dev/null 2>&1
+lclassx() { jq -r --arg n "$1" '.components[] | select(.name==$n)
+    | [(.properties // [])[] | select(.name=="bomlens:licenseClass") | .value] | first // "ABSENT"' "$WORK/lcx.json"; }
+[ "$(lclassx cpe-lib)" = "weak-copyleft" ] && pass "GPL with a classpath exception -> weak-copyleft" || fail "cpe-lib class='$(lclassx cpe-lib)', expected weak-copyleft"
+[ "$(lclassx cpe-with-lib)" = "weak-copyleft" ] && pass "the WITH spelling of the same exception -> weak-copyleft" || fail "cpe-with-lib class='$(lclassx cpe-with-lib)', expected weak-copyleft"
+[ "$(lclassx bare-gpl-lib)" = "strong-copyleft" ] && pass "a GPL without an exception is still strong-copyleft" || fail "bare-gpl-lib class='$(lclassx bare-gpl-lib)', expected strong-copyleft"
+# The exception test is anchored on GPL: the word WITH alone must not pull a
+# non-GPL license up into copyleft.
+[ "$(lclassx with-noise-lib)" = "uncategorized" ] && pass "a non-GPL license carrying WITH is not pulled into copyleft" || fail "with-noise-lib class='$(lclassx with-noise-lib)', expected uncategorized"
+
+# Creative Commons: datasets and AI models carry these, not software licenses.
+# Only Share-Alike propagates the license (the one CC clause with a
+# copyleft-like effect); attribution and field-of-use limits (NC, ND) do not.
+# Own fixture, same reason as lcx.json: keep lc.json's counts stable for the
+# risk-report assertions that reuse it.
+cat > "$WORK/lccc.json" <<'JSON'
+{"bomFormat":"CycloneDX","specVersion":"1.6","components":[
+ {"type":"data","name":"cc-by-lib","version":"1.0","licenses":[{"license":{"id":"CC-BY-4.0"}}]},
+ {"type":"data","name":"cc-by-nc-lib","version":"1.0","licenses":[{"license":{"id":"CC-BY-NC-4.0"}}]},
+ {"type":"data","name":"cc-by-nd-lib","version":"1.0","licenses":[{"license":{"id":"CC-BY-ND-4.0"}}]},
+ {"type":"data","name":"cc-by-sa-lib","version":"1.0","licenses":[{"license":{"id":"CC-BY-SA-4.0"}}]},
+ {"type":"data","name":"cc-by-nc-sa-lib","version":"1.0","licenses":[{"license":{"id":"CC-BY-NC-SA-4.0"}}]},
+ {"type":"data","name":"cc0-lib","version":"1.0","licenses":[{"license":{"id":"CC0-1.0"}}]}
+]}
+JSON
+bash "$LIB/normalize-sbom.sh" "$WORK/lccc.json" >/dev/null 2>&1
+lclasscc() { jq -r --arg n "$1" '.components[] | select(.name==$n)
+    | [(.properties // [])[] | select(.name=="bomlens:licenseClass") | .value] | first // "ABSENT"' "$WORK/lccc.json"; }
+[ "$(lclasscc cc-by-lib)" = "permissive" ] && pass "CC-BY -> permissive (attribution only, no propagation)" || fail "cc-by-lib class='$(lclasscc cc-by-lib)', expected permissive"
+[ "$(lclasscc cc-by-nc-lib)" = "permissive" ] && pass "CC-BY-NC -> permissive on this axis (NC is licenseReview's concern)" || fail "cc-by-nc-lib class='$(lclasscc cc-by-nc-lib)', expected permissive"
+[ "$(lclasscc cc-by-nd-lib)" = "permissive" ] && pass "CC-BY-ND -> permissive on this axis" || fail "cc-by-nd-lib class='$(lclasscc cc-by-nd-lib)', expected permissive"
+[ "$(lclasscc cc-by-sa-lib)" = "weak-copyleft" ] && pass "CC-BY-SA -> weak-copyleft (Share-Alike propagates, matched before bare CC-BY)" || fail "cc-by-sa-lib class='$(lclasscc cc-by-sa-lib)', expected weak-copyleft"
+[ "$(lclasscc cc-by-nc-sa-lib)" = "weak-copyleft" ] && pass "CC-BY-NC-SA -> weak-copyleft (SA still propagates alongside NC)" || fail "cc-by-nc-sa-lib class='$(lclasscc cc-by-nc-sa-lib)', expected weak-copyleft"
+[ "$(lclasscc cc0-lib)" = "permissive" ] && pass "CC0 -> permissive (allowlist match, unchanged)" || fail "cc0-lib class='$(lclasscc cc0-lib)', expected permissive"
+
 # A licenseReview-flagged component still gets a class: the two properties coexist.
 lr=$(jq -r '.components[] | select(.name=="llama-model")
     | [(.properties // [])[] | select(.name=="bomlens:licenseReview") | .value] | first // "ABSENT"' "$WORK/lc.json")
@@ -2127,6 +2174,157 @@ else
     fail "the SPDX file was rewritten for a scan that has no containers"
 fi
 
+echo "== version pinning: what the reported versions actually mean =="
+# When a project states ranges and ships no lock file, the resolver picks what is
+# newest at scan time. The SBOM then carries specific numbers a reader takes for
+# what is installed on their machine, and the vulnerability count inherits the
+# same basis. Measured on a real repository: 113 components all resolved to the
+# newest release, 3 vulnerabilities found against those.
+PINDIR="$WORK/pinning"
+pin_verdict() {
+    # $1 = subdirectory under PINDIR, already populated
+    local d="$PINDIR/$1"
+    printf '{"bomFormat":"CycloneDX","specVersion":"1.6","version":1,"metadata":{"component":{"type":"application","name":"x","version":"1"}},"components":[]}\n' > "$d/bom.json"
+    bash "$LIB/detect-version-pinning.sh" "$d" "$d/bom.json" >/dev/null 2>&1
+    jq -r '[.metadata.component.properties[]? | select(.name=="bomlens:source:versionPinning") | .value] | first // "none"' "$d/bom.json"
+}
+
+rm -rf "$PINDIR"; mkdir -p "$PINDIR"/{lockfile,exact,ranges,npm,nolock,java,empty}
+: > "$PINDIR/lockfile/requirements.txt"; : > "$PINDIR/lockfile/poetry.lock"
+printf 'flask==3.0.0\nnumpy==1.26.2\n# a comment\n' > "$PINDIR/exact/requirements.txt"
+printf 'flask>=3.0\nnumpy\n' > "$PINDIR/ranges/requirements.txt"
+printf '{}' > "$PINDIR/npm/package.json"; printf '{}' > "$PINDIR/npm/package-lock.json"
+printf '{}' > "$PINDIR/nolock/package.json"
+printf '<project/>' > "$PINDIR/java/pom.xml"
+: > "$PINDIR/empty/requirements.txt"
+
+for case in "lockfile:pinned" "exact:pinned" "ranges:unpinned" "npm:pinned" \
+            "nolock:unpinned" "java:none" "empty:none"; do
+    dir="${case%%:*}"; want="${case##*:}"
+    got="$(pin_verdict "$dir")"
+    if [ "$got" = "$want" ]; then
+        pass "$dir reads as $want"
+    else
+        fail "$dir read as '$got', expected '$want'"
+    fi
+done
+
+# A tree nobody can judge must record nothing rather than guess: Maven and Gradle
+# declare versions in the build file and have no lock of their own, so either
+# verdict would be made up.
+if jq -e '[.metadata.component.properties[]?] | length == 0' \
+   "$PINDIR/java/bom.json" >/dev/null 2>&1; then
+    pass "an unjudgeable tree has no property written at all"
+else
+    fail "a property was written for a tree that cannot be judged"
+fi
+
+# Idempotent: post-processing can run twice over the same document.
+bash "$LIB/detect-version-pinning.sh" "$PINDIR/ranges" "$PINDIR/ranges/bom.json" >/dev/null 2>&1
+n=$(jq '[.metadata.component.properties[]? | select(.name=="bomlens:source:versionPinning")] | length' "$PINDIR/ranges/bom.json")
+[ "$n" = "1" ] && pass "re-running keeps one pinning property" || fail "pinning properties=$n, expected 1"
+
+echo "== spdx: the document says which component it describes =="
+# syft converts every input the way it converts an image: the document DESCRIBES
+# one root package that CONTAINS the rest. A CycloneDX file has no such wrapper,
+# so the converter invented a blank one — no name, no version — and the export of
+# a scan that passed its own conformance check failed when read back, on the
+# field coverage every SBOM regulation asks for.
+cat > "$WORK/docroot-in.cdx.json" <<'CDXEOF'
+{"bomFormat":"CycloneDX","specVersion":"1.6","version":1,
+ "metadata":{"component":{"type":"application","name":"app","version":"1.0",
+                          "bom-ref":"pkg:pypi/app@1.0"}},
+ "components":[{"type":"library","name":"dep","version":"2.0","purl":"pkg:pypi/dep@2.0"}]}
+CDXEOF
+# The converter's output: the blank wrapper holding everything, with the root
+# component sitting among the dependencies as an ordinary package.
+cat > "$WORK/docroot.spdx.json" <<'SPDXEOF'
+{"spdxVersion":"SPDX-2.3","SPDXID":"SPDXRef-DOCUMENT","name":"app-1.0",
+ "creationInfo":{"created":"1970-01-01T00:00:00Z","creators":["Tool: syft"]},
+ "packages":[
+  {"SPDXID":"SPDXRef-DocumentRoot-Unknown-","name":"","filesAnalyzed":false},
+  {"SPDXID":"SPDXRef-Package-app","name":"app","versionInfo":"1.0",
+   "externalRefs":[{"referenceCategory":"PACKAGE-MANAGER","referenceType":"purl",
+                    "referenceLocator":"pkg:pypi/app@1.0"}]},
+  {"SPDXID":"SPDXRef-Package-dep","name":"dep","versionInfo":"2.0"}],
+ "relationships":[
+  {"spdxElementId":"SPDXRef-DOCUMENT","relatedSpdxElement":"SPDXRef-DocumentRoot-Unknown-",
+   "relationshipType":"DESCRIBES"},
+  {"spdxElementId":"SPDXRef-DocumentRoot-Unknown-","relatedSpdxElement":"SPDXRef-Package-app",
+   "relationshipType":"CONTAINS"},
+  {"spdxElementId":"SPDXRef-DocumentRoot-Unknown-","relatedSpdxElement":"SPDXRef-Package-dep",
+   "relationshipType":"CONTAINS"},
+  {"spdxElementId":"SPDXRef-Package-dep","relatedSpdxElement":"SPDXRef-Package-app",
+   "relationshipType":"DEPENDENCY_OF"}]}
+SPDXEOF
+python3 "$LIB/spdx-document-root.py" "$WORK/docroot-in.cdx.json" "$WORK/docroot.spdx.json" 2>/dev/null
+
+if jq -e '[.packages[] | select((.name // "") == "")] | length == 0' \
+   "$WORK/docroot.spdx.json" >/dev/null; then
+    pass "no package is left without a name"
+else
+    fail "the blank wrapper survived the conversion"
+fi
+
+got=$(jq -r '.relationships[] | select(.relationshipType == "DESCRIBES") | .relatedSpdxElement' \
+      "$WORK/docroot.spdx.json")
+if [ "$got" = "SPDXRef-Package-app" ]; then
+    pass "the document describes the component the BOM stamps as its root"
+else
+    fail "the document describes the wrong package" "got: ${got:-nothing}"
+fi
+
+# The memberships move with the DESCRIBES, minus the one that would now say the
+# root contains itself.
+got=$(jq -r '[.relationships[] | select(.relationshipType == "CONTAINS")
+      | "\(.spdxElementId)->\(.relatedSpdxElement)"] | sort | join(",")' "$WORK/docroot.spdx.json")
+if [ "$got" = "SPDXRef-Package-app->SPDXRef-Package-dep" ]; then
+    pass "what the wrapper held now hangs off the real root"
+else
+    fail "the memberships did not move to the real root" "got: ${got:-nothing}"
+fi
+
+if jq -e '[.relationships[] | select(.spdxElementId == .relatedSpdxElement)] | length == 0' \
+   "$WORK/docroot.spdx.json" >/dev/null; then
+    pass "no package is said to contain itself"
+else
+    fail "the root was related to itself"
+fi
+
+# A converter may drop a root it does not count as software. Then the wrapper is
+# the only thing holding the memberships, so it is filled in rather than removed.
+cat > "$WORK/docroot-nb.spdx.json" <<'SPDXEOF'
+{"spdxVersion":"SPDX-2.3","SPDXID":"SPDXRef-DOCUMENT","name":"app-1.0",
+ "creationInfo":{"created":"1970-01-01T00:00:00Z","creators":["Tool: syft"]},
+ "packages":[
+  {"SPDXID":"SPDXRef-DocumentRoot-Unknown-","name":"","filesAnalyzed":false},
+  {"SPDXID":"SPDXRef-Package-dep","name":"dep","versionInfo":"2.0"}],
+ "relationships":[
+  {"spdxElementId":"SPDXRef-DOCUMENT","relatedSpdxElement":"SPDXRef-DocumentRoot-Unknown-",
+   "relationshipType":"DESCRIBES"},
+  {"spdxElementId":"SPDXRef-DocumentRoot-Unknown-","relatedSpdxElement":"SPDXRef-Package-dep",
+   "relationshipType":"CONTAINS"}]}
+SPDXEOF
+python3 "$LIB/spdx-document-root.py" "$WORK/docroot-in.cdx.json" "$WORK/docroot-nb.spdx.json" 2>/dev/null
+if jq -e '([.packages[] | select(.SPDXID == "SPDXRef-DocumentRoot-Unknown-"
+      and .name == "app" and .versionInfo == "1.0")] | length == 1)
+      and ([.relationships[] | select(.relationshipType == "CONTAINS")] | length == 1)' \
+   "$WORK/docroot-nb.spdx.json" >/dev/null; then
+    pass "a root the converter dropped is filled in on the wrapper it left"
+else
+    fail "the wrapper was neither replaced nor filled in"
+fi
+
+# A document whose root already has a name is not this bug, and is left alone.
+cp "$FIX/good-spdx.json" "$WORK/docroot-ok.spdx.json"
+before="$(jq -S . "$WORK/docroot-ok.spdx.json")"
+python3 "$LIB/spdx-document-root.py" "$WORK/docroot-in.cdx.json" "$WORK/docroot-ok.spdx.json" 2>/dev/null
+if [ "$before" = "$(jq -S . "$WORK/docroot-ok.spdx.json")" ]; then
+    pass "an already-named document root is left untouched"
+else
+    fail "a document that did not have this problem was rewritten"
+fi
+
 echo "== conformance: a PURL failure says when the components carry a CPE instead =="
 # The submission criteria require a PURL, so this stays a mandatory failure. What
 # it must not do is read as "unidentified components" when the components are
@@ -3505,6 +3703,12 @@ printf 'pruned\n' > "$snap_dir/tree/node_modules/dep/index.js"
 printf 'ELF\0\0\0binary payload\n' > "$snap_dir/tree/src/app.bin"
 python3 -c "import sys; open(sys.argv[1],'w').write('x' * 300000)" "$snap_dir/tree/big.txt"
 ln -s /etc/passwd "$snap_dir/tree/link.txt"
+# OS Finder/Explorer bookkeeping (BL-ADV: macOS artifacts leaking into the
+# source-tree view). Every folder anyone has browsed on their desktop has one
+# of these; they carry no license or SBOM information.
+printf 'ds-store-bytes\n' > "$snap_dir/tree/.DS_Store"
+printf 'ds-store-bytes\n' > "$snap_dir/tree/src/.DS_Store"
+printf 'thumbs\n' > "$snap_dir/tree/Thumbs.db"
 (
     cd "$snap_dir/out" || exit 1
     bash "$LIB/source-file-tree.sh" "$snap_dir/tree" snap_files.json >/dev/null 2>&1
@@ -3518,7 +3722,7 @@ else
 fi
 got=$(jq -r '[.files[].path] | sort | join(",")' "$snap_out" 2>/dev/null)
 [ "$got" = "LICENSE,big.txt,package.json,src/main.go" ] \
-    && pass "text files captured; node_modules pruned by the shared listing" \
+    && pass "text files captured; node_modules pruned, .DS_Store/Thumbs.db excluded, by the shared listing" \
     || fail "unexpected captured set: '$got'"
 got=$(jq -c '[.files[] | select(.path == "src/main.go") | .content]' "$snap_out" 2>/dev/null)
 [ "$got" = '["package main\n"]' ] && pass "content is the real file body, newline included" \
@@ -4050,6 +4254,67 @@ if [ -n "$UNV_TXT" ] && [ -f "$UNV_TXT" ]; then
         || fail "compound expression was annotated" "$(grep '^License: Apache' "$UNV_TXT")"
 else
     fail "generate-notice.sh produced no NOTICE for the unverified-name fixture"
+fi
+
+echo "== modelica: uses() annotation is read structurally, not summarized =="
+MODIR="$WORK/modelica"
+rm -rf "$MODIR"; mkdir -p "$MODIR"/{decl,plain,empty,multiline}
+
+cat > "$MODIR/decl/Example.mo" <<'MOEOF'
+within ;
+package Example
+  annotation(uses(Modelica(version="4.0.0"), Custom(version="0.1.0")));
+end Example;
+MOEOF
+python3 "$LIB/identify-modelica.py" "$MODIR/decl" "$MODIR/decl/out.json" "1.0.0" >/dev/null 2>&1
+if [ "$(jq '.components | length' "$MODIR/decl/out.json" 2>/dev/null)" = "2" ]; then
+    pass "two uses() entries become two components"
+else
+    fail "expected 2 components" "$(jq -c '.components' "$MODIR/decl/out.json" 2>/dev/null)"
+fi
+mapped_purl="$(jq -r '.components[] | select(.name=="Modelica") | .purl' "$MODIR/decl/out.json")"
+[ "$mapped_purl" = "pkg:github/modelica/ModelicaStandardLibrary@4.0.0" ] \
+    && pass "a mapped library name becomes a pkg:github purl" \
+    || fail "mapped purl=$mapped_purl"
+generic_purl="$(jq -r '.components[] | select(.name=="Custom") | .purl' "$MODIR/decl/out.json")"
+[ "$generic_purl" = "pkg:generic/Custom@0.1.0" ] \
+    && pass "an unmapped library name falls back to pkg:generic (no guessed repo)" \
+    || fail "generic purl=$generic_purl"
+[ "$(jq '[.components[].licenses] | flatten | length' "$MODIR/decl/out.json")" = "0" ] \
+    && pass "licenses are left empty rather than guessed" \
+    || fail "a license was invented for a declaration with none"
+
+cat > "$MODIR/plain/NoUses.mo" <<'MOEOF'
+within ;
+package NoUses
+end NoUses;
+MOEOF
+python3 "$LIB/identify-modelica.py" "$MODIR/plain" "$MODIR/plain/out.json" "1.0.0" >/dev/null 2>&1
+if jq -e 'type=="object" and (.components | length == 0)' "$MODIR/plain/out.json" >/dev/null 2>&1; then
+    pass "a .mo file with no uses() block yields a valid, empty SBOM"
+else
+    fail "a .mo file with no uses() block did not yield a valid empty SBOM"
+fi
+
+python3 "$LIB/identify-modelica.py" "$MODIR/empty" "$MODIR/empty/out.json" "1.0.0" >/dev/null 2>&1
+[ "$(jq '.components | length' "$MODIR/empty/out.json" 2>/dev/null)" = "0" ] \
+    && pass "a directory with no .mo files at all yields zero components" \
+    || fail "an empty source tree produced components"
+
+cat > "$MODIR/multiline/Multiline.mo" <<'MOEOF'
+within ;
+package Multiline
+  annotation(uses(
+    Modelica(version =
+      "4.0.0"),
+    Buildings(version="13.0.0")));
+end Multiline;
+MOEOF
+python3 "$LIB/identify-modelica.py" "$MODIR/multiline" "$MODIR/multiline/out.json" "1.0.0" >/dev/null 2>&1
+if [ "$(jq '.components | length' "$MODIR/multiline/out.json" 2>/dev/null)" = "2" ]; then
+    pass "a uses() block split across lines still parses"
+else
+    fail "multiline uses() was not parsed" "$(jq -c '.components' "$MODIR/multiline/out.json" 2>/dev/null)"
 fi
 
 echo ""

@@ -8,6 +8,7 @@ import {
   componentConflict,
   conflictGroups,
   isCopyleft,
+  licenseNeedsDecision,
   licenseGroups,
   licenseRiskSummary,
   licenseRiskTier,
@@ -93,6 +94,33 @@ describe("licenseRiskTier", () => {
     expect(licenseRiskTier("MPL-2.0")).toBe("weak-copyleft");
     expect(licenseRiskTier("MIT")).toBe("permissive");
     expect(licenseRiskTier("Apache-2.0")).toBe("permissive");
+  });
+
+  it("does not label a GPL with an exception clause as strong copyleft", () => {
+    // The clause exists to permit linking the bare license forbids (jakarta/javax
+    // APIs and OpenJDK ship this way), so strong-copyleft would warn about an
+    // obligation the component does not impose.
+    expect(licenseRiskTier("GPL-2.0-with-classpath-exception")).toBe("weak-copyleft");
+    expect(licenseRiskTier("GPL-2.0-only WITH Classpath-exception-2.0")).toBe("weak-copyleft");
+    // Anchored on GPL: the word WITH alone must not pull a license into copyleft.
+    expect(licenseRiskTier("Bespoke-1.0 WITH Vendor-exception")).toBe("uncategorized");
+    // And a GPL without any exception is unchanged.
+    expect(licenseRiskTier("GPL-2.0-only")).toBe("strong-copyleft");
+  });
+
+  it("grades Creative Commons by the one clause with a copyleft-like effect (Share-Alike)", () => {
+    // Datasets and AI models carry these, not software licenses. Attribution and
+    // a field-of-use limit (NC, ND) never propagate the license, so they land on
+    // permissive for this axis; only Share-Alike does, the same way LGPL/MPL do
+    // for modified files.
+    expect(licenseRiskTier("CC-BY-4.0")).toBe("permissive");
+    expect(licenseRiskTier("CC-BY-NC-4.0")).toBe("permissive");
+    expect(licenseRiskTier("CC-BY-ND-4.0")).toBe("permissive");
+    expect(licenseRiskTier("CC0-1.0")).toBe("permissive");
+    // Anchored on CC-BY: SA is matched before the bare CC-BY test, same reason
+    // AGPL/LGPL precede GPL.
+    expect(licenseRiskTier("CC-BY-SA-4.0")).toBe("weak-copyleft");
+    expect(licenseRiskTier("CC-BY-NC-SA-4.0")).toBe("weak-copyleft");
   });
 
   it("never assumes an unrecognised license is permissive", () => {
@@ -285,5 +313,29 @@ describe("conflictGroups", () => {
     ]);
     expect(groups).toHaveLength(1);
     expect(groups[0].components.map((x) => x.name)).toEqual(["a", "b"]);
+  });
+});
+
+describe("licenseNeedsDecision", () => {
+  // The rows a person has to resolve by hand. Measured on real trees: 3 of 39
+  // components in a small example, 57 of 113 in a research project.
+  it("flags a component that declares no licence at all", () => {
+    expect(licenseNeedsDecision([])).toBe(true);
+  });
+
+  it("flags a name that is not an identifier we can place", () => {
+    // Seen verbatim on python-dateutil, which carries all three.
+    expect(licenseNeedsDecision(["BSD License"])).toBe(true);
+    expect(licenseNeedsDecision(["Dual License"])).toBe(true);
+  });
+
+  it("leaves a placed licence alone", () => {
+    expect(licenseNeedsDecision(["MIT"])).toBe(false);
+    expect(licenseNeedsDecision(["Apache-2.0", "BSD-3-Clause"])).toBe(false);
+    expect(licenseNeedsDecision(["GPL-3.0-only"])).toBe(false);
+  });
+
+  it("flags a component where only one of several licences is unplaceable", () => {
+    expect(licenseNeedsDecision(["Apache-2.0", "BSD License"])).toBe(true);
   });
 });

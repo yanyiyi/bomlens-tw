@@ -72,9 +72,14 @@ export function deriveScanContext(result: DoneEvent | null): ScanContext {
  * generated AIBOM).
  */
 export function isAiScan(result: DoneEvent): boolean {
-  return (result.sbom?.componentList ?? []).some(
-    (c) => c.type === "machine-learning-model",
-  );
+  if ((result.sbom?.componentList ?? []).some((c) => c.type === "machine-learning-model")) {
+    return true;
+  }
+  // A dataset scan carries no model at all: the published item is the document,
+  // and `data` as a root type is what only that scan produces (every other mode
+  // roots at application / firmware / container / operating-system). Without
+  // this the AI section stays hidden on exactly the scan it exists for.
+  return result.sbom?.componentType === "data";
 }
 
 /**
@@ -114,12 +119,29 @@ export function sectionCounts(
   for (const c of componentList) for (const l of c.licenses) licenses.add(l);
   return {
     components: result.sbom?.components ?? 0,
-    dependencies: direct + transitive > 0 ? `${direct}/${transitive}` : undefined,
-    vulnerabilities: result.security?.TOTAL ?? 0,
+    // The split is what makes this badge worth more than the component count,
+    // but only while there is something on both sides of it. An AI scan's root
+    // model is not a dependency of itself, so every AI scan has a transitive
+    // count of zero and "3/0" printed a zero that carried no information.
+    dependencies:
+      direct + transitive === 0
+        ? undefined
+        : transitive === 0
+          ? `${direct}`
+          : `${direct}/${transitive}`,
+    // No security report means the scan never asked, which is not the same as
+    // asking and finding nothing. Writing 0 claimed the second. The section
+    // itself says so ("no report was generated"); the badge must not contradict
+    // it before the reader gets there. Same rule the dependency badge uses.
+    vulnerabilities: result.security ? result.security.TOTAL : undefined,
     conformance: conformanceCount(result),
     licenses: licenses.size > 0 ? licenses.size : undefined,
     artifacts: result.results.length,
-    models: componentList.filter((c) => c.type === "machine-learning-model")
-      .length,
+    // The section is "Models & datasets" and shows both, so the badge counts
+    // both. Counting only the models left a scan reading "1" beside a screen
+    // holding one model and three datasets.
+    models: componentList.filter(
+      (c) => c.type === "machine-learning-model" || c.type === "data",
+    ).length,
   };
 }

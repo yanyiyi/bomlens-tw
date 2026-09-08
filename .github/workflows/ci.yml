@@ -11,6 +11,10 @@ on:
     types: [ opened, synchronize, reopened, labeled ]
   workflow_dispatch:
     inputs:
+      heavy:
+        description: "Also run the heavy E2E suites (web, full CLI, docs walkthrough). Off by default: they take ~40 min of the one Linux runner, and a targeted dispatch (baselines, screenshots) should not queue behind them"
+        type: boolean
+        default: false
       firmware:
         description: "Also build the firmware image and run the firmware e2e group in full-e2e"
         type: boolean
@@ -31,10 +35,24 @@ on:
 permissions:
   contents: read
 
+# One CI run per ref. Pushing again to a branch supersedes the run still queued
+# behind it, which on a single runner would otherwise hold the queue for its
+# full length. Pushes to main are never cancelled: they carry the image publish
+# and the baseline commits.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+# Runner selection. Every job reads its labels from a repository variable and
+# falls back to the self-hosted labels when the variable is unset, which is the
+# case here. A fork that has no self-hosted runners sets CI_LINUX_RUNNER to
+# '["ubuntu-latest"]' (and CI_WINDOWS_RUNNER / CI_MACOS_RUNNER likewise) and
+# runs the same workflow files unchanged, so the two copies never diverge.
+
 jobs:
   test:
     name: Integration Tests
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
     
     steps:
       - name: Checkout repository
@@ -73,7 +91,7 @@ jobs:
   
   lint:
     name: Lint Scripts
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
     
     steps:
       - name: Checkout repository
@@ -119,7 +137,7 @@ jobs:
 
   secrets:
     name: Secret Scan
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
 
     steps:
       - name: Checkout repository
@@ -168,7 +186,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-    runs-on: ${{ matrix.os == 'windows-latest' && fromJSON('["self-hosted","windows","bomlens-win"]') || fromJSON('["self-hosted","linux","bomlens-wsl"]') }}
+    runs-on: ${{ matrix.os == 'windows-latest'
+      && fromJSON(vars.CI_WINDOWS_RUNNER || '["self-hosted","windows","bomlens-win"]')
+      || fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
 
     steps:
       - name: Checkout repository
@@ -193,7 +213,16 @@ jobs:
 
   desktop-linux:
     name: Desktop boot tests (linux)
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
+    needs: [changes]
+    # Skipped on a pull request that touches none of this job's paths (see the
+    # changes job). Pushes to main and dispatch always run it. Compared against
+    # 'false' rather than 'true' so a classifier failure runs the job instead of
+    # skipping it unnoticed.
+    if: >-
+      !cancelled() && (
+        github.event_name != 'pull_request' ||
+        needs.changes.outputs.desktop != 'false')
     defaults:
       run:
         working-directory: electron
@@ -211,17 +240,17 @@ jobs:
       - name: Unit tests (boot/container/health/i18n/log/update/winstate)
         run: node --test test/*.test.mjs
 
-      # Runs on EVERY PR (not just electron/**): the boot-recovery spec's fake
-      # docker boots the real docker/web/server.py through the app's genuine
-      # startup path, so a server.py change that breaks the desktop boot
-      # contract is caught here — desktop.yml's path filter would miss it.
+      # docker/web/server.py is in the path filter above for this step: the
+      # boot-recovery spec's fake docker boots the real server through the
+      # app's genuine startup path, so a server change that breaks the desktop
+      # boot contract is caught here — desktop.yml's own filter would miss it.
       # Smoke + recovery are deterministic (no daemon, no image pull).
       - name: Boot smoke + recovery e2e (xvfb)
         run: xvfb-run --auto-servernum npm run test:smoke
 
   postprocess:
     name: Post-process Unit and Sync Tests
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
 
     steps:
       - name: Checkout repository
@@ -249,6 +278,12 @@ jobs:
       - name: Firmware unpack unit tests
         run: bash tests/test-firmware-unpack.sh
 
+      # No Docker (docker itself is stubbed): guards SBOM_PULL/ensure_image_fresh.
+      # `docker run` only auto-pulls a MISSING image, so a once-pulled :latest
+      # was reused forever even after the registry published a newer image.
+      - name: Image freshness unit tests
+        run: bash tests/test-image-refresh.sh
+
       - name: Output regression snapshots
         run: bash tests/test-snapshot.sh
 
@@ -268,6 +303,17 @@ jobs:
 
       - name: Vendored-OSS adversarial tests
         run: bash tests/test-vendored-adversarial.sh
+
+      # The CocoaPods case runs the scanner image with --network none, to prove the
+      # identification needs no `pod` and no network. That leaves the image itself
+      # as the one thing the test cannot fetch for itself, and it used to rely on
+      # the runner happening to have it cached — which stopped being true the
+      # moment a disk guard started pruning images between runs. Pull it here, and
+      # let the test skip rather than fail when the pull cannot happen (a fork PR
+      # with no registry access, or an offline runner).
+      - name: Fetch the scanner image the iOS test drives
+        continue-on-error: true
+        run: docker pull ghcr.io/sktelecom/bomlens:latest
 
       - name: iOS lockfile coverage (CocoaPods merge; syft when Docker present)
         run: bash tests/test-ios.sh
@@ -303,10 +349,14 @@ jobs:
   # `git diff base HEAD` is exactly the PR's change set.
   changes:
     name: Detect changed paths
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
     if: github.event_name == 'pull_request'
     outputs:
       web: ${{ steps.filter.outputs.web }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      docs: ${{ steps.filter.outputs.docs }}
+      examples: ${{ steps.filter.outputs.examples }}
+      desktop: ${{ steps.filter.outputs.desktop }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -319,41 +369,59 @@ jobs:
           git fetch --no-tags --depth=1 origin "$BASE_SHA"
           changed="$(git diff --name-only "$BASE_SHA" HEAD)"
           echo "$changed"
-          if echo "$changed" | grep -qE '^(docker/web/|docker/Dockerfile|docker/entrypoint\.sh|scripts/scan-sbom\.sh|tests/test-web-e2e\.sh|\.github/workflows/heavy-e2e\.yml)'; then
-            echo "web=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "web=false" >> "$GITHUB_OUTPUT"
-          fi
+
+          # Every filter also matches this workflow file. A pull request that
+          # edits the gating rules runs the jobs those rules gate, so the rule
+          # change is exercised rather than skipped by itself.
+          emit() {
+            if echo "$changed" | grep -qE "$2|^\.github/workflows/ci\.yml$"; then
+              echo "$1=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "$1=false" >> "$GITHUB_OUTPUT"
+            fi
+          }
+
+          emit web      '^(docker/web/|docker/Dockerfile|docker/entrypoint\.sh|scripts/scan-sbom\.sh|tests/test-web-e2e\.sh|\.github/workflows/heavy-e2e\.yml)'
+          emit frontend '^docker/web/frontend/'
+          emit docs     '(\.md$|^docs/|^mkdocs\.yml$|^\.github/markdown-link-check-config\.json$)'
+          emit examples '^examples/'
+          emit desktop  '^(electron/|docker/web/server\.py$)'
 
   # The three heavy suites live in the reusable heavy-e2e.yml (shared with the
   # nightly full run, so the step definitions cannot drift). Gating:
   #   - web-e2e: main pushes, dispatch, AND pull requests that touch the web
   #     stack (docker/web/**, image entry, its own harness) — the layer where a
   #     PR regression is most user-visible and the always-on contract suite
-  #     cannot see container wiring.
-  #   - full-e2e / docs-walkthrough: main pushes and dispatch (scanner PRs
-  #     already run the real-Docker integration suite); the nightly run bounds
-  #     drift on quiet days to 24h. A PR can opt in by adding the
-  #     run-heavy-e2e label (e.g. a risky scanner or docs change). Renovate
-  #     applies that label to every tool-pin bump (renovate.json manages only
-  #     the scanner tool ARGs / cdxgen images), so a version bump that quietly
-  #     shrinks the SBOM is caught by the component-count checks in full-e2e
-  #     instead of merging on the default checks alone.
+  #     cannot see container wiring. Kept on every push deliberately, unlike
+  #     the other two below: it is cheap (~1 minute) and the one layer other
+  #     pushes cannot exercise incidentally.
+  #   - full-e2e / docs-walkthrough: dispatch only, plus PRs that opt in with
+  #     the run-heavy-e2e label (e.g. a risky scanner or docs change).
+  #     Renovate applies that label to every tool-pin bump (renovate.json
+  #     manages only the scanner tool ARGs / cdxgen images), so a version bump
+  #     that quietly shrinks the SBOM is caught by the component-count checks
+  #     in full-e2e instead of merging on the default checks alone. Not on
+  #     main pushes: nightly.yml already runs both, over ALL bundled examples
+  #     for full-e2e, so the daily floor is unchanged while a merge no longer
+  #     queues behind them on the single runner.
   web-e2e:
     name: Web UI E2E
     needs: [changes]
     if: >-
       !cancelled() && (
-        github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+        github.event_name == 'push' ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.heavy == 'true') ||
         (github.event_name == 'pull_request' && needs.changes.outputs.web == 'true'))
     uses: ./.github/workflows/heavy-e2e.yml
     with:
       suites: web-e2e
 
+  # 33 minutes of the single Linux runner — by far the most expensive job here.
+  # Reach it earlier with the run-heavy-e2e label on the PR.
   full-e2e:
     name: Full CLI E2E
     if: >-
-      github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.heavy == 'true') ||
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'run-heavy-e2e'))
     uses: ./.github/workflows/heavy-e2e.yml
@@ -361,14 +429,14 @@ jobs:
       suites: full-e2e
       firmware: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.firmware == 'true' }}
       deep_license: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.deep_license == 'true' }}
-      # On push, scan a representative subset (npm/pip/gomod) to bound runtime;
-      # manual dispatch (ONLY empty) scans every bundled example.
-      examples_only: ${{ github.event_name == 'push' && 'nodejs python go' || '' }}
+      # Empty: scan every bundled example. Both remaining triggers are opted
+      # into deliberately, so neither wants the cut-down set.
+      examples_only: ""
 
   docs-walkthrough:
     name: Docs Walkthrough
     if: >-
-      github.event_name == 'push' || github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.heavy == 'true') ||
       (github.event_name == 'pull_request' &&
        contains(github.event.pull_request.labels.*.name, 'run-heavy-e2e'))
     uses: ./.github/workflows/heavy-e2e.yml
@@ -377,8 +445,16 @@ jobs:
 
   validate-docs:
     name: Validate Documentation
-    runs-on: [self-hosted, linux, bomlens-wsl]
-    
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
+    needs: [changes]
+    # Skipped on a pull request that touches none of this job's paths (see the
+    # changes job). Pushes to main and dispatch always run it. Compared against
+    # 'false' rather than 'true' so a classifier failure runs the job instead of
+    # skipping it unnoticed.
+    if: >-
+      !cancelled() && (
+        github.event_name != 'pull_request' ||
+        needs.changes.outputs.docs != 'false')
     steps:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -433,8 +509,16 @@ jobs:
   
   validate-examples:
     name: Validate Examples
-    runs-on: [self-hosted, linux, bomlens-wsl]
-    
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
+    needs: [changes]
+    # Skipped on a pull request that touches none of this job's paths (see the
+    # changes job). Pushes to main and dispatch always run it. Compared against
+    # 'false' rather than 'true' so a classifier failure runs the job instead of
+    # skipping it unnoticed.
+    if: >-
+      !cancelled() && (
+        github.event_name != 'pull_request' ||
+        needs.changes.outputs.examples != 'false')
     strategy:
       matrix:
         example: [java-maven, java-gradle, nodejs, python, go, ruby, php, rust, dotnet, swift]
@@ -550,7 +634,16 @@ jobs:
   
   ui:
     name: UI Tests (Playwright)
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
+    needs: [changes]
+    # Skipped on a pull request that touches none of this job's paths (see the
+    # changes job). Pushes to main and dispatch always run it. Compared against
+    # 'false' rather than 'true' so a classifier failure runs the job instead of
+    # skipping it unnoticed.
+    if: >-
+      !cancelled() && (
+        github.event_name != 'pull_request' ||
+        needs.changes.outputs.frontend != 'false')
     defaults:
       run:
         working-directory: docker/web/frontend
@@ -595,7 +688,21 @@ jobs:
   # upload them, then commit the ones that actually changed.
   visual:
     name: UI Visual Regression
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
+    needs: [changes]
+    # Skipped on a pull request that touches none of this job's paths (see the
+    # changes job). Pushes to main and dispatch always run it. Compared against
+    # 'false' rather than 'true' so a classifier failure runs the job instead of
+    # skipping it unnoticed.
+    if: >-
+      !cancelled() && (
+        github.event_name != 'pull_request' ||
+        needs.changes.outputs.frontend != 'false')
+    # Write access only for the reseed path below, which commits the regenerated
+    # baselines to the branch the dispatch came from. The strict-diff path (every
+    # push and PR) writes nothing.
+    permissions:
+      contents: write
     container:
       image: mcr.microsoft.com/playwright:v1.61.1-jammy
     defaults:
@@ -610,24 +717,47 @@ jobs:
         id: visual
         run: |
           if [ "${{ github.event.inputs.reseed_visual }}" = "true" ]; then
-            echo "::notice::reseed_visual=true — regenerating ALL baselines. Download the artifact and commit the PNGs that changed."
+            echo "::notice::reseed_visual=true — regenerating ALL baselines and committing them to this branch."
             npm run test:visual -- --update-snapshots
             echo "seeded=true" >> "$GITHUB_OUTPUT"
           elif ls tests/ui/*-snapshots/*.png >/dev/null 2>&1; then
             echo "Baselines found — running strict visual diff."
             npm run test:visual
           else
-            echo "::notice::No visual baselines yet — seeding them. Commit the uploaded PNGs to enable the strict gate."
+            echo "::notice::No visual baselines yet — seeding them and committing them to this branch to enable the strict gate."
             npm run test:visual -- --update-snapshots
             echo "seeded=true" >> "$GITHUB_OUTPUT"
           fi
-      - name: Upload seeded baselines
+      # Committed rather than uploaded as an artifact. Artifact storage shares one
+      # quota with GHCR, and the published images fill it; a reseed then spends its
+      # whole run only to fail on the upload, and the regenerated PNGs are lost.
+      # Committing also removes the download-unzip-copy step this used to need.
+      - name: Commit seeded baselines
         if: steps.visual.outputs.seeded == 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        with:
-          name: visual-baselines
-          path: docker/web/frontend/tests/ui/**/*-snapshots/**
-          retention-days: 7
+        working-directory: ${{ github.workspace }}
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "::error::Dispatch a reseed from a feature branch. Baselines are committed to the branch they were dispatched from, and main takes changes through a PR."
+            exit 1
+          fi
+          # This job runs in a container, so the checkout is owned by a different
+          # uid than the one git sees here and it refuses the repository as unsafe.
+          # actions/checkout does register it, but under a HOME it only overrides
+          # for the length of its own step — by the time this step runs, that
+          # setting is gone and every git command fails with "not in a git
+          # directory". Register it again for this step.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A docker/web/frontend/tests/ui/
+          if git diff --cached --quiet; then
+            echo "::notice::Baselines regenerated with no pixel change — nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore(ui): regenerate visual baselines" \
+                     -m "Regenerated by the reseed_visual dispatch of run ${{ github.run_id }}."
+          git push origin "HEAD:${{ github.ref_name }}"
+          echo "::notice::Baselines committed to ${{ github.ref_name }}. Pull before you continue on that branch."
 
   # Guide screenshots (docs/images/web-ui-*.png) are captured by npm run capture:ui
   # in the same pinned container so they render like the visual baselines. They are
@@ -659,7 +789,7 @@ jobs:
 
   doc-coverage:
     name: Doc Coverage
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
     # Reads the scan-mode list from docker/entrypoint.sh and checks every
     # user-facing input form is documented across by-input, ui, cli, architecture,
     # pipeline-by-input and README. A new mode missing from a page fails here.
@@ -702,11 +832,56 @@ jobs:
 
   summary:
     name: CI Summary
-    runs-on: [self-hosted, linux, bomlens-wsl]
+    runs-on: ${{ fromJSON(vars.CI_LINUX_RUNNER || '["self-hosted","linux","bomlens-wsl"]') }}
     needs: [test, secrets, contract, postprocess, web-e2e, full-e2e, docs-walkthrough, lint, validate-docs, validate-examples, ui, visual, doc-coverage]
     if: always()
 
     steps:
+      # The runner is a single WSL2 machine with no image lifecycle of its own.
+      # Every integration and example run pulls the cdxgen language images and a
+      # release pulls more, and nothing ever removed them: 90 GB had accumulated
+      # by the time anyone looked, 87 of it reclaimable, and a full disk had
+      # already blocked one release. This runs after every other job on this
+      # runner has finished, so nothing is using what it removes.
+      #
+      # `until` reads an image's CREATION time, not when it was last used, so a
+      # long window on the image prune protects almost nothing: the third-party
+      # images a run pulls (cdxgen, syft) were built months ago and are dropped
+      # by any window. What it actually keeps is the images CI itself just
+      # built, one copy per run, which is the growth worth cutting — hence two
+      # days there. The builder cache keeps the week: it is what makes a
+      # rebuild cheap and it stays small. Failure here is not a CI failure: a
+      # machine that could not be tidied still ran the tests correctly.
+      - name: Reclaim runner disk
+        if: always()
+        continue-on-error: true
+        run: |
+          # `docker system df` prints one line per resource type, so it is
+          # reported as a block rather than folded into a table cell.
+          before=$(docker system df 2>/dev/null || echo "unavailable")
+          docker image prune -af --filter until=48h >/dev/null 2>&1 || true
+          docker builder prune -f --filter until=168h >/dev/null 2>&1 || true
+          after=$(docker system df 2>/dev/null || echo "unavailable")
+          {
+            echo "### Runner disk"
+            echo ""
+            echo "<details><summary>docker system df — before</summary>"
+            echo ""
+            echo '```'
+            echo "$before"
+            echo '```'
+            echo ""
+            echo "</details>"
+            echo ""
+            echo "After the prune:"
+            echo ""
+            echo '```'
+            echo "$after"
+            echo '```'
+            echo ""
+            df -h / | tail -1 | awk '{print "Root filesystem: " $4 " free of " $2 " (" $5 " used)"}'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Generate summary
         run: |
           echo "## CI Test Results" >> $GITHUB_STEP_SUMMARY
