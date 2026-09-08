@@ -127,6 +127,41 @@ plugins:
             Testing: 테스트
             Talks: 발표
             Release notes: 릴리스 노트
+        - locale: zh-TW
+          name: 正體中文
+          build: true
+          nav_translations:
+            Home: 首頁
+            Get started: 快速開始
+            What is an SBOM: 什麼是 SBOM
+            First scan: 第一次掃描
+            No-CLI quickstart: 免指令列快速開始
+            Web UI & app: 網頁介面與桌面版
+            Guides: 指南
+            By input type: 依輸入類型
+            Reports: 產生報告
+            Supplier SBOM: 供應者 SBOM
+            Firmware: 韌體分析
+            AI model: AI 模型
+            Identify bundled OSS (C/C++): 識別內含的開放原始碼 (C/C++)
+            Server SBOM: 伺服器 SBOM
+            Upload: 上傳
+            CI/CD: CI/CD 整合
+            Outputs: 產出物
+            Artifacts: 產出物種類
+            Reading reports: 如何讀報告
+            Advanced: 進階
+            CLI reference: CLI 參考
+            Docker image: Docker 映像檔
+            Ecosystems: 支援的生態系
+            About: 專案資訊
+            Architecture: 架構
+            Pipeline by input: 各輸入類型的流程
+            Local-first: 本機優先設計
+            Package managers: 套件管理器
+            Testing: 測試
+            Talks: 演講
+            Release notes: 版本發行說明
   # Redirects for URLs from the pre-IA-restructure site (#154), which served
   # Korean at the root and English under /en/. Old bookmarks, external links
   # and search-engine results keep working. Old /en/ paths map to the now

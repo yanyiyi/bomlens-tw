@@ -13,6 +13,19 @@ test("pickLang maps Korean locales to ko", () => {
   assert.equal(pickLang("KO-kr"), "ko");
 });
 
+test("pickLang folds every Chinese variant onto the one Chinese we ship", () => {
+  // Only Traditional Chinese ships, so a Simplified or Hong Kong locale lands
+  // there too rather than falling through to English — same call the web UI's
+  // convertDetectedLanguage makes.
+  assert.equal(pickLang("zh"), "zh-TW");
+  assert.equal(pickLang("zh-TW"), "zh-TW");
+  assert.equal(pickLang("zh-Hant-TW"), "zh-TW");
+  assert.equal(pickLang("zh-HK"), "zh-TW");
+  assert.equal(pickLang("zh-CN"), "zh-TW");
+  assert.equal(pickLang("zh_TW"), "zh-TW");
+  assert.equal(pickLang("ZH-Hans"), "zh-TW");
+});
+
 test("pickLang falls back to English for everything else", () => {
   assert.equal(pickLang("en-US"), "en");
   assert.equal(pickLang("fr"), "en");
@@ -21,12 +34,20 @@ test("pickLang falls back to English for everything else", () => {
 });
 
 test("SUPPORTED lists English first as the fallback", () => {
-  assert.deepEqual(SUPPORTED, ["en", "ko"]);
+  assert.deepEqual(SUPPORTED, ["en", "ko", "zh-TW"]);
+});
+
+test("every supported language carries the same message keys", () => {
+  // A key present in one language and missing from another throws at render
+  // time (the messages are read as `m.startingUi`, not looked up defensively).
+  const keys = (l) => Object.keys(mainMessages(l)).sort();
+  for (const lang of SUPPORTED) assert.deepEqual(keys(lang), keys("en"), lang);
 });
 
 test("resolveLang prefers SBOM_LANG over the system locale", () => {
   assert.equal(resolveLang("en", "ko-KR"), "en");
   assert.equal(resolveLang("ko", "en-US"), "ko");
+  assert.equal(resolveLang("zh-TW", "en-US"), "zh-TW");
 });
 
 test("resolveLang falls back to the system locale when no override is set", () => {

@@ -502,7 +502,7 @@ function registerApp() {
   });
 
   app.whenReady().then(async () => {
-    // 시작 화면 언어 확정: SBOM_LANG 환경변수 우선, 없으면 시스템 로캘(한국어면 ko, 아니면 en).
+    // 시작 화면 언어 확정: SBOM_LANG 환경변수 우선, 없으면 시스템 로캘(ko / zh-TW / en 폴백).
     lang = resolveLang(process.env.SBOM_LANG, app.getLocale());
     t = mainMessages(lang);
     // 시작 로그 파일: 실행마다 새로 쓴다. UI 전환 후 사라진 진행 내역을 문제 보고에 쓴다.

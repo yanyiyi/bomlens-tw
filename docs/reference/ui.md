@@ -23,7 +23,7 @@ cd ~/sbom-output      # output folder (anywhere is fine)
 
 The interface has a top bar across the width, a left rail for the current scan's sections, and a content area:
 
-- **Top bar** — the product mark (links home), the current project, a Re-scan button (shown on a scan that still carries its settings, so you can re-run the same target with the toggles prefilled), global search across components and CVEs, the Scan management menu (the clock icon opens a list of past scans with a delete control and a link to the full list), the New scan button, and the language (한국어 / EN) and light/dark toggles.
+- **Top bar** — the product mark (links home), the current project, a Re-scan button (shown on a scan that still carries its settings, so you can re-run the same target with the toggles prefilled), global search across components and CVEs, the Scan management menu (the clock icon opens a list of past scans with a delete control and a link to the full list), the New scan button, and the language (KO / EN / TW) and light/dark toggles.
 - **Left rail** — two named links out of the scan (Scan management, New scan) above the current scan's sections, which are grouped under Inventory, Security, Compliance, AI and Outputs. The rail adapts to the scan: AI sections appear only for AI/ML SBOMs, and a section appears only when its data exists. It collapses to icons on narrow windows. With no scan open — the home screen — there is no rail.
 - **Content** — the home (Scan management) screen, the New scan form, the running view, or the active result section.
 

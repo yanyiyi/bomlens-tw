@@ -1,5 +1,5 @@
 {
-  "_note": "正體中文（zh-TW）字串，供給人閱讀的符合性報告、AI 合規概況與風險報告使用。由 validate-sbom.sh、generate-ai-profile.sh、generate-risk-report.sh 三個消費者在 REPORT_LANG=zh-TW 時載入；英文預設不讀取本檔，輸出維持逐位元組相同。機器可讀的 _conformance.json / _ai-profile.json 一律維持英文。以下資料與識別碼不得翻譯：狀態碼與表情符號（pass/warn/fail/review、PASS/FAIL/WARN/REVIEW）、openness 值、G7 元素 id、PURL、授權條款識別碼、CycloneDX 欄位路徑、URL、框架與條文識別碼。chrome 類鍵使用 %s 佔位符（shell printf），數量與順序須與英文完全一致；label/detail 樣板鍵使用由 jq 填入的具名 token（%n% %a% %b% %v%）。初版翻譯由 Claude 產出（2026-09），待母語者校對。",
+  "_note": "正體中文（zh-TW）字串，供給人閱讀的符合性報告、AI 合規概況與風險報告使用。由 validate-sbom.sh、generate-ai-profile.sh、generate-risk-report.sh 三個消費者在 REPORT_LANG=zh-TW 時載入；英文預設不讀取本檔，輸出維持逐位元組相同。機器可讀的 _conformance.json / _ai-profile.json 一律維持英文。以下資料與識別碼不得翻譯：狀態碼與表情符號（pass/warn/fail/review、PASS/FAIL/WARN/REVIEW）、openness 值、G7 元素 id、PURL、授權條款識別碼、CycloneDX 欄位路徑、URL、框架與條文識別碼。chrome 類鍵使用 %s 佔位符（shell printf），數量與順序須與英文完全一致；label/detail 樣板鍵使用由 jq 填入的具名 token（%n% %a% %b% %v%）。初版翻譯由 Claude 產出（2026-09），並經母語者校對。用詞基準見 docs/chinese-style-guide.md。",
   "common.yes": "是",
   "common.no": "否",
   "conformance.kind": "符合性",
@@ -29,7 +29,7 @@
   "conformance.h2_review": "需要人工確認的項目",
   "conformance.review_intro": "掃描無法判定的項目，以及各項應確認的內容。",
   "conformance.fill_intro": "以下每個要素皆屬建議性質，不影響結果。程式碼片段示範了能滿足該要素的寫法。",
-  "conformance.reference": "參考：%s",
+  "conformance.reference": "參考：",
   "conformance.h2_crosswalk": "法規對照",
   "conformance.pill_result": "結果：",
   "conformance.pill_failures": "必要項未通過：",

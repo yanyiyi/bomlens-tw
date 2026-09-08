@@ -145,7 +145,7 @@
   </head>
   <body>
     <nav id="lang-toggle" aria-label="Language">
-      <button type="button" data-lang="ko">KO</button>|<button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ko">KO</button>|<button type="button" data-lang="en">EN</button>|<button type="button" data-lang="zh-TW">TW</button>
     </nav>
     <main>
       <h1 id="title"></h1>
@@ -161,7 +161,8 @@
     <script>
       // 언어는 main.mjs가 ?lang= 쿼리로, OS는 ?platform=(process.platform 값)으로 넘긴다.
       const params = new URLSearchParams(location.search);
-      const lang = params.get("lang") === "ko" ? "ko" : "en";
+      // ko, en, zh-TW 중 하나. lib/i18n.mjs의 SUPPORTED와 같은 목록을 쓴다.
+      const lang = ["ko", "en", "zh-TW"].includes(params.get("lang")) ? params.get("lang") : "en";
       const reason = params.get("reason");
       // 알 수 없는 platform은 win32 안내로 폴백한다(주 배포 대상이 Windows).
       const rawPlatform = params.get("platform");
@@ -205,6 +206,24 @@
           openLogs: "로그 폴더 열기",
           stillMissing: "아직 Docker를 찾을 수 없어요. 엔진이 켜졌는지 확인해 주세요.",
         },
+        "zh-TW": {
+          title: "需要 Docker",
+          titleNotRunning: "請啟動 Docker 引擎",
+          leadNotRunning:
+            "Docker 已安裝，但引擎沒有在執行。請啟動 Rancher Desktop 或 Docker Desktop，等圖示狀態穩定後，再重新啟動這個應用程式。",
+          leadNotRunningLinux:
+            "Docker 已安裝，但引擎沒有在執行。請用 sudo systemctl start docker 啟動引擎，再重新啟動這個應用程式。",
+          leadNotInstalled: "Docker 沒有安裝，或是在 PATH 中找不到。",
+          intro: {
+            win32: "BomLens 以 Docker 容器執行掃描器。Windows 上可用的免費選項：",
+            darwin: "BomLens 以 Docker 容器執行掃描器。macOS 上可用的選項：",
+            linux: "BomLens 以 Docker 容器執行掃描器。在 Linux 上安裝 Docker Engine 即可：",
+          },
+          hint: "安裝並啟動引擎後，再重新啟動這個應用程式。",
+          checkAgain: "重新檢查",
+          openLogs: "開啟日誌資料夾",
+          stillMissing: "還是找不到 Docker。請確認引擎已經啟動。",
+        },
         en: {
           title: "Docker is required",
           titleNotRunning: "Please start the Docker engine",
@@ -234,12 +253,13 @@
             desc: {
               ko: "GUI, 이 앱과 바로 동작(권장)",
               en: "GUI, works with this app out of the box (recommended)",
+              "zh-TW": "有圖形介面，裝好就能配合這個應用程式使用（建議）",
             },
           },
           {
             url: "https://docs.docker.com/engine/install/",
             name: "WSL2 + docker-ce",
-            desc: { ko: "완전 무료", en: "completely free" },
+            desc: { ko: "완전 무료", en: "completely free", "zh-TW": "完全免費" },
           },
           {
             url: "https://www.docker.com/products/docker-desktop/",
@@ -247,6 +267,7 @@
             desc: {
               ko: "규모가 큰 조직은 유료 라이선스 필요",
               en: "larger organizations need a paid license",
+              "zh-TW": "規模較大的組織需要付費授權",
             },
           },
         ],
@@ -257,6 +278,7 @@
             desc: {
               ko: "가장 간단한 설치, 규모가 큰 조직은 유료 라이선스 필요",
               en: "the simplest setup; larger organizations need a paid license",
+              "zh-TW": "安裝最簡單；規模較大的組織需要付費授權",
             },
           },
           {
@@ -265,6 +287,7 @@
             desc: {
               ko: "완전 무료 — brew install colima docker 후 colima start",
               en: "completely free — brew install colima docker, then colima start",
+              "zh-TW": "完全免費——brew install colima docker，然後 colima start",
             },
           },
         ],
@@ -275,12 +298,17 @@
             desc: {
               ko: "배포판별 설치 안내(docs.docker.com/engine/install)",
               en: "per-distribution install guide (docs.docker.com/engine/install)",
+              "zh-TW": "各發行版的安裝指引（docs.docker.com/engine/install）",
             },
           },
           {
             name: "sudo systemctl start docker",
             code: true,
-            desc: { ko: "설치 후 엔진 시작", en: "start the engine after installing" },
+            desc: {
+              ko: "설치 후 엔진 시작",
+              en: "start the engine after installing",
+              "zh-TW": "安裝後啟動引擎",
+            },
           },
           {
             name: "sudo usermod -aG docker $USER",
@@ -288,6 +316,7 @@
             desc: {
               ko: "다시 로그인하면 sudo 없이 쓸 수 있어요",
               en: "log out and back in to use Docker without sudo",
+              "zh-TW": "登出後再登入，就能不用 sudo 執行 Docker",
             },
           },
         ],

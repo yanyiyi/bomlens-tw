@@ -149,7 +149,7 @@
   </head>
   <body>
     <nav id="lang-toggle" aria-label="Language">
-      <button type="button" data-lang="ko">KO</button>|<button type="button" data-lang="en">EN</button>
+      <button type="button" data-lang="ko">KO</button>|<button type="button" data-lang="en">EN</button>|<button type="button" data-lang="zh-TW">TW</button>
     </nav>
     <header>
       <img src="logo.svg" alt="BomLens — SBOM Generator" style="height: 40px; width: auto; display: block" />
@@ -162,9 +162,11 @@
     <button id="open-logs" type="button"></button>
     <footer id="version"></footer>
     <script>
-      // 언어는 main.mjs가 ?lang= 쿼리로 넘긴다(ko 또는 en, 기본 en).
+      // 언어는 main.mjs가 ?lang= 쿼리로 넘긴다(ko, en, zh-TW 중 하나. 기본 en).
+      // lib/i18n.mjs의 SUPPORTED와 같은 목록을 쓴다 — 한쪽만 늘리면 토글이 눌러도
+      // 바뀌지 않는 언어가 생긴다.
       const params = new URLSearchParams(location.search);
-      const lang = params.get("lang") === "ko" ? "ko" : "en";
+      const lang = ["ko", "en", "zh-TW"].includes(params.get("lang")) ? params.get("lang") : "en";
       document.documentElement.lang = lang;
 
       // 앱 버전은 main.mjs가 ?v= 쿼리로 넘긴다. 파일을 직접 열어 쿼리가 없으면 표시하지 않는다.
@@ -199,6 +201,22 @@
             timeout:
               "다운로드가 진행되지 않아 중단했습니다. 네트워크가 매우 느리거나 방화벽에 막혔을 수 있습니다. 오프라인 이미지 파일(tar)로 설치하는 방법은 관리자에게 문의해 주세요.",
             unknown: "아래 로그의 마지막 줄에 원인이 적혀 있습니다.",
+          },
+        },
+        "zh-TW": {
+          subtitle: "正在準備。初次執行時，下載掃描器映像檔可能需要幾分鐘。",
+          retry: "重試",
+          openLogs: "開啟日誌資料夾",
+          help: {
+            // 公司代理伺服器是現場最常見的失敗原因。重點是「下載的是 daemon，不是應用程式」。
+            proxy:
+              "看起來是公司的代理伺服器阻擋了下載。映像檔是由 Docker daemon 下載，不是由 BomLens 下載，所以在應用程式裡設定代理伺服器變數沒有作用。請到 Docker Desktop → Settings → Resources → Proxies，或 Rancher Desktop → Preferences → WSL → Proxy 設定代理伺服器，然後按「重試」。",
+            dns: "無法解析登錄伺服器的主機名稱（DNS）。請確認網路連線，以及公司的 DNS／VPN 設定。",
+            auth: "登錄伺服器拒絕存取。請確認映像檔名稱正確；若是私有映像檔，請先執行 docker login。",
+            disk: "磁碟空間不足。掃描器映像檔需要大約 4 GB 的可用空間。",
+            timeout:
+              "下載停止進展，已經取消。你的網路可能非常慢，或是被防火牆阻擋。請向主辦方詢問改用離線映像檔（tar）安裝的方式。",
+            unknown: "下方日誌的最後幾行會顯示出錯的原因。",
           },
         },
         en: {

@@ -2369,6 +2369,24 @@ REPORT_LANG=zh-TW bash "$LIB/validate-sbom.sh" "$FIX/good-cyclonedx.json" "$WORK
 grep -q "^## 需要人工確認的項目" "$WORK/sgz_conformance.md" \
     && pass "the Traditional Chinese report renders the section too" || fail "zh-TW markdown has no review section"
 
+# No placeholder may survive into a rendered report. The catalogue carries two
+# substitution dialects -- printf's %s (via tfmt) and jq gsub's %n%/%a%/%b%/%v%
+# -- and a value can also be post-processed by the shell before it is used:
+# conformance.reference is cut at its first space, so a translation without one
+# leaked a literal "%s" into every localized conformance report. Assert on the
+# whole rendered surface rather than on one string, in both languages.
+for _lang_dir in sgk sgz; do
+    for _out in "$WORK/${_lang_dir}_conformance.md" "$WORK/${_lang_dir}_conformance.html"; do
+        [ -f "$_out" ] || continue
+        if grep -qE '%[snabv]%|%s' "$_out"; then
+            fail "an unsubstituted placeholder reached $(basename "$_out")" \
+                 "$(grep -oE '%[snabv]%|%s' "$_out" | sort -u | tr '\n' ' ')"
+        else
+            pass "no unsubstituted placeholder in $(basename "$_out")"
+        fi
+    done
+done
+
 echo "== conformance: the 2026 SBOM minimum elements are measured on every SBOM =="
 # The baseline applies to all software, not to a subset, so its registry declares
 # no condition and is measured wherever a CycloneDX SBOM is. Advisory throughout

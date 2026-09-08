@@ -1,15 +1,21 @@
 // Copyright 2026 SK Telecom Co., Ltd.
 // SPDX-License-Identifier: Apache-2.0
 
-// 데스크톱 시작 화면 문자열의 한국어/영어 사전과 로캘 선택(순수 — electron 비의존, 단위 테스트 가능).
-// 웹 UI(docker/web/frontend, i18next)와 동일한 원칙: 로캘이 ko로 시작하면 한국어, 아니면 영어 폴백.
-// 전역 확장에 맞춰 비한국어 환경에서는 영어로 뜨고, 한국 사용자는 기존 경험을 그대로 유지한다.
+// 데스크톱 시작 화면 문자열의 사전과 로캘 선택(순수 — electron 비의존, 단위 테스트 가능).
+// 웹 UI(docker/web/frontend, i18next)와 동일한 원칙: 로캘 접두사로 지원 언어를 고르고,
+// 해당하는 것이 없으면 영어로 폴백한다. 전역 확장에 맞춰 비한국어 환경에서는 영어로 뜨고,
+// 한국 사용자는 기존 경험을 그대로 유지한다.
 
-export const SUPPORTED = ["en", "ko"];
+export const SUPPORTED = ["en", "ko", "zh-TW"];
 
 // app.getLocale()이나 navigator.language 같은 BCP 47 문자열을 받아 지원 언어로 환원한다.
+// 중국어는 번체만 제공하므로 zh 계열(zh, zh-Hant-TW, zh-HK, zh-CN...)은 모두 zh-TW로
+// 모은다 — 웹 UI의 convertDetectedLanguage와 같은 판단이다.
 export function pickLang(locale = "en") {
-  return String(locale).toLowerCase().startsWith("ko") ? "ko" : "en";
+  const l = String(locale).toLowerCase();
+  if (l.startsWith("ko")) return "ko";
+  if (l === "zh" || l.startsWith("zh-") || l.startsWith("zh_")) return "zh-TW";
+  return "en";
 }
 
 // 언어 결정: SBOM_LANG 환경변수가 있으면 우선(사용자가 언어를 강제하거나 스크린샷을 찍을 때),
@@ -62,6 +68,42 @@ const MAIN = {
     updateDownload: "다운로드 페이지 열기",
     updateLater: "나중에",
     scanMountChooseTitle: "스캔할 폴더 선택",
+  },
+  "zh-TW": {
+    dockerChecking: "正在確認 Docker 狀態…",
+    firstPull: "初次執行，正在下載掃描器映像檔（約 250 MB）。",
+    image: (img) => `映像檔：${img}`,
+    network: "初次掃描專案時，會再下載一次語言專用映像檔（0.6-1.7 GB）…",
+    // 畫面上的按鈕是「重試」，文案若寫成「重新啟動應用程式」就會對不上。
+    pullFailed: "映像檔下載失敗。請先看下方的說明，然後按「重試」。",
+    // non-TTY 的 docker pull 沒有位元組與百分比，只能數圖層（pullprogress.mjs）。
+    pullProgress: (complete, total, secs) =>
+      total === 0
+        ? `正在連線到登錄伺服器…（已經過 ${secs} 秒）`
+        : `正在下載映像檔圖層：${total} 個中已完成 ${complete} 個（已經過 ${secs} 秒）`,
+    // 映像檔已存在時只會靜靜確認是否為最新，真的開始下載新版本才顯示。
+    updateFound: "正在下載新版的掃描器映像檔…",
+    cleanedOrphans: (n) => `已清理前次執行殘留的 ${n} 個容器。`,
+    startingUi: "正在啟動 UI 容器…",
+    ready: "準備完成，正在開啟 UI。",
+    startFailed: (msg) => `啟動失敗：${msg}`,
+    // 把 container.mjs 丟出的 ContainerError.code 轉成給人看的文案。detail 是 docker
+    // 的原始輸出等附加資訊，不是翻譯對象。
+    containerError: (code, detail) => {
+      if (code === "run-failed")
+        return `Docker 無法啟動掃描器容器。${detail ? ` 原因：${detail}` : ""}`;
+      if (code === "exited-early") return "掃描器容器在啟動過程中結束了。";
+      if (code === "not-ready")
+        return `掃描器在 ${secs(detail)} 秒內沒有完成啟動。請按「重試」。`;
+      return String(code);
+    },
+    containerDied: "UI 容器已結束。請按「重試」重新啟動。",
+    updateTitle: "有可用的更新",
+    updateMessage: (current, latest) =>
+      `新版本（v${latest}）已經發佈。你目前使用的是 v${current}。`,
+    updateDownload: "開啟下載頁面",
+    updateLater: "稍後再說",
+    scanMountChooseTitle: "選擇要掃描的資料夾",
   },
   en: {
     dockerChecking: "Checking Docker status...",

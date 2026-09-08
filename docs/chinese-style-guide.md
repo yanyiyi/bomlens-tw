@@ -1,7 +1,7 @@
 # 正體中文在地化文體指南
 
-這份文件是 BomLens 正體中文（`zh-TW`，台灣用語）翻譯的基準。初版翻譯由機器產出、
-待母語者校對，校對時請以本文的術語表與規則為準；[`korean-style-guide.md`](korean-style-guide.md)
+這份文件是 BomLens 正體中文（`zh-TW`，台灣用語）翻譯的基準。初版由機器產出、已經母語者
+校對一輪（2026-09，110 條修訂），新增或修改字串時請以本文的術語表與規則為準；[`korean-style-guide.md`](korean-style-guide.md)
 是同一套精神的韓文版本。行文慣例大致依循
 [Mozilla 正體中文風格指南](https://mozilla-l10n.github.io/styleguides/zh-TW/)。
 
