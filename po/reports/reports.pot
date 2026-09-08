@@ -1,0 +1,1472 @@
+# Human-facing report strings for BomLens (conformance, AI profile, risk).
+# Generated from docker/lib/i18n/report-strings.*.json + the English literals
+# inlined in docker/lib/*.sh.
+#
+# After a Weblate push, regenerate the JSON the report generators read:
+#   scripts/po-to-report-strings.sh <lang>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: BomLens report-strings\n"
+"Report-Msgid-Bugs-To: https://github.com/sktelecom/bomlens/issues\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. [aiprofile.assess_conditions]
+#: generate-ai-profile.sh:257
+msgctxt "aiprofile.assess_conditions"
+msgid "conditions"
+msgstr ""
+
+#. [aiprofile.assess_source]
+#: generate-ai-profile.sh:257
+msgctxt "aiprofile.assess_source"
+msgid "source"
+msgstr ""
+
+#. [aiprofile.assess_usage]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:253
+#, c-format
+msgctxt "aiprofile.assess_usage"
+msgid "Assessed for the %s usage scenario; conditions that do not bind it are omitted."
+msgstr ""
+
+#. [aiprofile.close_intro]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:245
+#, c-format
+msgctxt "aiprofile.close_intro"
+msgid "These G7 elements have an automated source but are absent from the SBOM. The conformance report (\\`%s_conformance.md\\`) carries the CycloneDX fragment that would satisfy each one."
+msgstr ""
+
+#. [aiprofile.crosswalk_full]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:244
+#, c-format
+msgctxt "aiprofile.crosswalk_full"
+msgid "The full element-by-element mapping is in the conformance report (\\`%s_conformance.*\\`)."
+msgstr ""
+
+#. [aiprofile.flag_behavioral]
+#: generate-ai-profile.sh:193
+msgctxt "aiprofile.flag_behavioral"
+msgid "Behavioral-use restriction"
+msgstr ""
+
+#. [aiprofile.flag_noncommercial]
+#: generate-ai-profile.sh:193
+msgctxt "aiprofile.flag_noncommercial"
+msgid "Non-commercial"
+msgstr ""
+
+#. [aiprofile.h2_assessment]
+#: generate-ai-profile.sh:247
+msgctxt "aiprofile.h2_assessment"
+msgid "Model risk assessment"
+msgstr ""
+
+#. [aiprofile.h2_close]
+#: generate-ai-profile.sh:245
+msgctxt "aiprofile.h2_close"
+msgid "How to close the gaps"
+msgstr ""
+
+#. [aiprofile.h2_clusters]
+#: generate-ai-profile.sh:239
+msgctxt "aiprofile.h2_clusters"
+msgid "G7 minimum elements by cluster"
+msgstr ""
+
+#. [aiprofile.h2_crosswalk]
+#: generate-ai-profile.sh:242
+msgctxt "aiprofile.h2_crosswalk"
+msgid "Regulatory crosswalk"
+msgstr ""
+
+#. [aiprofile.h2_lic]
+#: generate-ai-profile.sh:235
+msgctxt "aiprofile.h2_lic"
+msgid "Licenses flagged for review"
+msgstr ""
+
+#. [aiprofile.h2_review]
+#: generate-ai-profile.sh:246
+msgctxt "aiprofile.h2_review"
+msgid "Elements a person still has to fill in"
+msgstr ""
+
+#. [aiprofile.h2_summary]
+#: generate-ai-profile.sh:231
+msgctxt "aiprofile.h2_summary"
+msgid "Summary"
+msgstr ""
+
+#. [aiprofile.lic_more_md]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:362
+#, c-format
+msgctxt "aiprofile.lic_more_md"
+msgid "_… and %s more (see the JSON profile)._"
+msgstr ""
+
+#. [aiprofile.lic_none]
+#: generate-ai-profile.sh:238
+msgctxt "aiprofile.lic_none"
+msgid "_No components carry an AI behavioral-use or non-commercial license flag._"
+msgstr ""
+
+#. [aiprofile.lic_none_html]
+#: validate-sbom.sh:939
+msgctxt "aiprofile.lic_none_html"
+msgid "No components carry an AI behavioral-use or non-commercial license flag."
+msgstr ""
+
+#. [aiprofile.md_generated]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:229
+#, c-format
+msgctxt "aiprofile.md_generated"
+msgid "- Generated: %s"
+msgstr ""
+
+#. [aiprofile.md_intro]
+#: generate-ai-profile.sh:230
+msgctxt "aiprofile.md_intro"
+msgid "- This profile re-aggregates the conformance and SBOM artifacts already produced."
+msgstr ""
+
+#. [aiprofile.md_title]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:228
+#, c-format
+msgctxt "aiprofile.md_title"
+msgid "AI compliance profile — %s"
+msgstr ""
+
+#. [aiprofile.review_intro]
+#: generate-ai-profile.sh:246
+msgctxt "aiprofile.review_intro"
+msgid "These G7 elements have no automated source; they are surfaced for human review, not guessed."
+msgstr ""
+
+#. [aiprofile.sum_assess]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:248
+#, c-format
+msgctxt "aiprofile.sum_assess"
+msgid "- Model risk assessment: no restriction signals %s, conditional use %s, caution %s, needs review %s."
+msgstr ""
+
+#. [aiprofile.sum_base]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:234
+#, c-format
+msgctxt "aiprofile.sum_base"
+msgid "- Base conformance result: **%s** (the overall pass/fail comes from the required format checks, not from G7)."
+msgstr ""
+
+#. [aiprofile.sum_g7]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:232
+#, c-format
+msgctxt "aiprofile.sum_g7"
+msgid "- G7 minimum elements: **%s / %s present** (of the automatically checkable), %s gap, %s need human review."
+msgstr ""
+
+#. [aiprofile.sum_lic]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-ai-profile.sh:233
+#, c-format
+msgctxt "aiprofile.sum_lic"
+msgid "- Licenses flagged for review: **%s** (%s behavioral-use, %s non-commercial)."
+msgstr ""
+
+#. [aiprofile.th_cluster]
+#: generate-ai-profile.sh:240
+msgctxt "aiprofile.th_cluster"
+msgid "Cluster"
+msgstr ""
+
+#. [aiprofile.th_component]
+#: generate-ai-profile.sh:236
+msgctxt "aiprofile.th_component"
+msgid "Component"
+msgstr ""
+
+#. [aiprofile.th_datasets]
+#: generate-ai-profile.sh:256
+msgctxt "aiprofile.th_datasets"
+msgid "Datasets"
+msgstr ""
+
+#. [aiprofile.th_flag]
+#: generate-ai-profile.sh:237
+msgctxt "aiprofile.th_flag"
+msgid "Flag"
+msgstr ""
+
+#. [aiprofile.th_framework]
+#: generate-ai-profile.sh:243
+msgctxt "aiprofile.th_framework"
+msgid "Framework"
+msgstr ""
+
+#. [aiprofile.th_gap]
+#: generate-ai-profile.sh:241
+msgctxt "aiprofile.th_gap"
+msgid "Gap"
+msgstr ""
+
+#. [aiprofile.th_lic_verdict]
+#: generate-ai-profile.sh:255
+msgctxt "aiprofile.th_lic_verdict"
+msgid "License verdict"
+msgstr ""
+
+#. [aiprofile.th_license]
+#: generate-ai-profile.sh:237
+msgctxt "aiprofile.th_license"
+msgid "License"
+msgstr ""
+
+#. [aiprofile.th_mapped]
+#: generate-ai-profile.sh:243
+msgctxt "aiprofile.th_mapped"
+msgid "Mapped"
+msgstr ""
+
+#. [aiprofile.th_overall]
+#: generate-ai-profile.sh:256
+msgctxt "aiprofile.th_overall"
+msgid "Overall"
+msgstr ""
+
+#. [aiprofile.th_present]
+#: generate-ai-profile.sh:240
+msgctxt "aiprofile.th_present"
+msgid "Present"
+msgstr ""
+
+#. [aiprofile.th_review]
+#: generate-ai-profile.sh:241
+msgctxt "aiprofile.th_review"
+msgid "Review"
+msgstr ""
+
+#. [aiprofile.th_security]
+#: generate-ai-profile.sh:255
+msgctxt "aiprofile.th_security"
+msgid "File security"
+msgstr ""
+
+#. [aiprofile.th_total]
+#: generate-ai-profile.sh:241
+msgctxt "aiprofile.th_total"
+msgid "Total"
+msgstr ""
+
+#. [aiprofile.th_version]
+#: generate-ai-profile.sh:236
+msgctxt "aiprofile.th_version"
+msgid "Version"
+msgstr ""
+
+#. [aiprofile.usage_internal]
+#: generate-ai-profile.sh:285
+msgctxt "aiprofile.usage_internal"
+msgid "internal"
+msgstr ""
+
+#. [aiprofile.usage_outputs-only]
+#: generate-ai-profile.sh:285
+msgctxt "aiprofile.usage_outputs-only"
+msgid "outputs-only"
+msgstr ""
+
+#. [aiprofile.usage_product]
+#: generate-ai-profile.sh:285
+msgctxt "aiprofile.usage_product"
+msgid "product"
+msgstr ""
+
+#. [aiprofile.usage_redistribute]
+#: generate-ai-profile.sh:285
+msgctxt "aiprofile.usage_redistribute"
+msgid "redistribute"
+msgstr ""
+
+#. [aiprofile.v_caution]
+#: generate-risk-report.sh:282
+msgctxt "aiprofile.v_caution"
+msgid "Caution"
+msgstr ""
+
+#. [aiprofile.v_conditional]
+#: generate-risk-report.sh:281
+msgctxt "aiprofile.v_conditional"
+msgid "Conditional use"
+msgstr ""
+
+#. [aiprofile.v_ok]
+#: generate-risk-report.sh:281
+msgctxt "aiprofile.v_ok"
+msgid "No restriction signals"
+msgstr ""
+
+#. [aiprofile.v_review]
+#: generate-risk-report.sh:282
+msgctxt "aiprofile.v_review"
+msgid "Needs review"
+msgstr ""
+
+#. [common.no]
+#: validate-sbom.sh:944
+msgctxt "common.no"
+msgid "no"
+msgstr ""
+
+#. [common.yes]
+#: validate-sbom.sh:944
+msgctxt "common.yes"
+msgid "yes"
+msgstr ""
+
+#. [conformance.check_summary]
+#: validate-sbom.sh:931
+msgctxt "conformance.check_summary"
+msgid "What to establish"
+msgstr ""
+
+#. [conformance.detail.checksum]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.checksum"
+msgid "%n% checksum(s)"
+msgstr ""
+
+#. [conformance.detail.could_not_eval]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.could_not_eval"
+msgid "could not evaluate"
+msgstr ""
+
+#. [conformance.detail.edge]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.edge"
+msgid "%n% edge(s)"
+msgstr ""
+
+#. [conformance.detail.file_props_review]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.file_props_review"
+msgid "requires inspecting the delivered files (no automated source in this scan)"
+msgstr ""
+
+#. [conformance.detail.files_only]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.files_only"
+msgid "no package components (file inventory only)"
+msgstr ""
+
+#. [conformance.detail.found]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.found"
+msgid "%n% found"
+msgstr ""
+
+#. [conformance.detail.license_field]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.license_field"
+msgid "%n% license field(s)"
+msgstr ""
+
+#. [conformance.detail.malformed]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.malformed"
+msgid "%n% malformed"
+msgstr ""
+
+#. [conformance.detail.model_components]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.model_components"
+msgid "%a%/%b% model component(s)"
+msgstr ""
+
+#. [conformance.detail.names_versions]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.names_versions"
+msgid "names=%a%, versions=%b%"
+msgstr ""
+
+#. [conformance.detail.no_files]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.no_files"
+msgid "no file components"
+msgstr ""
+
+#. [conformance.detail.no_models]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.no_models"
+msgid "no machine-learning-model components"
+msgstr ""
+
+#. [conformance.detail.no_packages]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.no_packages"
+msgid "no packages to measure"
+msgstr ""
+
+#. [conformance.detail.no_subject_components]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.no_subject_components"
+msgid "no components"
+msgstr ""
+
+#. [conformance.detail.not_cdx_spdx]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.not_cdx_spdx"
+msgid "not CycloneDX or SPDX"
+msgstr ""
+
+#. [conformance.detail.not_present]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.not_present"
+msgid "not present in the SBOM"
+msgstr ""
+
+#. [conformance.detail.nothing]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.nothing"
+msgid "nothing to measure"
+msgstr ""
+
+#. [conformance.detail.package]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.package"
+msgid "%n% package(s)"
+msgstr ""
+
+#. [conformance.detail.present]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.present"
+msgid "present"
+msgstr ""
+
+#. [conformance.detail.purl_refs]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.purl_refs"
+msgid "%a% purl ref(s) for %b% package(s)"
+msgstr ""
+
+#. [conformance.detail.relationship]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.relationship"
+msgid "%n% relationship(s)"
+msgstr ""
+
+#. [conformance.detail.review]
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.review"
+msgid "requires human review (no automated source)"
+msgstr ""
+
+#. [conformance.detail.spdxver]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.spdxver"
+msgid "%n% accepted SPDXVersion line(s)"
+msgstr ""
+
+#. [conformance.detail.subject_components]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.subject_components"
+msgid "%a%/%b% component(s)"
+msgstr ""
+
+#. [conformance.detail.tool]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.tool"
+msgid "%n% tool(s)"
+msgstr ""
+
+#. [conformance.detail.untraceable]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq ldetail)
+msgctxt "conformance.detail.untraceable"
+msgid "%n% untraceable"
+msgstr ""
+
+#. [conformance.fill_intro]
+#: validate-sbom.sh:943
+msgctxt "conformance.fill_intro"
+msgid "Each element below is advisory and does not affect the result. The fragment shows the shape that would satisfy it."
+msgstr ""
+
+#. [conformance.fix_summary]
+#: validate-sbom.sh:930
+msgctxt "conformance.fix_summary"
+msgid "How to fill this"
+msgstr ""
+
+#. [conformance.g7checks_intro]
+#: validate-sbom.sh:940
+msgctxt "conformance.g7checks_intro"
+msgid "Advisory elements from the G7 \"Software Bill of Materials for AI — Minimum Elements\". Being advisory they never move the result, and elements with no automated source are marked for review."
+msgstr ""
+
+#. [conformance.h1]
+#: validate-sbom.sh:948
+msgctxt "conformance.h1"
+msgid "SBOM Conformance Report"
+msgstr ""
+
+#. [conformance.h2_crosswalk]
+#: validate-sbom.sh:943
+msgctxt "conformance.h2_crosswalk"
+msgid "Regulatory crosswalk"
+msgstr ""
+
+#. [conformance.h2_fill]
+#: validate-sbom.sh:941
+msgctxt "conformance.h2_fill"
+msgid "How to fill the gaps"
+msgstr ""
+
+#. [conformance.h2_g7checks]
+#: validate-sbom.sh:940
+msgctxt "conformance.h2_g7checks"
+msgid "G7 minimum elements"
+msgstr ""
+
+#. [conformance.h2_missing]
+#: validate-sbom.sh:941
+msgctxt "conformance.h2_missing"
+msgid "Missing / non-conformant items"
+msgstr ""
+
+#. [conformance.h2_review]
+#: validate-sbom.sh:942
+msgctxt "conformance.h2_review"
+msgid "What needs a person"
+msgstr ""
+
+#. [conformance.h2_submission]
+#: validate-sbom.sh:932
+msgctxt "conformance.h2_submission"
+msgid "SBOM format requirements"
+msgstr ""
+
+#. [conformance.html_title]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: validate-sbom.sh:947
+#, c-format
+msgctxt "conformance.html_title"
+msgid "SBOM Conformance — %s"
+msgstr ""
+
+#. [conformance.kind]
+#: validate-sbom.sh:948
+msgctxt "conformance.kind"
+msgid "Conformance"
+msgstr ""
+
+#. [conformance.label.artifact_uri]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.artifact_uri"
+msgid "Source or distribution URI coverage (>= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.creator]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.creator"
+msgid "Component creator coverage (>= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.file_identifier]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.file_identifier"
+msgid "File component identifier coverage (hash, >= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.filename]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.filename"
+msgid "Component filename coverage (>= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.hash]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.hash"
+msgid "Hash coverage (>= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.license]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.license"
+msgid "License coverage (>= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.purl]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.purl"
+msgid "PURL coverage (>= %n%%)"
+msgstr ""
+
+#. [conformance.label.sha512]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.sha512"
+msgid "SHA-512 checksum coverage (>= %n%%, recommended)"
+msgstr ""
+
+#. [conformance.label.spec_cdx]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.spec_cdx"
+msgid "Spec version (CycloneDX %v%)"
+msgstr ""
+
+#. [conformance.label.spec_other]
+#. Substituted by jq gsub(). The %x% placeholders are named, so order is
+#. free, but every one present here must appear in the translation. A bare
+#. %% is a literal percent sign.
+#: validate-sbom.sh (jq)
+msgctxt "conformance.label.spec_other"
+msgid "Spec version (%v%)"
+msgstr ""
+
+#. [conformance.label_exact/Checksums present (recommended)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Checksums present (recommended)"
+msgid "Checksums present (recommended)"
+msgstr ""
+
+#. [conformance.label_exact/Component name+version coverage (100%)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Component name+version coverage (100%)"
+msgid "Component name+version coverage (100%)"
+msgstr ""
+
+#. [conformance.label_exact/Delivered-file properties (executable/archive/structured)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Delivered-file properties (executable/archive/structured)"
+msgid "Delivered-file properties (executable/archive/structured)"
+msgstr ""
+
+#. [conformance.label_exact/Document name + described root]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Document name + described root"
+msgid "Document name + described root"
+msgstr ""
+
+#. [conformance.label_exact/Document/package present]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Document/package present"
+msgid "Document/package present"
+msgstr ""
+
+#. [conformance.label_exact/License present (recommended)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/License present (recommended)"
+msgid "License present (recommended)"
+msgstr ""
+
+#. [conformance.label_exact/PURL external refs present]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/PURL external refs present"
+msgid "PURL external refs present"
+msgstr ""
+
+#. [conformance.label_exact/PURL syntax (pkg:type/[namespace/]name)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/PURL syntax (pkg:type/[namespace/]name)"
+msgid "PURL syntax (pkg:type/[namespace/]name)"
+msgstr ""
+
+#. [conformance.label_exact/Package name+version coverage (100%)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Package name+version coverage (100%)"
+msgid "Package name+version coverage (100%)"
+msgstr ""
+
+#. [conformance.label_exact/PackageName + PackageVersion present]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/PackageName + PackageVersion present"
+msgid "PackageName + PackageVersion present"
+msgstr ""
+
+#. [conformance.label_exact/Parseable SBOM]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Parseable SBOM"
+msgid "Parseable SBOM"
+msgstr ""
+
+#. [conformance.label_exact/Recognized SBOM format]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Recognized SBOM format"
+msgid "Recognized SBOM format"
+msgstr ""
+
+#. [conformance.label_exact/Timestamp (Created:)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Timestamp (Created:)"
+msgid "Timestamp (Created:)"
+msgstr ""
+
+#. [conformance.label_exact/Timestamp (creationInfo.created)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Timestamp (creationInfo.created)"
+msgid "Timestamp (creationInfo.created)"
+msgstr ""
+
+#. [conformance.label_exact/Timestamp (metadata.timestamp)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Timestamp (metadata.timestamp)"
+msgid "Timestamp (metadata.timestamp)"
+msgstr ""
+
+#. [conformance.label_exact/Tool info (Creator: Tool:)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Tool info (Creator: Tool:)"
+msgid "Tool info (Creator: Tool:)"
+msgstr ""
+
+#. [conformance.label_exact/Tool info (creationInfo.creators Tool:)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Tool info (creationInfo.creators Tool:)"
+msgid "Tool info (creationInfo.creators Tool:)"
+msgstr ""
+
+#. [conformance.label_exact/Tool info (metadata.tools)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Tool info (metadata.tools)"
+msgid "Tool info (metadata.tools)"
+msgstr ""
+
+#. [conformance.label_exact/Top-level component name+version]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Top-level component name+version"
+msgid "Top-level component name+version"
+msgstr ""
+
+#. [conformance.label_exact/Traceable PURL (no pkg:generic, advisory)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Traceable PURL (no pkg:generic, advisory)"
+msgid "Traceable PURL (no pkg:generic, advisory)"
+msgstr ""
+
+#. [conformance.label_exact/Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)"
+msgid "Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)"
+msgstr ""
+
+#. [conformance.label_exact/Transitive dependencies (graph edges)]
+#. Matched against the English check label verbatim -- this msgid is
+#. also a lookup key, so it must not be edited.
+#: validate-sbom.sh (jq llabel)
+msgctxt "conformance.label_exact/Transitive dependencies (graph edges)"
+msgid "Transitive dependencies (graph edges)"
+msgstr ""
+
+#. [conformance.md_format]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: validate-sbom.sh:925
+#, c-format
+msgctxt "conformance.md_format"
+msgid "- Format: %s"
+msgstr ""
+
+#. [conformance.md_generated]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: validate-sbom.sh:924
+#, c-format
+msgctxt "conformance.md_generated"
+msgid "- Generated: %s"
+msgstr ""
+
+#. [conformance.md_result]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: validate-sbom.sh:926
+#, c-format
+msgctxt "conformance.md_result"
+msgid "- Result: **%s** (mandatory failures: %s, warnings: %s, needs review: %s, not applicable: %s)"
+msgstr ""
+
+#. [conformance.md_title]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: validate-sbom.sh:923
+#, c-format
+msgctxt "conformance.md_title"
+msgid "SBOM Conformance — %s"
+msgstr ""
+
+#. [conformance.md_untraceable]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: validate-sbom.sh:927
+#, c-format
+msgctxt "conformance.md_untraceable"
+msgid "- Untraceable components (pkg:generic / custom PURL): %s — advisory, does not affect the result"
+msgstr ""
+
+#. [conformance.meta_format]
+#: validate-sbom.sh (jq)
+msgctxt "conformance.meta_format"
+msgid "Format"
+msgstr ""
+
+#. [conformance.meta_generated]
+#: validate-sbom.sh (jq)
+msgctxt "conformance.meta_generated"
+msgid "Generated"
+msgstr ""
+
+#. [conformance.meta_project]
+#: validate-sbom.sh (jq)
+msgctxt "conformance.meta_project"
+msgid "Project"
+msgstr ""
+
+#. [conformance.pill_failures]
+#: validate-sbom.sh:951
+msgctxt "conformance.pill_failures"
+msgid "Mandatory failures:"
+msgstr ""
+
+#. [conformance.pill_na]
+#: validate-sbom.sh:953
+msgctxt "conformance.pill_na"
+msgid "Not applicable:"
+msgstr ""
+
+#. [conformance.pill_result]
+#: validate-sbom.sh (jq)
+msgctxt "conformance.pill_result"
+msgid "Result:"
+msgstr ""
+
+#. [conformance.pill_review]
+#: validate-sbom.sh:952
+msgctxt "conformance.pill_review"
+msgid "Needs review:"
+msgstr ""
+
+#. [conformance.pill_untraceable]
+#: validate-sbom.sh:952
+msgctxt "conformance.pill_untraceable"
+msgid "Untraceable (pkg:generic):"
+msgstr ""
+
+#. [conformance.pill_warnings]
+#: validate-sbom.sh:951
+msgctxt "conformance.pill_warnings"
+msgid "Warnings:"
+msgstr ""
+
+#. [conformance.reference]
+#. Used as a bare label: the shell cuts this at the first space, so the
+#. translation must not contain one.
+#: validate-sbom.sh:945
+msgctxt "conformance.reference"
+msgid "Reference:"
+msgstr ""
+
+#. [conformance.review_intro]
+#: validate-sbom.sh:942
+msgctxt "conformance.review_intro"
+msgid "Items no scan can settle, and what to establish for each."
+msgstr ""
+
+#. [conformance.submission_intro]
+#: validate-sbom.sh:932
+msgctxt "conformance.submission_intro"
+msgid "What the SBOM itself has to carry. The same bar applies however the SBOM was produced, and a single mandatory failure makes the overall result a failure."
+msgstr ""
+
+#. [conformance.th_detail]
+#: validate-sbom.sh:929
+msgctxt "conformance.th_detail"
+msgid "Detail"
+msgstr ""
+
+#. [conformance.th_evidence]
+#: validate-sbom.sh:930
+msgctxt "conformance.th_evidence"
+msgid "Evidence / how"
+msgstr ""
+
+#. [conformance.th_required]
+#: validate-sbom.sh:929
+msgctxt "conformance.th_required"
+msgid "Required"
+msgstr ""
+
+#. [conformance.th_requirement]
+#: validate-sbom.sh:928
+msgctxt "conformance.th_requirement"
+msgid "Requirement"
+msgstr ""
+
+#. [conformance.th_status]
+#: validate-sbom.sh:928
+msgctxt "conformance.th_status"
+msgid "Status"
+msgstr ""
+
+#. [crosswalk.th_failed]
+#: validate-sbom.sh:936
+msgctxt "crosswalk.th_failed"
+msgid "Failed"
+msgstr ""
+
+#. [risk.ai_disclaimer]
+#: generate-risk-report.sh:280
+msgctxt "risk.ai_disclaimer"
+msgid "This assessment is guidance, not legal advice."
+msgstr ""
+
+#. [risk.ai_see_html]
+#: generate-risk-report.sh:279
+msgctxt "risk.ai_see_html"
+msgid "Per-model rationale and conditions are in the AI compliance profile artifact."
+msgstr ""
+
+#. [risk.ai_see_md]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:278
+#, c-format
+msgctxt "risk.ai_see_md"
+msgid "Per-model rationale and conditions are in \\`%s_ai-profile.md\\`."
+msgstr ""
+
+#. [risk.conf_fail_b]
+#: generate-risk-report.sh:247
+msgctxt "risk.conf_fail_b"
+msgid "Unmet format-validation items"
+msgstr ""
+
+#. [risk.conf_fail_txt]
+#: generate-risk-report.sh:248
+msgctxt "risk.conf_fail_txt"
+msgid " — the required items below are missing. We recommend fixing them and re-validating."
+msgstr ""
+
+#. [risk.conf_result_label]
+#: generate-risk-report.sh:246
+msgctxt "risk.conf_result_label"
+msgid "Validation result:"
+msgstr ""
+
+#. [risk.copyleft_drivers]
+#: generate-risk-report.sh:267
+msgctxt "risk.copyleft_drivers"
+msgid "Components that create copyleft exposure (network/strong, up to 10):"
+msgstr ""
+
+#. [risk.copyleft_more_end]
+#: generate-risk-report.sh:276
+msgctxt "risk.copyleft_more_end"
+msgid " property for all)"
+msgstr ""
+
+#. [risk.copyleft_more_md]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:275
+#, c-format
+msgctxt "risk.copyleft_more_md"
+msgid "- … and %s more (see the SBOM \\`bomlens:licenseClass\\` property for all)"
+msgstr ""
+
+#. [risk.copyleft_more_mid]
+#: generate-risk-report.sh:276
+msgctxt "risk.copyleft_more_mid"
+msgid " more (see the SBOM "
+msgstr ""
+
+#. [risk.copyleft_more_pre]
+#: generate-risk-report.sh:276
+msgctxt "risk.copyleft_more_pre"
+msgid "… and "
+msgstr ""
+
+#. [risk.deadline_bold_crit]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:251
+#, c-format
+msgctxt "risk.deadline_bold_crit"
+msgid "Critical → within %s days"
+msgstr ""
+
+#. [risk.deadline_bold_high]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:252
+#, c-format
+msgctxt "risk.deadline_bold_high"
+msgid "High → within %s days"
+msgstr ""
+
+#. [risk.deadline_crit]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:253
+#, c-format
+msgctxt "risk.deadline_crit"
+msgid "within %s days"
+msgstr ""
+
+#. [risk.deadline_high]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:254
+#, c-format
+msgctxt "risk.deadline_high"
+msgid "within %s days"
+msgstr ""
+
+#. [risk.deadline_note_lead]
+#: generate-risk-report.sh:250
+msgctxt "risk.deadline_note_lead"
+msgid "Recommended remediation deadlines: "
+msgstr ""
+
+#. [risk.deadline_note_tail]
+#: generate-risk-report.sh:250
+msgctxt "risk.deadline_note_tail"
+msgid ". We recommend preparing a remediation plan or risk justification."
+msgstr ""
+
+#. [risk.deadline_policy]
+#: generate-risk-report.sh:255
+msgctxt "risk.deadline_policy"
+msgid "Per policy"
+msgstr ""
+
+#. [risk.h1_self]
+#: generate-risk-report.sh:238
+msgctxt "risk.h1_self"
+msgid "Open-source risk analysis report"
+msgstr ""
+
+#. [risk.h1_supplier]
+#: generate-risk-report.sh:236
+msgctxt "risk.h1_supplier"
+msgid "Supplier SBOM risk report"
+msgstr ""
+
+#. [risk.h2_conf]
+#: generate-risk-report.sh:242
+msgctxt "risk.h2_conf"
+msgid "Requirements met (format validation)"
+msgstr ""
+
+#. [risk.h2_lic]
+#: generate-risk-report.sh:260
+msgctxt "risk.h2_lic"
+msgid "License summary"
+msgstr ""
+
+#. [risk.h2_next]
+#: generate-risk-report.sh:283
+msgctxt "risk.h2_next"
+msgid "Next steps"
+msgstr ""
+
+#. [risk.h2_vuln]
+#: generate-risk-report.sh:249
+msgctxt "risk.h2_vuln"
+msgid "Vulnerability analysis and remediation deadlines"
+msgstr ""
+
+#. [risk.h3_ai]
+#: generate-risk-report.sh:277
+msgctxt "risk.h3_ai"
+msgid "AI model risk assessment"
+msgstr ""
+
+#. [risk.h3_licclass]
+#: generate-risk-report.sh:264
+msgctxt "risk.h3_licclass"
+msgid "License classification (copyleft strength)"
+msgstr ""
+
+#. [risk.h3_licconflict]
+#: generate-risk-report.sh:268
+msgctxt "risk.h3_licconflict"
+msgid "Outbound-license conflicts"
+msgstr ""
+
+#. [risk.h3_malicious]
+#: generate-risk-report.sh:272
+msgctxt "risk.h3_malicious"
+msgid "Known-malicious packages"
+msgstr ""
+
+#. [risk.kind]
+#: generate-risk-report.sh:288
+msgctxt "risk.kind"
+msgid "Risk Report"
+msgstr ""
+
+#. [risk.lic_html_post]
+#: generate-risk-report.sh:263
+msgctxt "risk.lic_html_post"
+msgid " (see the NOTICE artifact for details)."
+msgstr ""
+
+#. [risk.lic_html_pre]
+#: generate-risk-report.sh:263
+msgctxt "risk.lic_html_pre"
+msgid "Distinct licenses identified:"
+msgstr ""
+
+#. [risk.lic_no_notice_html]
+#: generate-risk-report.sh:261
+msgctxt "risk.lic_no_notice_html"
+msgid "Skipped: no NOTICE artifact was produced."
+msgstr ""
+
+#. [risk.lic_no_notice_md]
+#: generate-risk-report.sh:261
+msgctxt "risk.lic_no_notice_md"
+msgid "_Skipped: no NOTICE artifact was produced._"
+msgstr ""
+
+#. [risk.licclass_intro_html_a]
+#: generate-risk-report.sh:266
+msgctxt "risk.licclass_intro_html_a"
+msgid "Each component is also recorded in the SBOM with a "
+msgstr ""
+
+#. [risk.licclass_intro_html_b]
+#: generate-risk-report.sh:266
+msgctxt "risk.licclass_intro_html_b"
+msgid " property. An unrecognized license is left uncategorized rather than assumed permissive."
+msgstr ""
+
+#. [risk.licclass_intro_md]
+#: generate-risk-report.sh:265
+msgctxt "risk.licclass_intro_md"
+msgid "Each component is also recorded in the SBOM with a \\`bomlens:licenseClass\\` property. An unrecognized license is left uncategorized rather than assumed permissive."
+msgstr ""
+
+#. [risk.licconflict_drivers]
+#: generate-risk-report.sh:271
+msgctxt "risk.licconflict_drivers"
+msgid "Dependencies whose terms clash with the outbound license (up to 10):"
+msgstr ""
+
+#. [risk.licconflict_intro]
+#: generate-risk-report.sh:269
+msgctxt "risk.licconflict_intro"
+msgid "Dependencies checked against the declared outbound license. Advisory only — it surfaces combinations that need a person to look, and makes no legal determination."
+msgstr ""
+
+#. [risk.malicious_intro]
+#: generate-risk-report.sh:273
+msgctxt "risk.malicious_intro"
+msgid "These are not vulnerabilities to patch. A package published to attack whoever installs it has to be removed, and any credential the build could reach should be rotated."
+msgstr ""
+
+#. [risk.malicious_list]
+#: generate-risk-report.sh:274
+msgctxt "risk.malicious_list"
+msgid "Packages matched against the bundled OSV snapshot:"
+msgstr ""
+
+#. [risk.md_conf_fail]
+#: generate-risk-report.sh:245
+msgctxt "risk.md_conf_fail"
+msgid "> ⚠️ **Unmet format-validation items** — the required items below are missing. We recommend fixing them and re-validating."
+msgstr ""
+
+#. [risk.md_conf_format]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:243
+#, c-format
+msgctxt "risk.md_conf_format"
+msgid "- Input format: %s"
+msgstr ""
+
+#. [risk.md_conf_result]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:244
+#, c-format
+msgctxt "risk.md_conf_result"
+msgid "- Validation result: **%s**"
+msgstr ""
+
+#. [risk.md_generated]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:240
+#, c-format
+msgctxt "risk.md_generated"
+msgid "- Generated: %s"
+msgstr ""
+
+#. [risk.md_intro]
+#: generate-risk-report.sh:241
+msgctxt "risk.md_intro"
+msgid "- This report re-aggregates the vulnerability and license artifacts already produced, without running a new scan."
+msgstr ""
+
+#. [risk.md_lic_count]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:262
+#, c-format
+msgctxt "risk.md_lic_count"
+msgid "- Distinct licenses identified: %s (see \\`%s_NOTICE.{txt,html}\\` for details)"
+msgstr ""
+
+#. [risk.md_title_self]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:238
+#, c-format
+msgctxt "risk.md_title_self"
+msgid "Open-source risk analysis report — %s"
+msgstr ""
+
+#. [risk.md_title_supplier]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:236
+#, c-format
+msgctxt "risk.md_title_supplier"
+msgid "Supplier SBOM risk report — %s"
+msgstr ""
+
+#. [risk.meta_format]
+#: generate-risk-report.sh:289
+msgctxt "risk.meta_format"
+msgid "Input format:"
+msgstr ""
+
+#. [risk.meta_generated]
+#: generate-risk-report.sh:289
+msgctxt "risk.meta_generated"
+msgid "Generated:"
+msgstr ""
+
+#. [risk.meta_project]
+#: generate-risk-report.sh:289
+msgctxt "risk.meta_project"
+msgid "Project:"
+msgstr ""
+
+#. [risk.next1_bold]
+#: generate-risk-report.sh:284
+msgctxt "risk.next1_bold"
+msgid "remediation plan or risk justification"
+msgstr ""
+
+#. [risk.next1_post]
+#: generate-risk-report.sh:284
+msgctxt "risk.next1_post"
+msgid " within the recommended deadlines above."
+msgstr ""
+
+#. [risk.next1_pre]
+#: generate-risk-report.sh:284
+msgctxt "risk.next1_pre"
+msgid "Prepare a "
+msgstr ""
+
+#. [risk.next2_conf]
+#: generate-risk-report.sh:285
+msgctxt "risk.next2_conf"
+msgid "If format validation failed, fill the missing items and regenerate the SBOM."
+msgstr ""
+
+#. [risk.next2_self_html]
+#: generate-risk-report.sh:287
+msgctxt "risk.next2_self_html"
+msgid "Keep and distribute the notice (NOTICE) together with the SBOM."
+msgstr ""
+
+#. [risk.next2_self_md]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#: generate-risk-report.sh:286
+#, c-format
+msgctxt "risk.next2_self_md"
+msgid "Keep and distribute the notice (\\`%s_NOTICE.{txt,html}\\`) together with the SBOM (\\`%s_bom.json\\`)."
+msgstr ""
+
+#. [risk.presence_only_html]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#. The call site passes the same count TWICE, so the translation may
+#. restate it: one %s or two are both correct here.
+#: generate-risk-report.sh:259
+msgctxt "risk.presence_only_html"
+msgid "<b>%s component(s)</b> were proved present but no version could be recovered. With no version there is nothing to ask a vulnerability database about, so the counts above do not cover them. The licence obligations still apply."
+msgstr ""
+
+#. [risk.presence_only_md]
+#. Consumed by printf via tfmt(). bash printf has NO positional parameters,
+#. so %s placeholders must stay in this exact order.
+#. The call site passes the same count TWICE, so the translation may
+#. restate it: one %s or two are both correct here.
+#: generate-risk-report.sh:258
+msgctxt "risk.presence_only_md"
+msgid "> %s component(s) were proved present but no version could be recovered. With no version there is nothing to ask a vulnerability database about, so the counts above do not cover them. The licence obligations still apply."
+msgstr ""
+
+#. [risk.th_deadline]
+#: generate-risk-report.sh:256
+msgctxt "risk.th_deadline"
+msgid "Deadline"
+msgstr ""
+
+#. [risk.th_licconflict]
+#: generate-risk-report.sh:270
+msgctxt "risk.th_licconflict"
+msgid "| Outbound license | Incompatible | Conditional | Unknown |"
+msgstr ""
+
+#. [risk.vuln_none_html]
+#: generate-risk-report.sh:257
+msgctxt "risk.vuln_none_html"
+msgid "No known vulnerabilities, or no security artifact was produced."
+msgstr ""
+
+#. [risk.vuln_none_md]
+#: generate-risk-report.sh:257
+msgctxt "risk.vuln_none_md"
+msgid "_No known vulnerabilities, or no security artifact was produced._"
+msgstr ""

@@ -1,0 +1,1768 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2026-09-08 15:59+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. type: Title #
+#: CONTRIBUTING.md:1
+#, no-wrap
+msgid "Contributing"
+msgstr "貢獻指南"
+
+#. type: Plain text
+#: CONTRIBUTING.md:4
+#, no-wrap
+msgid "> **한국어**: [CONTRIBUTING.ko.md](CONTRIBUTING.ko.md)\n"
+msgstr "> **English**: [CONTRIBUTING.md](CONTRIBUTING.md)\n"
+
+#. type: Plain text
+#: CONTRIBUTING.md:6
+msgid ""
+"Thanks for your interest in BomLens! Contributions of any kind are welcome — "
+"bug fixes, documentation improvements, new language support, and more."
+msgstr ""
+"感謝你對 BomLens 感興趣！任何形式的貢獻都歡迎——修正問題、改善文件、新增語言支"
+"援等等。"
+
+#. type: Plain text
+#: CONTRIBUTING.md:8
+#, no-wrap
+msgid "> **Related**: [Architecture](docs/concepts/architecture.md) | [Testing guide](docs/contribute/testing.md) | [Adding a package manager](docs/contribute/package-managers.md)\n"
+msgstr "> **相關文件**：[架構](docs/concepts/architecture.md) | [測試指南](docs/contribute/testing.zh-TW.md) | [新增套件管理器](docs/contribute/package-managers.zh-TW.md)\n"
+
+#. type: Title ##
+#: CONTRIBUTING.md:9
+#, no-wrap
+msgid "Contents"
+msgstr "目錄"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Code of conduct](#code-of-conduct)"
+msgstr "[行為準則](#行為準則)"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Ways to contribute](#ways-to-contribute)"
+msgstr "[貢獻方式](#貢獻方式)"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Development setup](#development-setup)"
+msgstr "[開發環境設定](#開發環境設定)"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Pull request process](#pull-request-process)"
+msgstr "[Pull Request 流程](#pull-request-流程)"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Coding style](#coding-style)"
+msgstr "[程式碼風格](#程式碼風格)"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Commit message convention](#commit-message-convention)"
+msgstr "[Commit 訊息規範](#commit-訊息規範)"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:18
+msgid "[Issues and discussions](#issues-and-discussions)"
+msgstr "[Issue 與討論](#issue-與討論)"
+
+#. type: Title ##
+#: CONTRIBUTING.md:19
+#, no-wrap
+msgid "Code of conduct"
+msgstr "行為準則"
+
+#. type: Plain text
+#: CONTRIBUTING.md:22
+msgid ""
+"This project follows a [Code of Conduct](CODE_OF_CONDUCT.md) based on the "
+"[Contributor Covenant](https://www.contributor-covenant.org/). By "
+"participating, you agree to abide by it. Report security vulnerabilities "
+"privately per the [Security Policy](SECURITY.md)."
+msgstr ""
+"本專案採用以 [Contributor Covenant](https://www.contributor-covenant.org/) 為"
+"基礎的[行為準則](CODE_OF_CONDUCT.zh-TW.md)。參與本專案即表示你同意遵守它。安"
+"全弱點請依[安全政策](SECURITY.zh-TW.md)以非公開方式通報。"
+
+#. type: Title ##
+#: CONTRIBUTING.md:23
+#, no-wrap
+msgid "Ways to contribute"
+msgstr "貢獻方式"
+
+#. type: Plain text
+#: CONTRIBUTING.md:32
+#, no-wrap
+msgid ""
+"| Type | How |\n"
+"|------|-----|\n"
+"| Bug fix | Find and fix a bug from [Issues](https://github.com/sktelecom/bomlens/issues) |\n"
+"| New language support | See [adding a package manager](docs/contribute/package-managers.md) |\n"
+"| Documentation | Fix typos, add examples, improve explanations |\n"
+"| Tests | See the [testing guide](docs/contribute/testing.md) |\n"
+"| Feature proposal | Discuss first in [Discussions](https://github.com/sktelecom/bomlens/discussions) |\n"
+msgstr ""
+"| 類型 | 方式 |\n"
+"|------|-----|\n"
+"| 修正問題 | 從 [Issues](https://github.com/sktelecom/bomlens/issues) 找出問題並修正 |\n"
+"| 新增語言支援 | 請看[新增套件管理器](docs/contribute/package-managers.zh-TW.md) |\n"
+"| 文件 | 修正錯字、補充範例、改善說明 |\n"
+"| 測試 | 請看[測試指南](docs/contribute/testing.zh-TW.md) |\n"
+"| 功能提案 | 先在 [Discussions](https://github.com/sktelecom/bomlens/discussions) 討論 |\n"
+
+#. type: Plain text
+#: CONTRIBUTING.md:34
+msgid ""
+"When writing or editing Korean documentation, follow the [Korean style guide]"
+"(docs/korean-style-guide.md)."
+msgstr ""
+"撰寫或修改韓文文件時，請遵循[韓文文體指南](docs/korean-style-guide.md)；正體"
+"中文文件請遵循[正體中文文體指南](docs/chinese-style-guide.md)。"
+
+#. type: Title ##
+#: CONTRIBUTING.md:35
+#, no-wrap
+msgid "Development setup"
+msgstr "開發環境設定"
+
+#. type: Title ###
+#: CONTRIBUTING.md:37
+#, no-wrap
+msgid "Prerequisites"
+msgstr "必要條件"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:42
+msgid "Docker 20.10+"
+msgstr "Docker 20.10 以上"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:42
+msgid "Git"
+msgstr "Git"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:42
+msgid "bash (Linux/macOS) or Git Bash (Windows)"
+msgstr "bash（Linux/macOS）或 Git Bash（Windows）"
+
+#. type: Title ###
+#: CONTRIBUTING.md:43
+#, no-wrap
+msgid "Clone and prepare"
+msgstr "複製儲存庫並準備環境"
+
+#. type: Fenced code block (bash)
+#: CONTRIBUTING.md:45
+#, no-wrap
+msgid ""
+"git clone https://github.com/sktelecom/bomlens.git\n"
+"cd bomlens\n"
+"\n"
+"# Build the Docker image (when changing it locally)\n"
+"cd docker && docker build -t sbom-scanner:local .\n"
+"\n"
+"# Smoke test\n"
+"cd examples/nodejs\n"
+"../../scripts/scan-sbom.sh --project \"NodeExample\" --version \"1.0.0\" --generate-only\n"
+msgstr ""
+"git clone https://github.com/sktelecom/bomlens.git\n"
+"cd bomlens\n"
+"\n"
+"# Build the Docker image (when changing it locally)\n"
+"cd docker && docker build -t sbom-scanner:local .\n"
+"\n"
+"# Smoke test\n"
+"cd examples/nodejs\n"
+"../../scripts/scan-sbom.sh --project \"NodeExample\" --version \"1.0.0\" --generate-only\n"
+
+#. type: Title ##
+#: CONTRIBUTING.md:57
+#, no-wrap
+msgid "Pull request process"
+msgstr "Pull Request 流程"
+
+#. type: Bullet: '1. '
+#: CONTRIBUTING.md:60
+msgid ""
+"Before a new feature or bug fix, open a related issue first, or note your "
+"intent on an existing one."
+msgstr ""
+"開始新功能或修正問題之前，請先開一個相關的 issue，或在既有的 issue 上說明你的"
+"意願。"
+
+#. type: Bullet: '2. '
+#: CONTRIBUTING.md:62
+msgid "Fork the repository and create a purpose-named branch."
+msgstr "Fork 儲存庫，並建立一個以用途命名的分支。"
+
+#. type: Fenced code block (bash)
+#: CONTRIBUTING.md:62
+#, no-wrap
+msgid ""
+"   git checkout -b feat/add-kotlin-support\n"
+"   git checkout -b fix/java-gradle-detection\n"
+msgstr ""
+"   git checkout -b feat/add-kotlin-support\n"
+"   git checkout -b fix/java-gradle-detection\n"
+
+#. type: Bullet: '3. '
+#: CONTRIBUTING.md:68
+msgid "Make your changes and confirm all tests pass."
+msgstr "完成修改，並確認所有測試都通過。"
+
+#. type: Fenced code block (bash)
+#: CONTRIBUTING.md:68
+#, no-wrap
+msgid "   ./tests/test-scan.sh\n"
+msgstr "   ./tests/test-scan.sh\n"
+
+#. type: Bullet: '4. '
+#: CONTRIBUTING.md:73
+msgid ""
+"Submit a PR that clearly describes the change. Confirm the checklist below."
+msgstr "提出清楚說明變更內容的 PR，並確認下方的檢查清單。"
+
+#. type: Bullet: '5. '
+#: CONTRIBUTING.md:75
+msgid "Respond to reviewer feedback and make the needed adjustments."
+msgstr "回應審閱者的意見，並做出必要的調整。"
+
+#. type: Title ###
+#: CONTRIBUTING.md:76
+#, no-wrap
+msgid "PR checklist"
+msgstr "PR 檢查清單"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:82
+msgid "[ ] I added tests for the change."
+msgstr "[ ] 我為這次變更加上了測試。"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:82
+msgid "[ ] `./tests/test-scan.sh` passes."
+msgstr "[ ] `./tests/test-scan.sh` 通過。"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:82
+msgid "[ ] I updated the relevant documentation."
+msgstr "[ ] 我更新了相關文件。"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:82
+msgid ""
+"[ ] My commit messages follow the [convention](#commit-message-convention)."
+msgstr "[ ] 我的 commit 訊息遵循[規範](#commit-訊息規範)。"
+
+#. type: Title ##
+#: CONTRIBUTING.md:83
+#, no-wrap
+msgid "Coding style"
+msgstr "程式碼風格"
+
+#. type: Title ###
+#: CONTRIBUTING.md:85
+#, no-wrap
+msgid "Shell scripts"
+msgstr "Shell 指令碼"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:92
+msgid "First line: `#!/usr/bin/env bash`"
+msgstr "第一行：`#!/usr/bin/env bash`"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:92
+msgid ""
+"Global variables: `UPPER_SNAKE_CASE`, local variables: `lower_snake_case`"
+msgstr "全域變數：`UPPER_SNAKE_CASE`，區域變數：`lower_snake_case`"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:92
+msgid "Function names: `lower_snake_case`"
+msgstr "函式名稱：`lower_snake_case`"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:92
+msgid "Error handling: `set -euo pipefail` at the top of the script"
+msgstr "錯誤處理：在指令碼開頭加上 `set -euo pipefail`"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:92
+msgid "Prefer long options over short ones (`--verbose` over `-v`)"
+msgstr "偏好長選項而不是短選項（用 `--verbose` 而不用 `-v`）"
+
+#. type: Fenced code block (bash)
+#: CONTRIBUTING.md:93
+#, no-wrap
+msgid ""
+"#!/usr/bin/env bash\n"
+"set -euo pipefail\n"
+"\n"
+"readonly PROJECT_NAME=\"${1:-}\"\n"
+"\n"
+"function validate_input() {\n"
+"    local project_name=\"$1\"\n"
+"    if [[ -z \"$project_name\" ]]; then\n"
+"        echo \"ERROR: Project name is required\" >&2\n"
+"        return 1\n"
+"    fi\n"
+"}\n"
+msgstr ""
+"#!/usr/bin/env bash\n"
+"set -euo pipefail\n"
+"\n"
+"readonly PROJECT_NAME=\"${1:-}\"\n"
+"\n"
+"function validate_input() {\n"
+"    local project_name=\"$1\"\n"
+"    if [[ -z \"$project_name\" ]]; then\n"
+"        echo \"ERROR: Project name is required\" >&2\n"
+"        return 1\n"
+"    fi\n"
+"}\n"
+
+#. type: Title ###
+#: CONTRIBUTING.md:108
+#, no-wrap
+msgid "Dockerfile"
+msgstr "Dockerfile"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:113
+msgid "Use official base images"
+msgstr "使用官方的基礎映像檔"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:113
+msgid "Combine `RUN` commands to minimize layers"
+msgstr "合併 `RUN` 指令以減少層數"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:113
+msgid "Add a clear comment to each install step"
+msgstr "為每個安裝步驟加上清楚的註解"
+
+#. type: Title ##
+#: CONTRIBUTING.md:114
+#, no-wrap
+msgid "Commit message convention"
+msgstr "Commit 訊息規範"
+
+#. type: Plain text
+#: CONTRIBUTING.md:117
+msgid ""
+"Follow the [Conventional Commits](https://www.conventionalcommits.org/) "
+"format."
+msgstr ""
+"請遵循 [Conventional Commits](https://www.conventionalcommits.org/) 格式。"
+
+#. type: Fenced code block
+#: CONTRIBUTING.md:118
+#, no-wrap
+msgid ""
+"<type>(<scope>): <subject>\n"
+"\n"
+"[body]\n"
+"\n"
+"[footer]\n"
+msgstr ""
+"<type>(<scope>): <subject>\n"
+"\n"
+"[body]\n"
+"\n"
+"[footer]\n"
+
+#. type: Title ###
+#: CONTRIBUTING.md:126
+#, no-wrap
+msgid "Types"
+msgstr "Type 一覽"
+
+#. type: Plain text
+#: CONTRIBUTING.md:136
+#, no-wrap
+msgid ""
+"| Type | Description |\n"
+"|------|-------------|\n"
+"| `feat` | A new feature |\n"
+"| `fix` | A bug fix |\n"
+"| `docs` | Documentation changes |\n"
+"| `test` | Adding or fixing tests |\n"
+"| `refactor` | Refactoring (no feature/bug change) |\n"
+"| `chore` | Build, dependencies, and other changes |\n"
+msgstr ""
+"| Type | 說明 |\n"
+"|------|-------------|\n"
+"| `feat` | 新功能 |\n"
+"| `fix` | 修正問題 |\n"
+"| `docs` | 文件變更 |\n"
+"| `test` | 新增或修正測試 |\n"
+"| `refactor` | 重構（不改變功能，也不修正問題） |\n"
+"| `chore` | 建置、相依性與其他變更 |\n"
+
+#. type: Title ###
+#: CONTRIBUTING.md:137
+#, no-wrap
+msgid "Example"
+msgstr "範例"
+
+#. type: Fenced code block
+#: CONTRIBUTING.md:139
+#, no-wrap
+msgid ""
+"feat(scanner): add Kotlin/Gradle support\n"
+"\n"
+"Add support for Kotlin projects using Gradle build system.\n"
+"Uses cdxgen with KOTLIN_HOME environment variable.\n"
+"\n"
+"Closes #42\n"
+msgstr ""
+"feat(scanner): add Kotlin/Gradle support\n"
+"\n"
+"Add support for Kotlin projects using Gradle build system.\n"
+"Uses cdxgen with KOTLIN_HOME environment variable.\n"
+"\n"
+"Closes #42\n"
+
+#. type: Title ##
+#: CONTRIBUTING.md:148
+#, no-wrap
+msgid "Issues and discussions"
+msgstr "Issue 與討論"
+
+#. type: Title ###
+#: CONTRIBUTING.md:150
+#, no-wrap
+msgid "Bug reports"
+msgstr "問題回報"
+
+#. type: Plain text
+#: CONTRIBUTING.md:153
+msgid ""
+"Please use [GitHub Issues](https://github.com/sktelecom/bomlens/issues). "
+"Including the following helps us resolve it faster."
+msgstr ""
+"請使用 [GitHub Issues](https://github.com/sktelecom/bomlens/issues)。附上以下"
+"資訊有助於我們更快解決。"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:157
+msgid "Environment: OS, Docker version, script version"
+msgstr "環境：OS、Docker 版本、指令碼版本"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:157
+msgid "Reproduction: the minimal steps that reproduce the bug"
+msgstr "重現方式：能重現問題的最少步驟"
+
+#. type: Bullet: '- '
+#: CONTRIBUTING.md:157
+msgid "Expected vs actual result (include error messages)"
+msgstr "預期結果與實際結果（請附上錯誤訊息）"
+
+#. type: Title ###
+#: CONTRIBUTING.md:158
+#, no-wrap
+msgid "Feature proposals"
+msgstr "功能提案"
+
+#. type: Plain text
+#: CONTRIBUTING.md:161
+msgid ""
+"Discuss first in [GitHub Discussions](https://github.com/sktelecom/bomlens/"
+"discussions), then move to an issue."
+msgstr ""
+"請先在 [GitHub Discussions](https://github.com/sktelecom/bomlens/"
+"discussions) 討論，然後再轉為 issue。"
+
+#. type: Plain text
+#: CONTRIBUTING.md:164
+msgid "Contact: [opensource@sktelecom.com](mailto:opensource@sktelecom.com)"
+msgstr "聯絡方式：[opensource@sktelecom.com](mailto:opensource@sktelecom.com)"
+
+#. type: Title #
+#: SECURITY.md:1
+#, no-wrap
+msgid "Security Policy"
+msgstr "安全政策（Security Policy）"
+
+#. type: Plain text
+#: SECURITY.md:4
+#, no-wrap
+msgid "> **한국어**: [SECURITY.ko.md](SECURITY.ko.md)\n"
+msgstr "> **English**: [SECURITY.md](SECURITY.md)\n"
+
+#. type: Plain text
+#: SECURITY.md:6
+msgid ""
+"BomLens is a software supply-chain security tool, so the security of the "
+"tool itself matters too. If you find a vulnerability, please report it "
+"responsibly."
+msgstr ""
+"BomLens 是處理軟體供應鏈安全的工具，因此工具本身的安全同樣重要。若你發現弱"
+"點，請依負責的程序通報。"
+
+#. type: Title ##
+#: SECURITY.md:7
+#, no-wrap
+msgid "Supported versions"
+msgstr "支援的版本（Supported versions）"
+
+#. type: Plain text
+#: SECURITY.md:10
+msgid ""
+"Security fixes are provided for the latest release. The `ghcr.io/sktelecom/"
+"bomlens:latest` Docker image tag (legacy alias: `sbom-scanner:latest`) "
+"reflects the latest security patches."
+msgstr ""
+"安全修正以最新的發佈版本為準提供。Docker 映像檔的 `ghcr.io/sktelecom/"
+"bomlens:latest` 標籤（舊名別稱：`sbom-scanner:latest`）反映最新的安全修補。"
+
+#. type: Plain text
+#: SECURITY.md:15
+#, no-wrap
+msgid ""
+"| Version | Supported |\n"
+"|---------|-----------|\n"
+"| Latest release (`:latest`) | ✅ |\n"
+"| Older versions | ❌ |\n"
+msgstr ""
+"| 版本 | 是否支援 |\n"
+"|---------|-----------|\n"
+"| 最新發佈版本（`:latest`） | ✅ |\n"
+"| 更舊的版本 | ❌ |\n"
+
+#. type: Plain text
+#: SECURITY.md:17
+msgid ""
+"If you are on an older version, please upgrade to the latest release first "
+"and check whether the issue still reproduces."
+msgstr ""
+"若你使用的是較舊的版本，請先升級到最新的發佈版本，再確認問題是否仍會重現。"
+
+#. type: Title ##
+#: SECURITY.md:18
+#, no-wrap
+msgid "Reporting a vulnerability"
+msgstr "通報弱點（Reporting a vulnerability）"
+
+#. type: Plain text
+#: SECURITY.md:21
+msgid ""
+"Please do **not** open a public issue. Report privately through one of the "
+"two channels below."
+msgstr "請**不要**開公開的 issue。請透過下列兩個管道之一，以非公開方式通報。"
+
+#. type: Title ###
+#: SECURITY.md:22
+#, no-wrap
+msgid "1. GitHub Private Vulnerability Reporting"
+msgstr "1. GitHub Private Vulnerability Reporting"
+
+#. type: Plain text
+#: SECURITY.md:25
+msgid ""
+"In this repository's **Security** tab, click **Report a vulnerability** to "
+"submit a private advisory draft. It is visible only to maintainers, and the "
+"fix and disclosure schedule can be coordinated in the same place."
+msgstr ""
+"在本儲存庫的 **Security** 分頁點選 **Report a vulnerability**，即可提交非公開"
+"的安全公告（advisory）草稿。內容只有維護者看得到，修正與公開揭露的時程也能在"
+"同一處協調。"
+
+#. type: Title ###
+#: SECURITY.md:26
+#, no-wrap
+msgid "2. Email"
+msgstr "2. 電子郵件"
+
+#. type: Plain text
+#: SECURITY.md:29
+msgid ""
+"You may also email [opensource@sktelecom.com]"
+"(mailto:opensource@sktelecom.com)."
+msgstr ""
+"你也可以寄信到 [opensource@sktelecom.com](mailto:opensource@sktelecom.com)。"
+
+#. type: Title ###
+#: SECURITY.md:30
+#, no-wrap
+msgid "What to include"
+msgstr "通報時建議附上的資訊"
+
+#. type: Bullet: '- '
+#: SECURITY.md:36
+msgid "The type of vulnerability and its impact"
+msgstr "弱點的類型與影響範圍"
+
+#. type: Bullet: '- '
+#: SECURITY.md:36
+msgid "The affected file path or code location"
+msgstr "有問題的檔案路徑或程式碼位置"
+
+#. type: Bullet: '- '
+#: SECURITY.md:36
+msgid "Reproduction steps or a proof of concept (PoC)"
+msgstr "重現步驟或概念驗證（PoC）"
+
+#. type: Bullet: '- '
+#: SECURITY.md:36
+msgid "If possible, the affected version and environment (OS, Docker version)"
+msgstr "可能的話，附上受影響的版本與環境（OS、Docker 版本）"
+
+#. type: Title ##
+#: SECURITY.md:37
+#, no-wrap
+msgid "Process"
+msgstr "處理流程（Process）"
+
+#. type: Plain text
+#: SECURITY.md:40
+msgid ""
+"When we receive a report, we respond along the following lines. This is a "
+"volunteer-based project, so the timelines below are targets and may vary."
+msgstr ""
+"收到通報後，我們會依下列方式回應。本專案以志願者為基礎，因此以下時限是目標"
+"值，可能會因情況而異。"
+
+#. type: Bullet: '- '
+#: SECURITY.md:45
+msgid "Acknowledge receipt within 3 business days."
+msgstr "在 3 個營業日內確認收到。"
+
+#. type: Bullet: '- '
+#: SECURITY.md:45
+msgid ""
+"Review, determine whether it is a vulnerability and its severity, and inform "
+"the reporter."
+msgstr "檢視後判斷是否為弱點及其嚴重程度，並告知通報者。"
+
+#. type: Bullet: '- '
+#: SECURITY.md:45
+msgid ""
+"If a fix is needed, prepare a patch and coordinate the disclosure timing "
+"with the reporter."
+msgstr "若需要修正，會準備修補程式，並與通報者協調公開揭露的時機。"
+
+#. type: Bullet: '- '
+#: SECURITY.md:45
+msgid ""
+"Once the fix is released, publish the security advisory and, if desired, "
+"credit the reporter."
+msgstr "修正發佈後，會公開安全公告，並在通報者希望的情況下標示其為貢獻者。"
+
+#. type: Plain text
+#: SECURITY.md:46
+msgid ""
+"Private reports are not shared externally until the fix and coordination are "
+"complete."
+msgstr "非公開的通報內容在修正與協調完成之前，不會對外分享。"
+
+#. type: Title #
+#: CODE_OF_CONDUCT.md:1
+#, no-wrap
+msgid "Code of Conduct"
+msgstr "行為準則"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:4
+#, no-wrap
+msgid "> **한국어**: [CODE_OF_CONDUCT.ko.md](CODE_OF_CONDUCT.ko.md)\n"
+msgstr "> **English**: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)\n"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:6
+msgid ""
+"This project adopts the **Contributor Covenant, version 2.1** as its Code of "
+"Conduct. By participating, you agree to uphold it."
+msgstr ""
+"本專案採用 **Contributor Covenant, version 2.1** 作為行為準則。參與本專案即表"
+"示你同意遵守它。"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:8
+msgid ""
+"The full, authoritative text is published by the Contributor Covenant "
+"project:"
+msgstr "完整且具權威性的條文由 Contributor Covenant 專案發佈："
+
+#. type: Bullet: '- '
+#: CODE_OF_CONDUCT.md:11
+msgid ""
+"English: <https://www.contributor-covenant.org/version/2/1/code_of_conduct/>"
+msgstr ""
+"英文：<https://www.contributor-covenant.org/version/2/1/code_of_conduct/>"
+
+#. type: Bullet: '- '
+#: CODE_OF_CONDUCT.md:11
+msgid "Other languages: <https://www.contributor-covenant.org/translations/>"
+msgstr "其他語言：<https://www.contributor-covenant.org/translations/>"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:13
+msgid ""
+"A Korean rendition is also kept in this repository at [CODE_OF_CONDUCT.ko.md]"
+"(CODE_OF_CONDUCT.ko.md)."
+msgstr ""
+"本儲存庫另存有一份韓文譯本，位於 [CODE_OF_CONDUCT.ko.md]"
+"(CODE_OF_CONDUCT.ko.md)。"
+
+#. type: Title ##
+#: CODE_OF_CONDUCT.md:14
+#, no-wrap
+msgid "Scope"
+msgstr "適用範圍"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:17
+msgid ""
+"The Code of Conduct applies within all project spaces — the repository, "
+"issues, pull requests, and discussions — and when an individual is "
+"representing the project in public spaces."
+msgstr ""
+"行為準則適用於專案的所有空間——儲存庫、Issue、Pull Request 與 Discussions——也"
+"適用於個人在公開場合代表本專案的時候。"
+
+#. type: Title ##
+#: CODE_OF_CONDUCT.md:18
+#, no-wrap
+msgid "Reporting"
+msgstr "通報方式"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:21
+msgid ""
+"To report unacceptable behavior, contact the maintainers at "
+"[opensource@sktelecom.com](mailto:opensource@sktelecom.com). All reports are "
+"reviewed and investigated promptly and fairly, and the reporter's privacy "
+"and security are respected."
+msgstr ""
+"若要通報無法接受的行為，請透過 [opensource@sktelecom.com]"
+"(mailto:opensource@sktelecom.com) 聯絡維護者。所有通報都會迅速且公正地檢視與"
+"調查，通報者的隱私與安全也會受到尊重。"
+
+#. type: Plain text
+#: CODE_OF_CONDUCT.md:22
+msgid ""
+"Enforcement follows the Contributor Covenant 2.1 enforcement guidelines "
+"(Correction, Warning, Temporary Ban, Permanent Ban), as described in the "
+"full text linked above."
+msgstr ""
+"執行方式依照 Contributor Covenant 2.1 的執行準則（更正 Correction、警告 "
+"Warning、暫時停權 Temporary Ban、永久停權 Permanent Ban），詳見上方連結的完整"
+"條文。"
+
+#. type: Title #
+#: THIRD_PARTY_LICENSES.md:1
+#, no-wrap
+msgid "Third-Party Licenses"
+msgstr "第三方授權條款"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:4
+#, no-wrap
+msgid "> **한국어**: [THIRD_PARTY_LICENSES.ko.md](THIRD_PARTY_LICENSES.ko.md)\n"
+msgstr "> **English**: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:6
+msgid ""
+"BomLens (Apache-2.0) keeps its own code in shell scripts and bundles several "
+"open-source tools into its Docker images to generate and analyze SBOMs. This "
+"document is the license inventory for the bundled tools and the distribution "
+"obligations that come with them."
+msgstr ""
+"BomLens（Apache-2.0）自身的程式碼寫成 shell 指令碼，並把數個開放原始碼工具打"
+"包進 Docker 映像檔，用來產生與分析 SBOM。本文件是這些內附工具的授權清單，以及"
+"隨之而來的散布義務。"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:7
+#, no-wrap
+msgid "Compliance summary"
+msgstr "合規要點"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:15
+msgid ""
+"The BomLens shell scripts invoke the bundled tools as separate processes "
+"(exec) and do not modify their sources. The copyleft of GPL and AGPL tools "
+"therefore does not propagate to the Apache-2.0 code of BomLens (per the FSF "
+"reading: pipes, CLI calls, and exec make separate programs; bundling in a "
+"container is mere aggregation)."
+msgstr ""
+"BomLens 的 shell 指令碼是以獨立行程（exec）呼叫內附工具，並未修改工具的原始"
+"碼。因此 GPL 與 AGPL 工具的 copyleft 不會傳播到 BomLens 的 Apache-2.0 程式碼"
+"（依 FSF 的見解：管線、CLI 呼叫與 exec 構成各自獨立的程式，打包進容器屬於 "
+"mere aggregation）。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:15
+msgid ""
+"The tool binaries are still redistributed inside the images, so the license "
+"texts and, for GPL tools, a path to the corresponding source are provided. "
+"The SPDX license texts (Apache-2.0, MIT, GPL-2.0, GPL-3.0, and others) ship "
+"inside the images at `/usr/local/lib/sbom/licenses/`, and each tool's source "
+"is available from the Source URL in the tables below."
+msgstr ""
+"工具的二進位檔仍然隨映像檔一起再次散布，因此我們提供授權條款全文，GPL 工具還"
+"額外提供對應原始碼的取得途徑。SPDX 授權條款全文（Apache-2.0、MIT、GPL-2.0、"
+"GPL-3.0 等）隨映像檔放在 `/usr/local/lib/sbom/licenses/`，各工具的原始碼可從"
+"下方表格的 Source URL 取得。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:15
+msgid ""
+"BomLens ships its own terms with every distribution. In the images they are "
+"at `/usr/local/lib/sbom/notices/`, holding `LICENSE`, `NOTICE`, and this "
+"document; in the release bundles they sit at the top of the extracted tree; "
+"in the desktop installer they are in the app's resources folder. Passing "
+"those files along when you redistribute an image or a bundle is what "
+"Apache-2.0 §4 asks for."
+msgstr ""
+"BomLens 自身的使用條款會隨每一份散布物一起提供。在映像檔中位於 `/usr/local/"
+"lib/sbom/notices/`，內含 `LICENSE`、`NOTICE` 與本文件；在發行壓縮包中位於解開"
+"後的最上層；在桌面版安裝檔中則位於應用程式的資源資料夾。您再次散布映像檔或壓"
+"縮包時一併轉交這些檔案，就是 Apache-2.0 §4 所要求的做法。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:15
+msgid ""
+"No AGPL-licensed tool is included. Running the web UI (`--ui`) therefore "
+"does not trigger the AGPL §13 network clause."
+msgstr ""
+"未收錄任何以 AGPL 授權的工具。因此即使執行網頁介面（`--ui`），也不會觸發 "
+"AGPL §13 的網路條款。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:15
+msgid ""
+"The GPL-licensed analysis tools live only in a separate opt-in image "
+"(`bomlens-firmware`). The tools installed into the base image (`bomlens`) "
+"and into the other opt-in images (`bomlens-aibom`, `bomlens-deep-cve`) are "
+"permissive."
+msgstr ""
+"以 GPL 授權的分析工具只存在於另一個獨立的選用映像檔（`bomlens-firmware`）。安"
+"裝進基礎映像檔（`bomlens`）以及其他選用映像檔（`bomlens-aibom`、`bomlens-"
+"deep-cve`）的工具都是 permissive 授權。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:15
+msgid ""
+"Every image, the base one included, is built on `python:3.12-slim` and "
+"therefore also contains Debian system packages under the GPL, the LGPL and "
+"other licenses. That is inherent to any Linux base image; there is no GPL-"
+"free one. See [Debian packages in every image](#debian-packages-in-every-"
+"image) below for what this means and where the source is."
+msgstr ""
+"每一個映像檔（包含基礎映像檔）都建置在 `python:3.12-slim` 之上，因此也含有以 "
+"GPL、LGPL 與其他授權條款釋出的 Debian 系統套件。這是任何 Linux 基礎映像檔的固"
+"有性質，沒有不含 GPL 的選擇。這代表什麼、原始碼從哪裡取得，請看下方的[所有映"
+"像檔的 Debian 套件](#debian-packages-in-every-image)。"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:16
+#, no-wrap
+msgid "Base image — `ghcr.io/sktelecom/bomlens` (BomLens tools; see also the Debian base below)"
+msgstr "基礎映像檔——`ghcr.io/sktelecom/bomlens`（BomLens 安裝的工具；Debian 基底另見下方）"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:30
+#, no-wrap
+msgid ""
+"| Tool | Purpose | License (SPDX) | Source |\n"
+"|------|---------|----------------|--------|\n"
+"| cdxgen (official language images) | SBOM generation from source | Apache-2.0 | https://github.com/CycloneDX/cdxgen |\n"
+"| syft | SBOM for images, binaries, and directories | Apache-2.0 | https://github.com/anchore/syft |\n"
+"| Trivy | Vulnerability scanning | Apache-2.0 | https://github.com/aquasecurity/trivy |\n"
+"| trivy-db | Vulnerability database | Apache-2.0 | https://github.com/aquasecurity/trivy-db |\n"
+"| cosign | SBOM signing | Apache-2.0 | https://github.com/sigstore/cosign |\n"
+"| scancode-toolkit | Detailed license detection. Build-time opt-in (`SBOM_DEEP_LICENSE=true`); **not present in the published images**, which are built with the default `false` | Apache-2.0 (parts of the dataset CC-BY-4.0 and others) | https://github.com/aboutcode-org/scancode-toolkit |\n"
+"| scanoss (scanoss.py) | Vendored open-source identification (bundled by default; disable with `SBOM_SCANOSS=false`) | MIT (the bundled `osadl-copyleft.json` dataset is CC-BY-4.0) | https://github.com/scanoss/scanoss.py |\n"
+"| owasp-aibom-generator | AI model SBOM generation (opt-in `SBOM_AIBOM`, separate image `bomlens-aibom`; calls the HuggingFace API) | Apache-2.0 | https://github.com/GenAI-Security-Project/aibom-generator |\n"
+"| picklescan | Pickle analysis for scanned AI model files — whether loading the weights would run code (always installed; pure Python, no network) | MIT | https://github.com/mmaitre314/picklescan |\n"
+"| jq | SBOM post-processing helper | MIT (some components BSD, ICU, or Lucent) | https://github.com/jqlang/jq |\n"
+msgstr ""
+"| 工具 | 用途 | 授權條款 (SPDX) | Source |\n"
+"|------|---------|----------------|--------|\n"
+"| cdxgen（官方語言映像檔） | 從原始碼產生 SBOM | Apache-2.0 | https://github.com/CycloneDX/cdxgen |\n"
+"| syft | 映像檔、二進位檔與目錄的 SBOM | Apache-2.0 | https://github.com/anchore/syft |\n"
+"| Trivy | 安全弱點掃描 | Apache-2.0 | https://github.com/aquasecurity/trivy |\n"
+"| trivy-db | 弱點資料庫 | Apache-2.0 | https://github.com/aquasecurity/trivy-db |\n"
+"| cosign | SBOM 簽章 | Apache-2.0 | https://github.com/sigstore/cosign |\n"
+"| scancode-toolkit | 精細的授權條款檢出。建置時選用（`SBOM_DEEP_LICENSE=true`）；**發行的映像檔並未收錄**，發行版是以預設值 `false` 建置 | Apache-2.0（資料集部分為 CC-BY-4.0 等） | https://github.com/aboutcode-org/scancode-toolkit |\n"
+"| scanoss (scanoss.py) | 已複製納入的開放原始碼識別（預設內附；要停用請設 `SBOM_SCANOSS=false`） | MIT（內附的 `osadl-copyleft.json` 資料集為 CC-BY-4.0） | https://github.com/scanoss/scanoss.py |\n"
+"| owasp-aibom-generator | 產生 AI 模型 SBOM（選用 `SBOM_AIBOM`，獨立映像檔 `bomlens-aibom`；會呼叫 HuggingFace API） | Apache-2.0 | https://github.com/GenAI-Security-Project/aibom-generator |\n"
+"| picklescan | 對掃描到的 AI 模型檔案做 pickle 分析——判斷載入權重時是否會執行程式碼（一律安裝；純 Python，不連網） | MIT | https://github.com/mmaitre314/picklescan |\n"
+"| jq | SBOM 後處理輔助工具 | MIT（部分元件為 BSD、ICU 或 Lucent） | https://github.com/jqlang/jq |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:32
+msgid ""
+"Data: NVD, the vulnerability source, is public domain and requires "
+"attribution to \"NIST/NVD\"."
+msgstr ""
+"資料：弱點資料來源 NVD 屬於 public domain，並要求標示「NIST/NVD」出處。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:33
+#, no-wrap
+msgid "Bundled data snapshots"
+msgstr "內附的資料快照"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:36
+msgid ""
+"Two datasets are fetched once at image-build time and shipped inside the "
+"base image so the offline checks that read them need no network access at "
+"scan time. The build scripts that fetch them are deleted from the image "
+"afterwards, so the attribution is recorded here instead."
+msgstr ""
+"有兩份資料集在映像檔建置時抓取一次，並隨基礎映像檔一起收錄，讓讀取它們的離線"
+"檢查在掃描時不需要網路。抓取資料的建置指令碼在建置完成後就從映像檔中刪除，因"
+"此把出處記錄在這裡。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:41
+#, no-wrap
+msgid ""
+"| Data | Bundled at | Source | License |\n"
+"|------|-----------|--------|---------|\n"
+"| End-of-life dates | `/usr/local/lib/sbom/eol-data.json`, `eol-purl-map.json` | [endoflife.date](https://endoflife.date), read from its public API | MIT |\n"
+"| Malicious package advisories | `/usr/local/lib/sbom/malicious-index.json` | OSV bulk archives (`osv-vulnerabilities.storage.googleapis.com`). The `MAL-` records they carry are published by the OpenSSF Package Analysis project, [ossf/malicious-packages](https://github.com/ossf/malicious-packages) | Apache-2.0 (upstream advisory repository) |\n"
+msgstr ""
+"| 資料 | 映像檔內路徑 | 出處 | 授權條款 |\n"
+"|------|-----------|--------|---------|\n"
+"| 已終止支援日期 | `/usr/local/lib/sbom/eol-data.json`, `eol-purl-map.json` | [endoflife.date](https://endoflife.date)，從它的公開 API 讀取 | MIT |\n"
+"| 惡意套件安全公告 | `/usr/local/lib/sbom/malicious-index.json` | OSV 批次封存檔（`osv-vulnerabilities.storage.googleapis.com`）。其中所帶的 `MAL-` 紀錄由 OpenSSF Package Analysis 專案發佈於 [ossf/malicious-packages](https://github.com/ossf/malicious-packages) | Apache-2.0（上游公告儲存庫） |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:43
+msgid ""
+"Neither dataset is reproduced whole. Each is reduced to what the check "
+"actually reads — a product's end-of-life dates, or a PURL keyed to its "
+"advisory id — and the snapshot date travels with it, both in the bundled "
+"file and on every component the check flags (`bomlens:eol:source`, "
+"`bomlens:malicious:source`). Neither project endorses or certifies BomLens, "
+"and the bundled data is provided as is."
+msgstr ""
+"兩份資料集都不是原樣完整複製，而是各自縮減到檢查實際會讀取的部分——某個產品的"
+"已終止支援日期，或是一個 PURL 對應到它的公告識別碼——快照日期也隨之記錄，既寫"
+"在內附檔案裡，也標在檢查所標記的每一個元件上（`bomlens:eol:source`、"
+"`bomlens:malicious:source`）。這兩個專案都不為 BomLens 背書或認證，內附資料以"
+"現狀提供。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:45
+msgid ""
+"The CPE applicability index in the firmware image comes from NVD rather than "
+"either of these, and its attribution and notices ship beside it inside that "
+"image as `CVE-DATA-NOTICE.txt`."
+msgstr ""
+"韌體映像檔中的 CPE 適用性索引不是來自上述兩者，而是來自 NVD，其出處標示與聲明"
+"以 `CVE-DATA-NOTICE.txt` 隨該映像檔一起提供。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:46
+#, no-wrap
+msgid "Web UI npm packages"
+msgstr "網頁介面的 npm 套件"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:49
+msgid ""
+"The web UI (`--ui`) is a React single-page application. npm package code is "
+"compiled into the build output, and that output is redistributed inside the "
+"base image and the desktop installer, so the copyright and permission "
+"notices MIT and ISC ask for have to travel with it."
+msgstr ""
+"網頁介面（`--ui`）是一個 React 單頁應用程式。npm 套件的程式碼會編譯進建置產"
+"出，而該產出會隨基礎映像檔與桌面版安裝檔一起再次散布，因此 MIT 與 ISC 所要求"
+"的著作權與許可聲明必須隨之提供。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:51
+msgid ""
+"The authoritative record is `third-party-licenses.txt`, generated at build "
+"time. It lists only the packages that actually reach the bundle and "
+"reproduces each one's license text in full. Open it at `/third-party-"
+"licenses.txt` in the web UI; inside the image it is at `/usr/local/lib/sbom-"
+"web/dist/third-party-licenses.txt`. It comes from the bundled module graph "
+"rather than the `package.json` declaration because the two differ: declared "
+"dependencies used only at build time (tailwindcss, typescript) never reach "
+"the distribution, and a package can be declared and installed yet dropped "
+"from the bundle because nothing imports it."
+msgstr ""
+"正式記錄是建置時產生的 `third-party-licenses.txt`。它只列出實際進入打包結果的"
+"套件，並完整重現每一個套件的授權條款全文。在網頁介面中可從 `/third-party-"
+"licenses.txt` 開啟；在映像檔內則位於 `/usr/local/lib/sbom-web/dist/third-"
+"party-licenses.txt`。它取自打包後的模組關係圖，而不是 `package.json` 的宣告，"
+"因為兩者並不一致：只在建置時使用的宣告相依項目（tailwindcss、typescript）不會"
+"進入散布物，而一個套件也可能被宣告並安裝了，卻因為沒有任何地方匯入它而從打包"
+"結果中被剔除。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:53
+msgid ""
+"The 23 packages currently in the bundle are below. All are permissive; none "
+"is copyleft."
+msgstr ""
+"目前進入打包結果的 23 個套件如下。全部都是 permissive 授權，沒有任何 "
+"copyleft。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:65
+#, no-wrap
+msgid ""
+"| Package | Purpose | License (SPDX) |\n"
+"|---------|---------|----------------|\n"
+"| react, react-dom, scheduler | UI rendering | MIT |\n"
+"| @radix-ui/react-label, react-progress, react-slot, react-primitive, react-context, react-compose-refs | Accessible primitives | MIT |\n"
+"| cytoscape, cytoscape-dagre, dagre, graphlib, lodash | Dependency graph rendering and layout | MIT |\n"
+"| i18next, react-i18next, i18next-browser-languagedetector | English, Korean and Traditional Chinese switching | MIT |\n"
+"| class-variance-authority | Component variant definitions | Apache-2.0 |\n"
+"| clsx, tailwind-merge | Class name composition | MIT |\n"
+"| lucide-react | Icons | ISC |\n"
+"| highlight.js | Syntax highlighting in the source viewer (grammars loaded on demand) | BSD-3-Clause |\n"
+"| @fontsource/inter, @fontsource/jetbrains-mono, @fontsource/noto-sans-tc, pretendard | Fonts (see the section below) | OFL-1.1 |\n"
+msgstr ""
+"| 套件 | 用途 | 授權條款 (SPDX) |\n"
+"|---------|---------|----------------|\n"
+"| react, react-dom, scheduler | 使用者介面渲染 | MIT |\n"
+"| @radix-ui/react-label, react-progress, react-slot, react-primitive, react-context, react-compose-refs | 具無障礙支援的基本元件 | MIT |\n"
+"| cytoscape, cytoscape-dagre, dagre, graphlib, lodash | 相依關係圖的繪製與版面配置 | MIT |\n"
+"| i18next, react-i18next, i18next-browser-languagedetector | 英文、韓文與正體中文切換 | MIT |\n"
+"| class-variance-authority | 元件變體定義 | Apache-2.0 |\n"
+"| clsx, tailwind-merge | 類別名稱組合 | MIT |\n"
+"| lucide-react | 圖示 | ISC |\n"
+"| highlight.js | 原始碼檢視器的語法高亮（文法按需載入） | BSD-3-Clause |\n"
+"| @fontsource/inter, @fontsource/jetbrains-mono, @fontsource/noto-sans-tc, pretendard | 字型（見下一節） | OFL-1.1 |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:67
+msgid ""
+"`npm run notices:check` keeps the list from going stale by checking the "
+"generated file. CI fails when a bundled package declares no license, when no "
+"license text was found to reproduce, or when any copyleft license appears."
+msgstr ""
+"`npm run notices:check` 會檢查產生出來的檔案，避免這份清單過時。只要有內附套"
+"件未宣告授權條款、找不到可重現的授權條款全文，或出現任何 copyleft 授權，CI 就"
+"會失敗。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:68
+#, no-wrap
+msgid "Web UI components (adapted from shadcn/ui)"
+msgstr "網頁介面元件（改寫自 shadcn/ui）"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:71
+msgid ""
+"shadcn/ui is not a library you install; its component code is copied into "
+"the project. So it never appears in the npm dependency list even though the "
+"code is in this repository. The following seven files under `docker/web/"
+"frontend/src/components/ui/` are shadcn/ui components adapted to our design "
+"tokens and accessibility requirements."
+msgstr ""
+"shadcn/ui 不是安裝來用的程式庫，它的元件程式碼是複製到專案裡的。因此即使程式"
+"碼就在本儲存庫中，它也不會出現在 npm 相依項目清單裡。`docker/web/frontend/"
+"src/components/ui/` 底下的下列七個檔案，是把 shadcn/ui 的元件改寫成符合我們的"
+"設計 token 與無障礙需求的版本。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:75
+#, no-wrap
+msgid ""
+"| Files | Origin |\n"
+"|-------|--------|\n"
+"| `badge.tsx`, `button.tsx`, `card.tsx`, `input.tsx`, `label.tsx`, `progress.tsx`, `tabs.tsx` | shadcn/ui (MIT, Copyright (c) 2023 shadcn), https://github.com/shadcn-ui/ui |\n"
+msgstr ""
+"| 檔案 | 原始出處 |\n"
+"|-------|--------|\n"
+"| `badge.tsx`, `button.tsx`, `card.tsx`, `input.tsx`, `label.tsx`, `progress.tsx`, `tabs.tsx` | shadcn/ui (MIT, Copyright (c) 2023 shadcn), https://github.com/shadcn-ui/ui |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:77
+msgid ""
+"Those seven carry the upstream MIT notice alongside our own copyright line, "
+"and each is tagged `SPDX-License-Identifier: Apache-2.0 AND MIT`. The MIT "
+"text ships inside the images at `/usr/local/lib/sbom/licenses/MIT.txt`."
+msgstr ""
+"這七個檔案都在上游的 MIT 聲明旁附上我們自己的著作權標示，並且各自標記為 "
+"`SPDX-License-Identifier: Apache-2.0 AND MIT`。MIT 全文隨映像檔放在 `/usr/"
+"local/lib/sbom/licenses/MIT.txt`。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:79
+msgid ""
+"`barlist.tsx`, `select.tsx`, `state.tsx`, and `switch.tsx` in the same "
+"directory were written here and are Apache-2.0 only. `switch.tsx` follows "
+"shadcn/ui's visual proportions (track and thumb sizes) but is implemented "
+"separately as a native checkbox."
+msgstr ""
+"同一個目錄下的 `barlist.tsx`、`select.tsx`、`state.tsx` 與 `switch.tsx` 是在"
+"這裡自行撰寫的，只採用 Apache-2.0。`switch.tsx` 沿用 shadcn/ui 的視覺比例（軌"
+"道與滑鈕的尺寸），但實作另外以原生 checkbox 完成。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:80
+#, no-wrap
+msgid "Web UI fonts"
+msgstr "網頁介面的字型"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:83
+msgid ""
+"The web UI (`--ui`) bundles four typefaces for consistent typography and for "
+"offline and desktop (Electron) operation. The font files (woff2) are "
+"compiled into the web SPA at build time and ship with the base image; no "
+"external font CDN is called."
+msgstr ""
+"網頁介面（`--ui`）內附四種字型，用來維持排版一致，以及支援離線與桌面版"
+"（Electron）運作。字型檔（woff2）在建置時編譯進網頁 SPA，並隨基礎映像檔一起散"
+"布；不會呼叫任何外部字型 CDN。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:90
+#, no-wrap
+msgid ""
+"| Font | Purpose | License (SPDX) | Source |\n"
+"|------|---------|----------------|--------|\n"
+"| Inter | Body and UI typeface (Latin) | OFL-1.1 | https://github.com/rsms/inter |\n"
+"| JetBrains Mono | Code and monospace typeface | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |\n"
+"| Pretendard | Body and UI typeface (Hangul) | OFL-1.1 | https://github.com/orioncactus/pretendard |\n"
+"| Noto Sans TC | Body and UI typeface (Traditional Chinese) | OFL-1.1 | https://github.com/notofonts/noto-cjk |\n"
+msgstr ""
+"| 字型 | 用途 | 授權條款 (SPDX) | Source |\n"
+"|------|---------|----------------|--------|\n"
+"| Inter | 內文與介面字體（拉丁字母） | OFL-1.1 | https://github.com/rsms/inter |\n"
+"| JetBrains Mono | 程式碼與等寬字體 | OFL-1.1 | https://github.com/JetBrains/JetBrainsMono |\n"
+"| Pretendard | 內文與介面字體（韓文） | OFL-1.1 | https://github.com/orioncactus/pretendard |\n"
+"| Noto Sans TC | 內文與介面字體（正體中文） | OFL-1.1 | https://github.com/notofonts/noto-cjk |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:92
+msgid ""
+"The SIL Open Font License 1.1 requires attribution, and the fonts are "
+"bundled unmodified:"
+msgstr ""
+"SIL Open Font License 1.1 要求標示出處，而這些字型都是未經修改原樣內附："
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:97
+msgid ""
+"Inter: Copyright 2016 The Inter Project Authors (https://github.com/rsms/"
+"inter)"
+msgstr ""
+"Inter: Copyright 2016 The Inter Project Authors (https://github.com/rsms/"
+"inter)"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:97
+msgid ""
+"JetBrains Mono: Copyright 2020 The JetBrains Mono Project Authors (https://"
+"github.com/JetBrains/JetBrainsMono)"
+msgstr ""
+"JetBrains Mono: Copyright 2020 The JetBrains Mono Project Authors (https://"
+"github.com/JetBrains/JetBrainsMono)"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:97
+msgid ""
+"Pretendard: Copyright 2021 Kil Hyung-jin (https://github.com/orioncactus/"
+"pretendard), with Reserved Font Name 'Pretendard'. Includes Source Sans Pro: "
+"Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name "
+"'Source'."
+msgstr ""
+"Pretendard: Copyright 2021 Kil Hyung-jin (https://github.com/orioncactus/"
+"pretendard), with Reserved Font Name 'Pretendard'. Includes Source Sans Pro: "
+"Copyright 2014-2021 Adobe (http://www.adobe.com/), with Reserved Font Name "
+"'Source'."
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:97
+msgid ""
+"Noto Sans TC: Copyright 2014-2021 Adobe (http://www.adobe.com/), with "
+"Reserved Font Name 'Noto'."
+msgstr ""
+"Noto Sans TC: Copyright 2014-2021 Adobe (http://www.adobe.com/), with "
+"Reserved Font Name 'Noto'."
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:99
+msgid ""
+"The full OFL-1.1 text is available as `OFL.txt` in each repository listed "
+"under Source. The Pretendard npm package ships no license file of its own, "
+"so its text is carried in this repository at `docker/web/frontend/licenses/"
+"pretendard.txt` and reproduced in the web UI's generated `third-party-"
+"licenses.txt`."
+msgstr ""
+"OFL-1.1 全文可在 Source 欄所列的各儲存庫中以 `OFL.txt` 取得。Pretendard 的 "
+"npm 套件本身未附授權條款檔案，因此它的全文收在本儲存庫的 `docker/web/"
+"frontend/licenses/pretendard.txt`，也一併重現在網頁介面所產生的 `third-party-"
+"licenses.txt` 中。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:100
+#, no-wrap
+msgid "Vendored open-source identification and the OSSKB API (opt-in)"
+msgstr "已複製納入的開放原始碼識別與 OSSKB API（選用）"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:103
+msgid ""
+"`--identify-vendored` bundles only the `scanoss.py` client (MIT). The client "
+"is part of the default build; to leave it out, build with `docker build --"
+"build-arg SBOM_SCANOSS=false`. The SCANOSS Engine (GPL-2.0) that performs "
+"the matching is **not** included — the hosted OSSKB API (`api.osskb.org`) is "
+"called instead. That is why, unlike the GPL tools in the firmware image, "
+"this can sit in the base image (MIT). The bundled `osadl-copyleft.json` "
+"dataset is CC-BY-4.0 data rather than code and requires attribution only."
+msgstr ""
+"`--identify-vendored` 只內附 `scanoss.py` 用戶端（MIT）。該用戶端是預設建置的"
+"一部分；要排除它，請以 `docker build --build-arg SBOM_SCANOSS=false` 建置。實"
+"際執行比對的 SCANOSS Engine（GPL-2.0）**並未**收錄——改為呼叫託管的 OSSKB API"
+"（`api.osskb.org`）。這也是它與韌體映像檔中的 GPL 工具不同、可以放在基礎映像"
+"檔裡的原因（MIT）。內附的 `osadl-copyleft.json` 資料集是 CC-BY-4.0 資料而不是"
+"程式碼，只要求標示出處。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:105
+msgid ""
+"Using the OSSKB API (operated by the Software Transparency Foundation) comes "
+"with these terms:"
+msgstr ""
+"使用 OSSKB API（由 Software Transparency Foundation 營運）附帶以下條款："
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:111
+msgid ""
+"What leaves the machine is **file fingerprints (hashes)**, not source code."
+msgstr "離開機器的是**檔案指紋（雜湊值）**，不是原始碼。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:111
+msgid ""
+"The returned data may be used **for software identification only**; "
+"redistributing OSSKB data or caching it into a separate database is "
+"**prohibited**. BomLens emits results only as SBOM components for that one "
+"scan, which stays within this scope."
+msgstr ""
+"回傳的資料**只能用於軟體識別**；**禁止**再散布 OSSKB 資料或把它快取成另一個資"
+"料庫。BomLens 只會把結果輸出成該次掃描的 SBOM 元件，仍在這個範圍之內。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:111
+msgid ""
+"The service is free and best-effort, and it is **rate-limited**. The exact "
+"limits are not published and are discretionary under the terms (\"STF may "
+"limit the number or frequency of transactions per user through the OSSKB\"). "
+"A scan looks up a fingerprint per file, so repeatedly scanning a large "
+"source tree will be throttled — this is meant for one-off identification. "
+"For bulk, repeated, or organization-wide use, and for air-gapped "
+"environments, point `SCANOSS_API_URL` and `SCANOSS_API_KEY` at the "
+"commercial SCANOSS service or a self-hosted endpoint."
+msgstr ""
+"這項服務免費、盡力而為，並且有**用量限制**。確切的限額並未公開，依條款屬服務"
+"方的裁量事項（原文：\"STF may limit the number or frequency of transactions "
+"per user through the OSSKB\"）。掃描會逐一查詢每個檔案的指紋，因此反覆掃描龐"
+"大的原始碼樹會被限流——這是給一次性識別用的。若要大量、反覆或全公司範圍地使"
+"用，以及在對外連線受阻的環境中使用，請把 `SCANOSS_API_URL` 與 "
+"`SCANOSS_API_KEY` 指向 SCANOSS 的商業服務或自行架設的端點。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:111
+msgid ""
+"Results are provided as identification hints that need human review; "
+"accuracy is not warranted."
+msgstr "結果是以需人工檢視的識別線索形式提供；不保證準確度。"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:111
+msgid "Terms: https://www.softwaretransparency.org/terms"
+msgstr "條款：https://www.softwaretransparency.org/terms"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:112
+#, no-wrap
+msgid "Firmware image — `ghcr.io/sktelecom/bomlens-firmware` (contains GPL, opt-in)"
+msgstr "韌體映像檔——`ghcr.io/sktelecom/bomlens-firmware`（含 GPL，選用）"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:116
+msgid ""
+"This is a separate opt-in image that isolates the heavy unpacking and binary-"
+"analysis tools together with their GPL components.  Build: `docker build --"
+"build-arg SBOM_FIRMWARE=true -t bomlens-firmware ./docker`."
+msgstr ""
+"這是一個獨立的選用映像檔，把笨重的解包與二進位分析工具連同它們的 GPL 元件隔離"
+"出來。 建置：`docker build --build-arg SBOM_FIRMWARE=true -t bomlens-"
+"firmware ./docker`。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:118
+msgid ""
+"The versions below match the build ARG defaults in `docker/Dockerfile` "
+"(pinned for supply-chain hygiene; overridable through the ARG)."
+msgstr ""
+"下列版本與 `docker/Dockerfile` 中的建置 ARG 預設值一致（為供應鏈衛生而釘住；"
+"可透過 ARG 覆寫）。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:126
+#, no-wrap
+msgid ""
+"| Tool | Pinned version (ARG) | Purpose | License (SPDX) | Copyleft | Source |\n"
+"|------|----------------------|---------|----------------|----------|--------|\n"
+"| unblob | 26.3.30 (`UNBLOB_VERSION`) | Primary firmware unpacker | MIT | permissive | https://github.com/onekey-sec/unblob |\n"
+"| cve-bin-tool | 3.4 (`CVE_BIN_TOOL_VERSION`) | Identifies stripped binaries and their CVEs | **GPL-3.0** | strong | https://github.com/intel/cve-bin-tool |\n"
+"| ubi_reader | 0.8.14 (`UBI_READER_VERSION`) | UBI and UBIFS extraction | **GPL-3.0** | strong | https://github.com/onekey-sec/ubi_reader |\n"
+"| sasquatch | `sasquatch-v4.5.1-6` (`SASQUATCH_VERSION`) | Reads vendor squashfs variants standard unsquashfs refuses | GPL-2.0 | strong | https://github.com/onekey-sec/sasquatch |\n"
+"| jefferson | 0.4.7 (pip, pulled in by unblob) | JFFS2 extraction | MIT | permissive | https://github.com/onekey-sec/jefferson |\n"
+msgstr ""
+"| 工具 | 釘住的版本 (ARG) | 用途 | 授權條款 (SPDX) | Copyleft | Source |\n"
+"|------|----------------------|---------|----------------|----------|--------|\n"
+"| unblob | 26.3.30 (`UNBLOB_VERSION`) | 主要的韌體解包工具 | MIT | permissive | https://github.com/onekey-sec/unblob |\n"
+"| cve-bin-tool | 3.4 (`CVE_BIN_TOOL_VERSION`) | 識別 stripped 二進位檔及其 CVE | **GPL-3.0** | strong | https://github.com/intel/cve-bin-tool |\n"
+"| ubi_reader | 0.8.14 (`UBI_READER_VERSION`) | UBI 與 UBIFS 擷取 | **GPL-3.0** | strong | https://github.com/onekey-sec/ubi_reader |\n"
+"| sasquatch | `sasquatch-v4.5.1-6` (`SASQUATCH_VERSION`) | 讀取標準 unsquashfs 拒絕處理的廠商 squashfs 變體 | GPL-2.0 | strong | https://github.com/onekey-sec/sasquatch |\n"
+"| jefferson | 0.4.7 (pip，由 unblob 一併帶入) | JFFS2 擷取 | MIT | permissive | https://github.com/onekey-sec/jefferson |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:128
+msgid ""
+"Debian packages installed on top, with the versions measured in the "
+"published image:"
+msgstr "疊在其上的 Debian 套件，版本是在發行的映像檔中實測的值："
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:138
+#, no-wrap
+msgid ""
+"| Package | Version | Purpose | License (SPDX) |\n"
+"|---------|---------|---------|----------------|\n"
+"| squashfs-tools (unsquashfs) | 1:4.6.1-1 | Fallback for standard squashfs extraction | GPL-2.0+ |\n"
+"| binutils | 2.44-3 | `readelf` for the ELF component identification pass | GPL-3.0+ |\n"
+"| e2fsprogs | 1.47.2-3+b11 | ext filesystem extraction | GPL-2.0 |\n"
+"| cpio | 2.15+dfsg-2 | Archive extraction | GPL-3.0+ |\n"
+"| cabextract | 1.11-2 | Windows installer container extraction | GPL-2.0+ |\n"
+"| lzop, lz4, liblzo2-2 | 1.04-2, 1.10.0-4, 2.10-3+b1 | Compression codecs invoked by the unpackers | GPL-2.0+ |\n"
+"| p7zip / 7zip, unar | (apt distribution version) | 7z and vendor container formats | LGPL-2.1+ and others |\n"
+msgstr ""
+"| 套件 | 版本 | 用途 | 授權條款 (SPDX) |\n"
+"|---------|---------|---------|----------------|\n"
+"| squashfs-tools (unsquashfs) | 1:4.6.1-1 | 標準 squashfs 擷取的後備 | GPL-2.0+ |\n"
+"| binutils | 2.44-3 | ELF 元件識別階段所用的 `readelf` | GPL-3.0+ |\n"
+"| e2fsprogs | 1.47.2-3+b11 | ext 檔案系統擷取 | GPL-2.0 |\n"
+"| cpio | 2.15+dfsg-2 | 封存檔擷取 | GPL-3.0+ |\n"
+"| cabextract | 1.11-2 | Windows 安裝檔容器擷取 | GPL-2.0+ |\n"
+"| lzop, lz4, liblzo2-2 | 1.04-2, 1.10.0-4, 2.10-3+b1 | 解包工具呼叫的壓縮編解碼器 | GPL-2.0+ |\n"
+"| p7zip / 7zip, unar | （apt 散布版本） | 7z 與廠商容器格式 | LGPL-2.1+ 與其他 |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:140
+msgid ""
+"For all of these the corresponding source is the Debian source package; see "
+"[Debian packages in every image](#debian-packages-in-every-image)."
+msgstr ""
+"這些套件的對應原始碼都是 Debian 原始碼套件；請看[所有映像檔的 Debian 套件]"
+"(#debian-packages-in-every-image)。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:145
+msgid ""
+"The unpacking chain in `scan-firmware.sh` is unblob, then unsquashfs for a "
+"file `file` reports as squashfs, then 7z for the container formats Windows "
+"deliveries arrive in, then binwalk. A second pass opens filesystem images "
+"that were carved out but not extracted, trying unsquashfs and then sasquatch."
+msgstr ""
+"`scan-firmware.sh` 的解包順序是先 unblob，接著對 `file` 判定為 squashfs 的檔"
+"案使用 unsquashfs，然後是 Windows 交付物所在的容器格式需要的 7z，最後是 "
+"binwalk。第二輪會處理那些被切出來但沒有解開的檔案系統映像檔，依序嘗試 "
+"unsquashfs 與 sasquatch。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:146
+#, no-wrap
+msgid "Fallback tools not installed in the image"
+msgstr "未安裝進映像檔的後備工具"
+
+#. type: Bullet: '- '
+#: THIRD_PARTY_LICENSES.md:149
+msgid ""
+"binwalk: the PyPI `binwalk` 2.x distribution is broken (`binwalk.core` is "
+"missing), so it is not installed in the image. `scan-firmware.sh` uses a "
+"working `binwalk` from the PATH as the last fallback, but standard squashfs "
+"is already handled a step earlier by unsquashfs."
+msgstr ""
+"binwalk：PyPI 上的 `binwalk` 2.x 散布版是壞的（缺少 `binwalk.core`），因此沒"
+"有安裝進映像檔。`scan-firmware.sh` 會把 PATH 上可用的 `binwalk` 當成最後的後"
+"備，但標準 squashfs 在前一步就已由 unsquashfs 處理掉了。"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:150
+#, no-wrap
+msgid "GPL source code for the firmware tools"
+msgstr "韌體工具的 GPL 原始碼"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:153
+msgid ""
+"Every GPL tool in the firmware image is fetched at a pinned version from a "
+"public repository or package registry. **The GPL license texts (GPL-2.0, "
+"GPL-3.0) are distributed inside the image at `/usr/local/lib/sbom/licenses/"
+"`.** Source code for exactly the version installed in the image is available "
+"from the Source URL in the table above, at the matching tag or release, and "
+"the firmware image carries the location of this document in the "
+"`com.sktelecom.sbom.gpl-source-offer` label."
+msgstr ""
+"韌體映像檔中的每一個 GPL 工具，都是從公開儲存庫或套件登錄以釘住的版本取得。"
+"**GPL 授權條款全文（GPL-2.0、GPL-3.0）隨映像檔散布於 `/usr/local/lib/sbom/"
+"licenses/`。**與映像檔中所安裝版本完全相同的原始碼，可從上表 Source URL 的對"
+"應標籤或發行版取得，而韌體映像檔也在 `com.sktelecom.sbom.gpl-source-offer` 標"
+"籤中記載本文件的位置。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:155
+msgid ""
+"Tools installed from Debian packages rather than from a pinned upstream "
+"release — squashfs-tools, e2fsprogs, p7zip, unar, cpio, cabextract and the "
+"rest — are covered by [Debian packages in every image](#debian-packages-in-"
+"every-image) below, because for a Debian binary the corresponding source is "
+"the Debian source package, not the upstream tag."
+msgstr ""
+"不是從釘住的上游發行版、而是從 Debian 套件安裝的工具——squashfs-tools、"
+"e2fsprogs、p7zip、unar、cpio、cabextract 等——由下方的[所有映像檔的 Debian 套"
+"件](#debian-packages-in-every-image)涵蓋，因為對 Debian 二進位檔而言，對應原"
+"始碼是 Debian 原始碼套件，而不是上游標籤。"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:156
+#, no-wrap
+msgid "deep-cve image — `ghcr.io/sktelecom/bomlens-deep-cve` (permissive, opt-in)"
+msgstr "deep-cve 映像檔——`ghcr.io/sktelecom/bomlens-deep-cve`（permissive，選用）"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:160
+msgid ""
+"This is a separate opt-in image for `--deep-cve`. It uses the CPE matcher in "
+"grype to find NVD-only Maven CVEs that Trivy misses. The vulnerability "
+"database is large (about 1.8 GB), so it is kept out of the base image and "
+"pulled when needed.  Build: `docker build --build-arg SBOM_DEEP_CVE=true -t "
+"bomlens-deep-cve ./docker`."
+msgstr ""
+"這是給 `--deep-cve` 使用的獨立選用映像檔。它用 grype 的 CPE 比對器，找出 "
+"Trivy 漏掉、只存在於 NVD 的 Maven CVE。弱點資料庫很大（約 1.8 GB），因此不放"
+"進基礎映像檔，需要時才下載。 建置：`docker build --build-arg "
+"SBOM_DEEP_CVE=true -t bomlens-deep-cve ./docker`。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:162
+msgid ""
+"The version below matches the build ARG default in `docker/Dockerfile` "
+"(pinned; overridable through the ARG)."
+msgstr ""
+"下列版本與 `docker/Dockerfile` 中的建置 ARG 預設值一致（已釘住；可透過 ARG 覆"
+"寫）。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:166
+#, no-wrap
+msgid ""
+"| Tool | Pinned version (ARG) | Purpose | License (SPDX) | Copyleft | Source |\n"
+"|------|----------------------|---------|----------------|----------|--------|\n"
+"| grype | v0.112.0 (`GRYPE_VERSION`) | CPE-based NVD CVE matching | Apache-2.0 | permissive | https://github.com/anchore/grype |\n"
+msgstr ""
+"| 工具 | 釘住的版本 (ARG) | 用途 | 授權條款 (SPDX) | Copyleft | Source |\n"
+"|------|----------------------|---------|----------------|----------|--------|\n"
+"| grype | v0.112.0 (`GRYPE_VERSION`) | 以 CPE 為基礎的 NVD CVE 比對 | Apache-2.0 | permissive | https://github.com/anchore/grype |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:168
+msgid ""
+"Data: the grype vulnerability database baked into the image at build time is "
+"assembled by Anchore from public vulnerability sources — NVD (public "
+"domain), GitHub Security Advisories (CC-BY-4.0), and distribution security "
+"databases (each under its own terms). The database is pinned with "
+"`GRYPE_DB_AUTO_UPDATE=false`, so no network access happens during a scan."
+msgstr ""
+"資料：建置時烘進映像檔的 grype 弱點資料庫，由 Anchore 匯整公開的弱點來源而成"
+"——NVD（public domain）、GitHub Security Advisories（CC-BY-4.0），以及各發行版"
+"的安全資料庫（各自適用自己的條款）。這個資料庫以 "
+"`GRYPE_DB_AUTO_UPDATE=false` 釘住，因此掃描期間不會用到網路。"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:169
+#, no-wrap
+msgid "Android SDK image — built by you, not published"
+msgstr "Android SDK 映像檔——由您自行建置，不對外發行"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:172
+msgid ""
+"cdxgen publishes no Android-SDK-bearing image and marks Android as having no "
+"transitive support, so an Android project cannot be delegated to it. `docker/"
+"android/Dockerfile` adds an Android SDK platform on top of cdxgen's java "
+"image, one image per `compileSdk`."
+msgstr ""
+"cdxgen 沒有發行內含 Android SDK 的映像檔，並把 Android 標記為不支援間接相依，"
+"因此 Android 專案無法直接交給它處理。`docker/android/Dockerfile` 在 cdxgen "
+"的 java 映像檔之上加裝 Android SDK 平台，每一個 `compileSdk` 對應一個映像檔。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:174
+#, no-wrap
+msgid "**We do not publish this image.** The Android SDK is not open source, and its terms permit copying only for backup and bar redistribution except where a third-party licence requires otherwise ([§3.4](https://developer.android.com/studio/terms); §3.5 limits that exception to the SDK's open-source components). Putting the image in a public registry would hand the SDK to everyone who pulls it, which is what that clause names. So each user builds it once and accepts Google's terms directly, the same as installing Android Studio:\n"
+msgstr "**我們不發行這個映像檔。** Android SDK 不是開放原始碼，它的條款只允許為備份而複製，並且禁止再散布，除非第三方授權另有要求（[§3.4](https://developer.android.com/studio/terms)；§3.5 把該例外限縮在 SDK 的開放原始碼元件上）。把這個映像檔放上公開登錄，等於把 SDK 交給每一個下載它的人，而那正是該條款所指的行為。因此改由每位使用者自行建置一次，並像安裝 Android Studio 那樣直接接受 Google 的條款：\n"
+
+#. type: Fenced code block (bash)
+#: THIRD_PARTY_LICENSES.md:175
+#, no-wrap
+msgid "docker build --build-arg ANDROID_API=35 -t bomlens-android-sdk35 docker/android\n"
+msgstr "docker build --build-arg ANDROID_API=35 -t bomlens-android-sdk35 docker/android\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:180
+#, no-wrap
+msgid "`scan-sbom.sh` detects the project's `compileSdk` and prints this command when the matching image is missing. `ANDROID_IMAGE_PREFIX` points it at an image built elsewhere — including the `ghcr.io/sktelecom/bomlens-android-sdk<API>` images published up to v1.9.0, before this was decided. Those are left in place so scans on released versions keep working; nothing new is pushed to them.\n"
+msgstr "`scan-sbom.sh` 會偵測專案的 `compileSdk`，並在找不到對應映像檔時印出上面這個指令。`ANDROID_IMAGE_PREFIX` 可以把它指向在別處建置的映像檔——包括在本方針確立之前、發行到 v1.9.0 為止的 `ghcr.io/sktelecom/bomlens-android-sdk<API>` 映像檔。那些映像檔保留原處，讓已發行版本上的掃描能繼續運作；不會再推送任何新的內容上去。\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:182
+msgid ""
+"The image holds no BomLens code, so it is not covered by our Apache-2.0 "
+"grant. What it contains:"
+msgstr ""
+"這個映像檔不含 BomLens 的程式碼，因此不在我們 Apache-2.0 授權的涵蓋範圍內。它"
+"包含的是："
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:187
+#, no-wrap
+msgid ""
+"| Component | Source | Terms |\n"
+"|-----------|--------|-------|\n"
+"| cdxgen java image (`cdxgen-temurin-java21`, digest-pinned) | https://github.com/CycloneDX/cdxgen | Apache-2.0 |\n"
+"| Android SDK command-line tools, platform-tools, `platforms;android-<API>`, `build-tools;<API>.0.0` | Installed by `sdkmanager` from https://dl.google.com/android/repository/ | Android Software Development Kit License Agreement, https://developer.android.com/studio/terms |\n"
+msgstr ""
+"| 元件 | 出處 | 條款 |\n"
+"|-----------|--------|-------|\n"
+"| cdxgen java 映像檔（`cdxgen-temurin-java21`，以 digest 釘住） | https://github.com/CycloneDX/cdxgen | Apache-2.0 |\n"
+"| Android SDK 命令列工具、platform-tools、`platforms;android-<API>`、`build-tools;<API>.0.0` | 由 `sdkmanager` 從 https://dl.google.com/android/repository/ 安裝 | Android Software Development Kit License Agreement, https://developer.android.com/studio/terms |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:189
+msgid ""
+"The SDK terms also grant only a non-sublicensable licence to use the SDK for "
+"developing Android applications (§3.1), which is a further reason the image "
+"cannot be handed on: we have nothing to sublicense."
+msgstr ""
+"SDK 條款所給的，也只是一份不得再授權的許可，用來開發 Android 應用程式"
+"（§3.1），這是這個映像檔不能轉交他人的另一個理由：我們沒有任何可以再授權的東"
+"西。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:191
+msgid ""
+"Each SDK component carries its own `NOTICE.txt` inside the image (under `/"
+"opt/android-sdk/`), which is where the third-party notices for the SDK's own "
+"contents live. The `/opt/android-sdk/licenses/` files are acceptance markers "
+"written by `sdkmanager`, not licence texts."
+msgstr ""
+"SDK 的每一個元件在映像檔內都帶著自己的 `NOTICE.txt`（位於 `/opt/android-sdk/"
+"` 底下），SDK 自身內容的第三方聲明就在那裡。`/opt/android-sdk/licenses/` 底下"
+"的檔案是 `sdkmanager` 寫下的接受標記，不是授權條款全文。"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:192
+#, no-wrap
+msgid "Desktop installer — Electron and Chromium"
+msgstr "桌面版安裝檔——Electron 與 Chromium"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:195
+msgid ""
+"The desktop installer (`BomLens-Setup.exe`, `BomLens-Setup.dmg`) packages "
+"the app with an Electron runtime, so it redistributes Electron and the "
+"Chromium build inside it."
+msgstr ""
+"桌面版安裝檔（`BomLens-Setup.exe`、`BomLens-Setup.dmg`）把應用程式與 "
+"Electron 執行環境包在一起，因此也再次散布了其中的 Electron 與 Chromium 建置版"
+"本。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:200
+#, no-wrap
+msgid ""
+"| Component | License (SPDX) | Notice file |\n"
+"|-----------|----------------|-------------|\n"
+"| Electron | MIT | `LICENSE.electron` |\n"
+"| Chromium and its bundled third-party code | BSD-3-Clause and many others | `LICENSES.chromium.html` |\n"
+msgstr ""
+"| 元件 | 授權條款 (SPDX) | 聲明檔案 |\n"
+"|-----------|----------------|-------------|\n"
+"| Electron | MIT | `LICENSE.electron` |\n"
+"| Chromium 與其內附的第三方程式碼 | BSD-3-Clause 與其他多種 | `LICENSES.chromium.html` |\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:202
+msgid ""
+"Chromium's third-party set includes LGPL-2.1-or-later components, FFmpeg "
+"among them. Electron ships FFmpeg as a separate shared library "
+"(`libffmpeg.dll` on Windows, `libffmpeg.dylib` on macOS) rather than "
+"statically linked, which is what the LGPL's relinking clause asks for."
+msgstr ""
+"Chromium 的第三方元件集合中含有 LGPL-2.1-or-later 的元件，FFmpeg 就是其中之"
+"一。Electron 並未把 FFmpeg 靜態連結，而是以獨立的共享程式庫散布（Windows 上"
+"是 `libffmpeg.dll`，macOS 上是 `libffmpeg.dylib`），這正是 LGPL 的重新連結條"
+"款所要求的形式。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:204
+msgid ""
+"BomLens's own terms travel with the installer as well: `LICENSE`, `NOTICE` "
+"and this document are placed in the app's resources folder (`electron/"
+"electron-builder.yml`)."
+msgstr ""
+"BomLens 自身的使用條款同樣隨安裝檔一起提供：`LICENSE`、`NOTICE` 與本文件會放"
+"進應用程式的資源資料夾（`electron/electron-builder.yml`）。"
+
+#. type: Title ##
+#: THIRD_PARTY_LICENSES.md:205
+#, no-wrap
+msgid "Debian packages in every image"
+msgstr "所有映像檔的 Debian 套件 {#debian-packages-in-every-image}"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:208
+msgid ""
+"Every BomLens image is built on `python:3.12-slim`, a Debian-based image. "
+"Alongside the tools listed above it therefore contains Debian system "
+"packages, and most of them are copyleft: of the 128 packages in the base "
+"image, more than a hundred carry GPL or LGPL terms. bash, coreutils, grep, "
+"sed, gzip, findutils, wget and tar are GPL-3.0-or-later; git and mawk are "
+"GPL-2.0; the GNU C library is LGPL-2.1-or-later. No GPL-free Linux base "
+"image exists — Alpine ships BusyBox under GPL-2.0, and every glibc-based "
+"image ships LGPL — so this is a property of container images generally "
+"rather than a choice made here."
+msgstr ""
+"每一個 BomLens 映像檔都建置在 Debian 基底的 `python:3.12-slim` 之上。因此除了"
+"上面列出的工具，它也含有 Debian 系統套件，而其中大多數是 copyleft：基礎映像檔"
+"的 128 個套件中，超過一百個帶有 GPL 或 LGPL 條款。bash、coreutils、grep、"
+"sed、gzip、findutils、wget 與 tar 是 GPL-3.0-or-later；git 與 mawk 是 "
+"GPL-2.0；GNU C 程式庫是 LGPL-2.1-or-later。不存在不含 GPL 的 Linux 基礎映像檔"
+"——Alpine 內附 GPL-2.0 授權的 BusyBox，每一個基於 glibc 的映像檔都帶有 LGPL——"
+"所以這是容器映像檔的普遍性質，而不是這裡做的選擇。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:210
+msgid ""
+"BomLens applies no patches to any of these packages. It installs them with "
+"`apt-get` and invokes them as separate processes, so the corresponding "
+"source is the unmodified Debian source package."
+msgstr ""
+"BomLens 不對這些套件套用任何修補。它以 `apt-get` 安裝它們，並以獨立行程呼叫，"
+"因此對應原始碼就是未經修改的 Debian 原始碼套件。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:212
+msgid "To list every package and its exact version in an image you hold:"
+msgstr "要列出您手上映像檔中的每一個套件及其確切版本："
+
+#. type: Fenced code block (bash)
+#: THIRD_PARTY_LICENSES.md:213
+#, no-wrap
+msgid ""
+"docker run --rm --entrypoint dpkg-query ghcr.io/sktelecom/bomlens:latest \\\n"
+"  -W -f='${Package} ${Version} ${Architecture}\\n'\n"
+msgstr ""
+"docker run --rm --entrypoint dpkg-query ghcr.io/sktelecom/bomlens:latest \\\n"
+"  -W -f='${Package} ${Version} ${Architecture}\\n'\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:219
+#, no-wrap
+msgid "Each package's license and copyright statement is preserved inside the image at `/usr/share/doc/<package>/copyright`.\n"
+msgstr "每個套件的授權條款與著作權標示都原樣保存在映像檔內的 `/usr/share/doc/<package>/copyright`。\n"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:220
+#, no-wrap
+msgid "Source for the Debian packages"
+msgstr "Debian 套件的原始碼"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:223
+msgid ""
+"Corresponding source for any version listed is available from Debian's "
+"source archive:"
+msgstr "上面列出的任何版本，其對應原始碼都可從 Debian 的原始碼封存取得："
+
+#. type: Fenced code block
+#: THIRD_PARTY_LICENSES.md:224
+#, no-wrap
+msgid "https://snapshot.debian.org/\n"
+msgstr "https://snapshot.debian.org/\n"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:229
+msgid ""
+"Use `snapshot.debian.org` rather than `deb.debian.org`: it is addressable by "
+"exact version and keeps historical versions, so these directions stay valid "
+"for images built at any date. Equivalently, from inside the image:"
+msgstr ""
+"請使用 `snapshot.debian.org` 而不是 `deb.debian.org`：它可以用確切版本定址，"
+"也保留歷史版本，因此這份說明對任何日期建置的映像檔都仍然有效。同樣地，從映像"
+"檔內部也可以："
+
+#. type: Fenced code block (bash)
+#: THIRD_PARTY_LICENSES.md:230
+#, no-wrap
+msgid "apt-get source <package>=<version>\n"
+msgstr "apt-get source <package>=<version>\n"
+
+#. type: Title ###
+#: THIRD_PARTY_LICENSES.md:234
+#, no-wrap
+msgid "Written offer (GPL-2.0 components)"
+msgstr "書面提供聲明（GPL-2.0 元件）"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:237
+msgid ""
+"For any component in these images licensed under version 2 of the GNU "
+"General Public License, SK Telecom Co., Ltd. offers, valid for three years "
+"from the date you obtained the image, to give any third party a complete "
+"machine-readable copy of the corresponding source code, for a charge no more "
+"than the cost of physically performing the distribution. Request it by "
+"opening an issue at https://github.com/sktelecom/bomlens/issues."
+msgstr ""
+"對於這些映像檔中任何依 GNU General Public License 第 2 版授權的元件，SK "
+"Telecom Co., Ltd. 提供以下承諾，自您取得映像檔之日起三年內有效：向任何第三方"
+"提供對應原始碼的完整機器可讀副本，收費不超過實際執行散布的成本。請在 https://"
+"github.com/sktelecom/bomlens/issues 開立 issue 提出請求。"
+
+#. type: Plain text
+#: THIRD_PARTY_LICENSES.md:240
+#, no-wrap
+msgid "*This document is a general compliance summary, not legal advice. The licenses of record are the LICENSE files in each upstream project.*\n"
+msgstr "*本文件是一般性的合規整理，不是法律意見。具備效力的授權條款是各上游專案中的 LICENSE 檔案。*\n"
