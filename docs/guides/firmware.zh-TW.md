@@ -29,7 +29,7 @@ docker pull ghcr.io/sktelecom/bomlens-firmware:latest
 
 ## 執行方式
 
-不論用網頁介面還是 CLI，韌體分析都需要上面那個韌體映像檔。
+無論用網頁介面還是 CLI，韌體分析都需要上面那個韌體映像檔。
 
 ### 從網頁介面
 

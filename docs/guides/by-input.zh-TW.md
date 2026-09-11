@@ -16,7 +16,7 @@ description: 'BomLens 如何為七種輸入形式產生 SBOM、開放原始碼�
 | SBOM | `{Project}_{Version}_bom.json` | CycloneDX 1.6 元件清冊 |
 | 開放原始碼風險報告 | `{Project}_{Version}_risk-report.{md,html}` | 彙整授權條款與弱點的風險（含修補期限） |
 
-不論哪一種輸入形式，加上 `--all --generate-only` 就會一次產生這三份（風險報告預設開啟，只有 `--no-report` 會把它關掉）。
+無論哪一種輸入形式，加上 `--all --generate-only` 就會一次產生這三份（風險報告預設開啟，只有 `--no-report` 會把它關掉）。
 
 ## 共通準備 {#common-setup}
 

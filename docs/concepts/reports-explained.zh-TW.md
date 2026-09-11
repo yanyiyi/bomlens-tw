@@ -2,18 +2,18 @@
 description: '如何閱讀與解讀 BomLens 產生的開放原始碼授權聲明、安全報告與開放原始碼風險分析報告。'
 ---
 
-# 報告怎麼讀
+# 如何解讀報告
 
-這一頁說明掃描結束後如何閱讀與解讀 BomLens 的報告。產生方式請看[產生報告](../guides/reports.md)。
+這一頁說明掃描結束後如何閱讀與解讀 BomLens 的報告。其產生方式請看[產生報告](../guides/reports.md)。
 
-## 授權聲明一併處理的事
+## 授權聲明的處理內容
 
 開放原始碼授權聲明 (NOTICE) 會依授權條款把元件分組。除了分組之外，它還一併處理下列事項。
 
 - 把授權條款名稱正規化為 SPDX 識別碼。例如「Apache License, version 2.0」會正規化為 `Apache-2.0`。同一份授權條款因為寫法不同而重複的項目，會合併成一項。
-- 掃描工具無法判定授權條款名稱、只留下 `CUSTOM` 並附上授權條款檔全文時（LICENSE 檔改寫了著作權標示行的 Go 模組很常見），會把全文與主要授權條款（`MIT`、`BSD-2-Clause`、`BSD-3-Clause`、`Apache-2.0`、`ISC`）的條文用語比對，還原出 SPDX 識別碼。比對後仍然含糊的全文會保留為 `CUSTOM`，不會用猜測值填補。
+- 掃描工具無法判定授權條款名稱，僅留下 `CUSTOM` 並附上授權條款檔全文時（常見於 LICENSE 檔改寫著作權標示行的 Go 模組），會將全文與主要授權條款（`MIT`、`BSD-2-Clause`、`BSD-3-Clause`、`Apache-2.0`、`ISC`）的條文用語進行比對，以還原 SPDX 識別碼。若比對後仍無法明確判定授權條款，則會保留為 `CUSTOM`，而不會逕行推測。
 - SBOM 裡有著作權 (copyright) 值時，會逐一元件顯示。
-- 21 種主要開放原始碼授權條款（`Apache-2.0`、`MIT`、`BSD-3-Clause`、`GPL`／`LGPL` 家族等）的 SPDX 標準全文，會一併附在授權聲明的最後。這樣就能滿足要求隨附全文的授權條款義務，不必另外蒐集。內建的原文放在 `docker/lib/licenses/*.txt`。
+- 21 種主要開放原始碼授權條款（`Apache-2.0`、`MIT`、`BSD-3-Clause`、`GPL`／`LGPL` 家族等）的 SPDX 標準全文，也會附在授權聲明的最後。如此即可履行須隨附授權條款全文的義務，無須另外蒐集。這些內建的授權條款全文位於 `docker/lib/licenses/*.txt`。
 
 ## 優先順序訊號（CVSS、EPSS、CISA KEV）
 
@@ -50,7 +50,7 @@ EPSS 與 KEV 需要向外部 API 查詢。在封閉網路中，可以設定 `SEC
 
 ## 元件已終止支援 (EOL) {#component-end-of-life-eol}
 
-BomLens 也會標示各元件的發行週期是否已到上游的終止支援（End-of-Life，EOL）。這是與 CVE 各自獨立的供應鏈風險：過了支援期限的執行環境或框架不會再有上游的安全修正，因此之後即使報出 Critical（嚴重）或 High（高）等級的弱點，也沒有修補可以套用。
+BomLens 也會標示各元件的發行週期是否已達上游的支援終止期限（End-of-Life，EOL）。這是與 CVE 各自獨立的供應鏈風險：超過支援期限的執行環境或框架不會再獲得上游提供的安全性修正，因此之後即使通報 Critical（嚴重）或 High（高）等級的弱點，也沒有修補程式可供套用。
 
 - 日期來自內建於掃描器映像檔的 endoflife.date 快照，因此這項檢查不需任何網路呼叫就能離線執行，封閉網路也能用。來源與快照日期會記錄在每個被標記的元件上 (`bomlens:eol:source`)。
 - 涵蓋範圍以 endoflife.date 為準，它追蹤的是執行環境、主要框架、作業系統與資料庫（spring-boot、express、django、nodejs、python、php、nginx、openssl、ubuntu、debian 等）。多數規模較小的函式庫不在追蹤範圍內；沒有對應資料的元件會保留為未知，不會用猜測值填補。

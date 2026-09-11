@@ -100,7 +100,7 @@ source "$(dirname "$0")/cases/test-kotlin.sh"
 
 ### 6. 送出 PR
 
-依照[貢獻指南](https://github.com/sktelecom/bomlens/blob/main/CONTRIBUTING.md)送出 PR。PR 說明裡請包含以下內容。
+依照[貢獻指南](https://github.com/sktelecom/bomlens/blob/main/CONTRIBUTING.md)送出 PR，並在 PR 說明中包含以下內容。
 
 - 你新增的語言或套件管理器名稱
 - 測試執行結果（螢幕截圖或日誌）

@@ -1286,7 +1286,9 @@ msgstr "每個元件也會以 "
 #: generate-risk-report.sh:266
 msgctxt "risk.licclass_intro_html_b"
 msgid " property. An unrecognized license is left uncategorized rather than assumed permissive."
-msgstr " 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」，不會逕自視為「寬鬆式 (Permissive)」。"
+msgstr ""
+" 屬性會記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」"
+"，不會直接歸類為「寬鬆式 (Permissive)」。"
 
 #. [risk.licclass_intro_md]
 #: generate-risk-report.sh:265
