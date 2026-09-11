@@ -95,7 +95,7 @@
     "byteStable": "可重現的輸出",
     "byteStableHint": "以相同輸入重新掃描時，會產生逐位元組完全相同的 SBOM，因此輸出可以比對差異並以雜湊值核對。會略過每次執行結果可能不同的網路授權條款查詢。",
     "upload": "上傳到伺服器",
-    "uploadHint": "掃描完成後，將產生的 SBOM 傳送到 Dependency-Track 或 TRUSCA 伺服器。伺服器 URL 與權杖僅用於本次執行，絕不儲存。",
+    "uploadHint": "掃描完成後，將產生的 SBOM 傳送到 Dependency-Track 或 TRUSCA 伺服器。該伺服器 URL 與權杖僅用於本次執行，絕不儲存。",
     "outboundLicense": "對外授權條款（選填）",
     "outboundLicenseHint": "您的專案對外發行所採用的 SPDX 識別碼，例如 Apache-2.0。指定後會標記條款與其衝突的相依項目。原始碼掃描無法自行推斷這項資訊，未指定時此檢查保持關閉。"
   },
@@ -137,6 +137,11 @@
     "aiScanBody": "由 HuggingFace 模型後設資料產生。內容以模型與其資料集為中心，因此元件數量比一般軟體掃描少。",
     "vendoredHintTitle": "找到的元件很少——這是 C/C++ 嵌入式原始碼嗎？",
     "vendoredHintBody": "沒有套件管理器的 C/C++ 原始碼常會直接納入複製進來的開放原始碼 (vendored)，一般掃描看不到。請在進階掃描選項開啟「偵測複製進來的開放原始碼」後再執行一次。只會傳送檔案指紋——原始碼不會離開本機。",
+    "zeroComponentsTitle": "找不到任何元件",
+    "zeroComponentsBody": "這是警告，不代表結果乾淨。掃描沒有東西可讀時就會一無所獲：資料夾最上層沒有相依性清單檔（requirements.txt、package.json、pom.xml 之類），或是掃描路徑指向了別處。請確認清單檔與路徑後重新掃描。",
+    "unpinnedTitle": "版本是在掃描當下決定的",
+    "unpinnedBody": "這個專案只寫了版本範圍，也沒有附上鎖定檔，因此這裡列出的版本是現在重新安裝會取得的版本，不一定是您機器上已安裝的版本。弱點結果也是以這些版本為準。要了解自己環境中的風險，請改用有釘住確切版本的清單檔進行掃描。",
+    "scanWarningsTitle": "掃描過程中回報的事項",
     "sbomDegradedTitle": "僅含直接相依項目——未執行深度解析",
     "sbomDegradedBody": "間接相依性分析器 (cdxgen) 無法執行，因此這份 SBOM 只列出直接相依項目。請確認 Docker 可用後重新掃描，以取得完整的相依關係圖。",
     "sbomDegradedDisk": "間接相依性分析器 (cdxgen) 因 Docker 磁碟空間不足而未能執行，因此這份 SBOM 只列出直接相依項目。請釋出空間（例如「docker system prune」）後重新掃描，以取得完整的相依關係圖。",
@@ -183,6 +188,10 @@
       "conformance": {
         "title": "符合性報告",
         "desc": "所提交 SBOM 的格式驗證結果。"
+      },
+      "aiProfile": {
+        "title": "AI 合規概況",
+        "desc": "彙整這個模型的 G7 最低要素、需人工檢視的授權條款與法規對照。"
       },
       "security": {
         "title": "安全報告",
@@ -280,6 +289,7 @@
     "outdatedReleasesBehind": "落後 {{count}} 個版本",
     "outdatedLastReleased": "{{date}} 發行",
     "filterOutdated": "非最新",
+    "filterLicenseUnclear": "授權待確認",
     "columns": "欄位",
     "filters": "篩選",
     "clearFilters": "清除篩選",
@@ -306,7 +316,8 @@
     "csvCvss": "CVSS",
     "csvEpss": "EPSS",
     "csvKev": "已知遭利用",
-    "csvTitle": "標題"
+    "csvTitle": "標題",
+    "artifactFiles": "（{{count}} 個檔案）"
   },
   "deps": {
     "loading": "正在載入相依性…",
@@ -320,6 +331,9 @@
     "flatFallback": "這份 SBOM 沒有相依關係圖，改以扁平元件清單顯示。",
     "expand": "展開",
     "collapse": "收合",
+    "treeLabel": "相依關係樹",
+    "expandNamed": "展開 {{name}}",
+    "collapseNamed": "收合 {{name}}",
     "tooLarge": "圖中有 {{count}} 個節點（超過 {{cap}} 個上限），請改用樹狀檢視。",
     "graphError": "無法繪製相依關係圖。",
     "search": "搜尋套件…",
@@ -333,7 +347,8 @@
     "zoomIn": "放大",
     "zoomOut": "縮小",
     "fit": "調整至視窗大小",
-    "savePng": "儲存為 PNG"
+    "savePng": "儲存為 PNG",
+    "legendRoot": "掃描的元件"
   },
   "sourceTree": {
     "loading": "正在載入原始碼樹…",
@@ -381,7 +396,8 @@
     "HIGH": "High（高）",
     "MEDIUM": "Medium（中）",
     "LOW": "Low（低）",
-    "UNKNOWN": "Unknown（不明）"
+    "UNKNOWN": "Unknown（不明）",
+    "NONE": "None（無）"
   },
   "viewer": {
     "open": "檢視產出物",
@@ -428,7 +444,9 @@
     "helpDocs": "文件",
     "helpDemo": "線上展示",
     "helpVersion": "版本 {{version}}",
-    "helpVersionUnknown": "此建置未標記版本"
+    "helpVersionUnknown": "此建置未標記版本",
+    "conformanceSplitTitle": "已測量的必要檢查中通過的項數",
+    "lookupTitle": "外部弱點查詢"
   },
   "shell": {
     "newScan": "新增掃描",
@@ -441,7 +459,48 @@
     "placeholder": "搜尋元件、CVE…",
     "none": "沒有相符項目",
     "components": "元件",
-    "vulnerabilities": "弱點"
+    "vulnerabilities": "弱點",
+    "lookupGroup": "外部查詢",
+    "lookupExternal": "在 OSV.dev 查詢「{{term}}」"
+  },
+  "lookup": {
+    "title": "外部弱點查詢",
+    "subtitle": "以 CVE/GHSA 編號、purl，或套件名稱加版本，即時向 OSV.dev 查詢，本機不留任何快取。",
+    "inputLabel": "CVE、GHSA、purl 或套件名稱",
+    "inputPlaceholder": "CVE-2021-44228、pkg:npm/lodash@4.17.21 或套件名稱",
+    "ecosystemLabel": "生態系",
+    "ecosystemPlaceholder": "選擇生態系",
+    "versionLabel": "版本",
+    "versionPlaceholder": "例如 4.17.21",
+    "submit": "查詢",
+    "searching": "查詢中…",
+    "unsupportedPurl": "不支援的套件類型：{{type}}",
+    "notFound": "不在 OSV.dev 的目錄中",
+    "notFoundHint": "沒有被列出並不代表安全，沒有任何弱點資料庫的收錄是完備的。",
+    "packageClean": "這個版本沒有已知的安全公告",
+    "errorInvalid": "這看起來不是有效的編號、purl 或「套件 + 版本」格式。",
+    "errorOffline": "這台伺服器連不到 OSV.dev，在封閉網路中屬於正常情況。在連得上之前，查詢都會失敗。",
+    "errorUpstream": "OSV.dev 沒有回覆可用的結果。請稍後再試。",
+    "errorBusy": "目前查詢的請求量過大。請稍後再試。",
+    "errorUnreachable": "無法連上處理這次查詢的伺服器。",
+    "truncated": "OSV.dev 回報的安全公告比這裡顯示的還多。",
+    "withdrawn": "已撤回",
+    "aliases": "其他名稱",
+    "affected": "影響範圍",
+    "references": "參考連結",
+    "cvss": "CVSS",
+    "published": "發佈日期",
+    "modified": "修改日期",
+    "ecosystem": {
+      "npm": "npm",
+      "pypi": "PyPI",
+      "maven": "Maven",
+      "go": "Go",
+      "cargo": "crates.io",
+      "rubygems": "RubyGems",
+      "packagist": "Packagist",
+      "nuget": "NuGet"
+    }
   },
   "newscan": {
     "title": "您想掃描什麼？",
@@ -494,7 +553,10 @@
     "topRisk": "風險最高的元件",
     "topRiskOf": "共 {{total}} 個有弱點的元件，顯示其中 {{shown}} 個",
     "topRiskAll": "全部元件",
-    "attnMalicious": "{{count}} 個已知惡意套件——請移除並輪替認證資訊"
+    "attnMalicious": "{{count}} 個已知惡意套件——請移除並輪替認證資訊",
+    "attnModelRisk": "{{count}} 個模型或資料集需要授權條款或安全檢視",
+    "attnConformanceGap": "{{count}} 項符合性要素可以補齊",
+    "depNone": "未記錄任何相依關係"
   },
   "models": {
     "loading": "正在載入模型詳細資訊…",
@@ -532,6 +594,7 @@
     "assessLicense": "授權條款",
     "assessSecurity": "檔案安全",
     "assessDatasets": "資料集",
+    "assessTrainingData": "訓練資料使用條款",
     "assessNotEvaluated": "未評估",
     "gradeOk": "未發現限制訊號",
     "gradeConditional": "有條件使用",
@@ -882,7 +945,7 @@
         "what": "每個軟體版本是否各有自己的 SBOM，且資料變更時會重新發佈更正版。"
       }
     },
-    "verdictFailed": "{{count}} 項必要檢查未通過",
+    "verdictFailed_other": "有 {{count}} 項必要檢查未通過",
     "verdictFailed_one": "1 項必要檢查未通過",
     "verdictFailed_zero": "沒有未通過的必要檢查",
     "verdictGap": "尚缺 {{count}} 項建議",
@@ -968,6 +1031,7 @@
     "sevDown": "比上次掃描更好",
     "delete": "刪除",
     "deleted": "已刪除掃描",
+    "scanNotFound": "找不到掃描「{{id}}」，可能已經被刪除。",
     "confirmDeleteTitle": "要刪除這筆掃描嗎？",
     "confirmDeleteBody": "{{scan}} 的輸出檔案將從本機移除。其他地方沒有保留副本，因此無法復原。",
     "typeAi": "AI 模型",
@@ -1026,5 +1090,19 @@
       "cisa-component": "元件資料",
       "cisa-practices": "實務與流程"
     }
+  },
+  "conf": {
+    "kind": {
+      "pass": "已符合",
+      "actionable": "可修正",
+      "review": "需人工檢視",
+      "na": "不適用"
+    },
+    "searchPlaceholder": "搜尋檢查項目與參考規範",
+    "showingAll": "顯示全部 {{count}} 項檢查。",
+    "showingFiltered": "共 {{total}} 項檢查，顯示其中 {{count}} 項。",
+    "noMatch": "沒有符合此篩選條件的檢查。",
+    "report": "報告 ({{ext}})",
+    "hiddenByFilter": "在其他篩選條件下，還有 {{count}} 項符合這次搜尋。"
   }
 }
