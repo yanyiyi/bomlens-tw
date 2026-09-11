@@ -10,7 +10,7 @@ BomLens 發表過的場合，以及每一場的簡報。如果你希望在自己
 
 BomLens: An Open-Source, One-Click SBOM Tool for Supply Chain Security and Regulatory Compliance
 
-- **活動：** [OSPOlogy Asia 2026（Linux Foundation）](https://community.linuxfoundation.org/events/details/lfhq-ospology-asia-presents-ospology-asia/)
+- **活動：** [OSPOlogy Asia 2026 (Linux Foundation)](https://community.linuxfoundation.org/events/details/lfhq-ospology-asia-presents-ospology-asia/)
 - **日期：** 2026 年 7 月 27 日
 - **地點：** 日本東京
 - **形式：** 30 分鐘現場示範

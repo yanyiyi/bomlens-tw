@@ -1,10 +1,10 @@
 ---
-description: '如何用 BomLens 從 SBOM 產生開源授權聲明（NOTICE）、安全弱點報告與相關產出物。'
+description: '如何用 BomLens 從 SBOM 產生開源授權聲明 (NOTICE)、安全弱點報告與相關產出物。'
 ---
 
 # 產生授權聲明、安全與風險報告
 
-除了產生 SBOM 之外，BomLens 還會在同一次執行中產出開源授權聲明（NOTICE）與安全弱點報告。這一頁說明如何產生這些輸出；至於如何閱讀與解讀它們，請看[如何讀報告](../concepts/reports-explained.md)。
+除了產生 SBOM 之外，BomLens 還會在同一次執行中產出開源授權聲明 (NOTICE) 與安全弱點報告。這一頁說明如何產生這些輸出；至於如何閱讀與解讀它們，請看[如何讀報告](../concepts/reports-explained.md)。
 
 ## 快速上手（5 分鐘）
 
@@ -47,7 +47,7 @@ cd /path/to/your-project
 
 ---
 
-## 一次產生全部產出物（`--all`）
+## 一次產生全部產出物 (`--all`)
 
 `--all` 是 `--notice --security --spdx` 的縮寫。它會在一次掃描中產出 SBOM、授權聲明、安全報告，以及 SBOM 的 SPDX 副本。
 
@@ -59,9 +59,9 @@ cd /path/to/your-project
 
 產生的檔案：
 ```
-MyApp_1.0.0_bom.json            # SBOM（CycloneDX 1.6）
+MyApp_1.0.0_bom.json            # SBOM (CycloneDX 1.6)
 MyApp_1.0.0_NOTICE.txt          # 授權聲明（文字）
-MyApp_1.0.0_NOTICE.html         # 授權聲明（HTML）
+MyApp_1.0.0_NOTICE.html         # 授權聲明 (HTML)
 MyApp_1.0.0_security.json       # 安全報告（Trivy 原始輸出）
 MyApp_1.0.0_security.md         # 安全報告（摘要）
 MyApp_1.0.0_security.html       # 安全報告（視覺化）
@@ -69,13 +69,13 @@ MyApp_1.0.0_risk-report.md      # 開放原始碼風險分析報告（摘要）
 MyApp_1.0.0_risk-report.html    # 開放原始碼風險分析報告（視覺化）
 ```
 
-> 開放原始碼風險分析報告（`_risk-report`）在所有分析模式下都會預設產生（授權條款加弱點統計，並附上修補期限）。想略過就用 `--no-report`。六種輸入形式各自的處理方式，請看[依輸入類型的指南](by-input.md)。
+> 開放原始碼風險分析報告 (`_risk-report`) 在所有分析模式下都會預設產生（授權條款加弱點統計，並附上修補期限）。想略過就用 `--no-report`。六種輸入形式各自的處理方式，請看[依輸入類型的指南](by-input.md)。
 
 產出物種類的完整清單請看[產出物參考](../reference/artifacts.md)；想從瀏覽器產生它們，請看[網頁介面](../reference/ui.md)。
 
 ---
 
-## 開源授權聲明（`--notice`）
+## 開源授權聲明 (`--notice`)
 
 蒐集 SBOM 中的 `components[].licenses` 資訊，產生依授權條款分組列出元件的授權聲明。
 
@@ -98,9 +98,9 @@ Components (1):
 
 ---
 
-## 安全弱點報告（`--security`）
+## 安全弱點報告 (`--security`)
 
-以 Trivy 掃描產生出來的 SBOM，回報已知弱點（CVE）。（NVD + OSV + GHSA DB）
+以 Trivy 掃描產生出來的 SBOM，回報已知弱點 (CVE)。(NVD + OSV + GHSA DB)
 
 ```bash
 ./scripts/scan-sbom.sh --project "MyApp" --version "1.0.0" --security --generate-only
@@ -110,23 +110,23 @@ Components (1):
 - `_security.md`——依嚴重程度統計的表格與 CVE 清單。適合附在 PR 或 issue 上。
 - `_security.html`——帶有嚴重程度標籤與表格的視覺化報告。
 
-即使存在弱點，報告也不會讓掃描失敗（report-only）。如果需要閘門，請對 `_security.json` 做後處理。
+即使存在弱點，報告也不會讓掃描失敗 (report-only)。如果需要閘門，請對 `_security.json` 做後處理。
 
 嚴重程度、CVSS、EPSS 與 KEV 優先順序訊號，以及後續處理的解讀方式，請看[如何讀報告](../concepts/reports-explained.md)。
 
 ---
 
-## 深度 CVE 比對（`--deep-cve`）
+## 深度 CVE 比對 (`--deep-cve`)
 
-Trivy 以套件身分（PURL）比對弱點，對各生態系的公告資料庫覆蓋得很好。不過較舊的 Java 函式庫有些 CVE 只記錄在 NVD，而且是以 CPE 識別碼登錄，因此以 PURL 為基礎的掃描永遠碰不到它們。`--deep-cve` 會多加一輪比對：BomLens 依 groupId 為每個 Maven 元件推導出可與 NVD 比對的 CPE（這個補強步驟以 Maven 為對象），接著由 grype 把所有元件的 CPE——不論來自哪個生態系——拿去與內建的 NVD 資料庫比對。實務上多出來的結果大多仍是 Maven，因為補強步驟正是在那裡補上了 SBOM 原本沒有的 CPE。
+Trivy 以套件身分 (PURL) 比對弱點，對各生態系的公告資料庫覆蓋得很好。不過較舊的 Java 函式庫有些 CVE 只記錄在 NVD，而且是以 CPE 識別碼登錄，因此以 PURL 為基礎的掃描永遠碰不到它們。`--deep-cve` 會多加一輪比對：BomLens 依 groupId 為每個 Maven 元件推導出可與 NVD 比對的 CPE（這個補強步驟以 Maven 為對象），接著由 grype 把所有元件的 CPE——不論來自哪個生態系——拿去與內建的 NVD 資料庫比對。實務上多出來的結果大多仍是 Maven，因為補強步驟正是在那裡補上了 SBOM 原本沒有的 CPE。
 
 ```bash
 ./scripts/scan-sbom.sh --project "MyApp" --version "1.0.0" --deep-cve --generate-only
 ```
 
-- `--deep-cve` 會一併開啟 `--security`。多找到的結果會合併進同一份安全報告（`_security.json/.md/.html`），並標上 `nvd:cpe` 來源。
+- `--deep-cve` 會一併開啟 `--security`。多找到的結果會合併進同一份安全報告 (`_security.json/.md/.html`)，並標上 `nvd:cpe` 來源。
 - 掃描會在 opt-in 的 `ghcr.io/sktelecom/bomlens-deep-cve:latest` 映像檔上執行，該映像檔內建 grype 與它的資料庫；設定這個旗標時會自動下載（可用 `SBOM_DEEP_CVE_IMAGE` 覆寫）。它適用於使用基礎映像檔的模式（原始碼、映像檔、二進位檔案、rootfs、SBOM 分析）；韌體與 AI 模型掃描會印出警告並在沒有 grype 的情況下繼續執行，因為這兩種都不會產生可供比對的套件 purl。
-- 在網頁介面（以及桌面版應用程式）中，同一個選項是掃描選項裡的**深度 CVE 比對（NVD CPE）**開關。凡是使用基礎映像檔的掃描模式都提供它——原始碼、Docker 映像檔、rootfs、套件上傳與 SBOM 上傳——並且和 CLI 一樣，只在韌體與 AI 模型掃描時隱藏。開啟它會連安全報告一起開啟；deep-cve 映像檔會在第一次使用時下載一次，以並列的容器執行，若介面本身就是從該映像檔啟動的，則直接在同一個行程內處理。
+- 在網頁介面（以及桌面版應用程式）中，同一個選項是掃描選項裡的**深度 CVE 比對 (NVD CPE)** 開關。凡是使用基礎映像檔的掃描模式都提供它——原始碼、Docker 映像檔、rootfs、套件上傳與 SBOM 上傳——並且和 CLI 一樣，只在韌體與 AI 模型掃描時隱藏。開啟它會連安全報告一起開啟；deep-cve 映像檔會在第一次使用時下載一次，以並列的容器執行，若介面本身就是從該映像檔啟動的，則直接在同一個行程內處理。
 - CPE 比對比 PURL 比對寬鬆，因為 NVD 的版本範圍有時記錄得很粗略。預設情況下掃描維持離線：這類結果會保留下來，並在報告中標示為**版本未驗證**（一個劍號符號加上註腳），讓讀者知道哪些列可能是版本範圍過寬造成的誤判。想收緊判定，就搭配 `NVD_API_KEY` 設定 `SECURITY_NVD_VERIFY=true`：每一筆結果都會與即時的 NVD 版本範圍核對，落在範圍外的誤判會被濾掉。這項驗證需要網路連線，並會多花上幾分鐘。
 
 ```bash
@@ -136,7 +136,7 @@ SECURITY_NVD_VERIFY=true NVD_API_KEY="your-key" \
 
 ---
 
-## 逐檔授權條款掃描（`--deep-license`）
+## 逐檔授權條款掃描 (`--deep-license`)
 
 基本的授權聲明涵蓋的是相依項目（第三方）的授權條款。`--deep-license` 會用 scancode-toolkit 進一步偵測專案自身原始碼（第一方）中的授權條款檔頭。
 
@@ -156,7 +156,7 @@ SECURITY_NVD_VERIFY=true NVD_API_KEY="your-key" \
 
 ---
 
-## 對外授權條款衝突（`--license`）
+## 對外授權條款衝突 (`--license`)
 
 宣告你對外散布時採用的授權條款，讓每個相依項目都能以它為基準判定。原始碼掃描無法推斷這個值——cdxgen 在 maven 與 gradle 的樹狀結構中會把根授權條款留空——因此沒有指定這個旗標時不會產生判定。
 
@@ -168,7 +168,7 @@ SECURITY_NVD_VERIFY=true NVD_API_KEY="your-key" \
 
 ---
 
-## 決定性輸出（`--byte-stable`）
+## 決定性輸出 (`--byte-stable`)
 
 相同輸入會產生逐位元組完全相同的 SBOM。它消除了 CI 中沒有意義的差異（時間戳記、隨機 ID、排序差異），並確保可重現性。
 
@@ -180,9 +180,9 @@ SECURITY_NVD_VERIFY=true NVD_API_KEY="your-key" \
 
 ---
 
-## SBOM 簽章（`--sign`）
+## SBOM 簽章 (`--sign`)
 
-以 cosign 為 SBOM 建立 detached 簽章，藉此建立供應鏈信任。這是離線的金鑰簽章（`--tlog-upload=false`），不需要網路或 OIDC。
+以 cosign 為 SBOM 建立 detached 簽章，藉此建立供應鏈信任。這是離線的金鑰簽章 (`--tlog-upload=false`)，不需要網路或 OIDC。
 
 ```bash
 # 1）產生金鑰（只需第一次）。要產生無密碼的金鑰，請使用 COSIGN_PASSWORD=""
@@ -212,4 +212,4 @@ docker run --rm -v "$PWD":/w -w /w --entrypoint cosign \
 | `--deep-license requested but scancode not in image` | 請以 `--build-arg SBOM_DEEP_LICENSE=true` 建置映像檔。 |
 | 介面出現 `Docker is not running` | 請啟動 Docker 引擎（Rancher Desktop／Docker Desktop 等），然後重新執行。 |
 | 授權聲明中出現大量 `NOASSERTION` | 表示這些相依項目沒有授權條款後設資料。請用 `--deep-license` 補強，或手動確認。 |
-| 連接埠衝突（`--ui`） | 請用 `UI_PORT` 指定其他連接埠。 |
+| 連接埠衝突 (`--ui`) | 請用 `UI_PORT` 指定其他連接埠。 |

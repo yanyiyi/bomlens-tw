@@ -20,7 +20,7 @@ SBOM（Software Bill of Materials，軟體物料清單）是一份軟體內部�
 
 **CycloneDX** 是 BomLens 寫出 SBOM 所採用的標準檔案格式——由 [OWASP CycloneDX](https://cyclonedx.org/) 專案定義的 JSON 文件（1.6 版）。正因為格式是標準的，你產生的檔案可以被其他工具讀取：弱點追蹤系統、政策檢查工具，或是客戶自己的工具。
 
-**PURL**（Package URL）是 SBOM 內部每個元件所帶的識別碼，例如 `pkg:npm/express@4.18.2`。它以一個字串同時記下生態系（npm、Maven、PyPI 等）、套件與確切版本，讓每個讀取這份 SBOM 的工具都對「指的是哪個元件」有一致的理解。
+**PURL** (Package URL) 是 SBOM 內部每個元件所帶的識別碼，例如 `pkg:npm/express@4.18.2`。它以一個字串同時記下生態系（npm、Maven、PyPI 等）、套件與確切版本，讓每個讀取這份 SBOM 的工具都對「指的是哪個元件」有一致的理解。
 
 **ML-BOM** 是把同樣的概念套用到 AI 模型上：一份 CycloneDX 文件，列出一個模型由什麼構成——它的資料集、基礎模型與授權條款。BomLens 可以從 HuggingFace 模型 ID 產生一份；請參考 [AI 模型指南](../guides/ai-model.md)。
 

@@ -12,7 +12,7 @@ BomLens 在 Docker 引擎上執行，但桌面版應用程式與網頁介面會�
 
 ## 不用指令列開始（建議）
 
-下載 [BomLens Windows 版（.exe）](https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe)後雙擊執行，介面會直接開啟，不會出現主控台視窗。首次執行時會檢查 Docker、下載掃描器映像檔（約 250 MB），然後開啟 http://localhost:8080。目前這個應用程式尚未簽章，因此若 Windows SmartScreen 出現警告，請點選 **更多資訊**，再點 **仍要執行**。逐步點選的操作說明在[免指令列快速開始](../start/no-cli.md)。
+下載 [BomLens Windows 版 (.exe)](https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe)後雙擊執行，介面會直接開啟，不會出現主控台視窗。首次執行時會檢查 Docker、下載掃描器映像檔（約 250 MB），然後開啟 http://localhost:8080。目前這個應用程式尚未簽章，因此若 Windows SmartScreen 出現警告，請點選 **更多資訊**，再點 **仍要執行**。逐步點選的操作說明在[免指令列快速開始](../start/no-cli.md)。
 
 ![BomLens 桌面版應用程式——啟動畫面顯示 Docker 檢查、映像檔下載進度與容器啟動狀況](../images/desktop-startup-en.png)
 
@@ -39,7 +39,7 @@ git clone https://github.com/sktelecom/bomlens.git && cd bomlens
 
 畫面配置與各掃描目標的細節，見[網頁介面參考](../reference/ui.md)。
 
-## 你的第一份 SBOM（CLI）
+## 你的第一份 SBOM (CLI)
 
 進階用法——適合自動化與 CI。請在 clone 下來的儲存庫裡執行。下面的指令會掃描隨附的 Node.js 範例；把 `--target` 指向你自己的資料夾，或是拿掉 `--target` 改為掃描目前的目錄。
 
@@ -56,7 +56,7 @@ git clone https://github.com/sktelecom/bomlens.git && cd bomlens
 ./scripts/scan-sbom.sh --project "MyApp" --version "1.0.0" --git "https://github.com/org/repo" --all --generate-only
 ```
 
-其他輸入形式——ZIP 原始碼（`--target app.zip`）、既有的 SBOM（`--analyze sbom.json`）、韌體（`--target dev.bin --firmware`）、Docker 映像檔（`--target nginx:latest`）——都整理在[依輸入類型的指南](../guides/by-input.md)。
+其他輸入形式——ZIP 原始碼 (`--target app.zip`)、既有的 SBOM (`--analyze sbom.json`)、韌體 (`--target dev.bin --firmware`)、Docker 映像檔 (`--target nginx:latest`)——都整理在[依輸入類型的指南](../guides/by-input.md)。
 
 > `--generate-only` 只把產出物存在本機、不上傳（弱點掃描照樣會執行）。`--all` 會一次產生授權聲明、SBOM 與風險報告。完整的選項見 [CLI 參考](../reference/cli.md#options-reference)；要把結果上傳到 TRUSCA 或 Dependency-Track 伺服器，請使用 `--trusca <project_id>`（或 `UPLOAD_TARGET`）——步驟見[上傳指南](../guides/upload.md)。
 
@@ -66,7 +66,7 @@ git clone https://github.com/sktelecom/bomlens.git && cd bomlens
 
 | 檔案 | 內容 |
 |------|------------|
-| `{Project}_{Version}_bom.json` | SBOM（CycloneDX 1.6） |
+| `{Project}_{Version}_bom.json` | SBOM (CycloneDX 1.6) |
 | `{Project}_{Version}_NOTICE.{txt,html}` | 依授權條款分組的開放原始碼授權聲明 |
 | `{Project}_{Version}_security.{json,md,html}` | Trivy 弱點報告 |
 | `{Project}_{Version}_risk-report.{md,html}` | 開放原始碼風險報告（授權條款 + 弱點），預設會產生 |
@@ -107,11 +107,11 @@ SBOM 是 [CycloneDX 1.6](https://cyclonedx.org/) 格式的 JSON：
 | `metadata.component` | 被掃描的專案（名稱、版本） |
 | `components` | 找到的開放原始碼元件 |
 | `components[].purl` | Package URL——套件的唯一識別碼 |
-| `components[].licenses` | 授權條款資訊（SPDX ID） |
+| `components[].licenses` | 授權條款資訊 (SPDX ID) |
 
 ### 快速檢查 SBOM 的內容
 
-下面的範例使用 `jq`。在 WSL2（Ubuntu）上用 `sudo apt-get install jq` 安裝，Windows Git Bash 則用 `winget install jqlang.jq`。覺得安裝麻煩的話，網頁介面的「摘要」會直接顯示元件數量與授權條款：
+下面的範例使用 `jq`。在 WSL2 (Ubuntu) 上用 `sudo apt-get install jq` 安裝，Windows Git Bash 則用 `winget install jqlang.jq`。覺得安裝麻煩的話，網頁介面的「摘要」會直接顯示元件數量與授權條款：
 
 <!-- runnable -->
 ```bash
@@ -155,7 +155,7 @@ WSL2 + docker-ce 的精簡版做法（以管理員身分開啟 PowerShell）：
 wsl --install -d Ubuntu          # reboot, then finish Ubuntu setup
 ```
 
-接著在 WSL（Ubuntu）裡執行：
+接著在 WSL (Ubuntu) 裡執行：
 
 ```bash
 sudo apt-get update && curl -fsSL https://get.docker.com | sudo sh
@@ -163,7 +163,7 @@ sudo usermod -aG docker "$USER"  # log out and back in to apply
 docker pull ghcr.io/sktelecom/bomlens:latest
 ```
 
-之後在 WSL 裡 clone 儲存庫，照上面的方式執行 `./scripts/scan-sbom.sh ...`。若不使用 WSL2 而要在 Windows 上用 CLI，請安裝 [Git for Windows](https://git-scm.com/download/win)（Git Bash），並改用 `scripts\scan-sbom.bat`。
+之後在 WSL 裡 clone 儲存庫，照上面的方式執行 `./scripts/scan-sbom.sh ...`。若不使用 WSL2 而要在 Windows 上用 CLI，請安裝 [Git for Windows](https://git-scm.com/download/win)(Git Bash)，並改用 `scripts\scan-sbom.bat`。
 
 ## 下一步
 

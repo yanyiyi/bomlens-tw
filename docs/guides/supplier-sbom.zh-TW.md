@@ -1,10 +1,10 @@
 ---
-description: '以 BomLens 驗證收到的 SBOM（CycloneDX/SPDX）是否符合你的品質標準，接著分析授權條款與弱點，產出風險報告。'
+description: '以 BomLens 驗證收到的 SBOM (CycloneDX/SPDX) 是否符合你的品質標準，接著分析授權條款與弱點，產出風險報告。'
 ---
 
 # 供應者 SBOM 驗證指南
 
-說明如何驗證從供應者或其他團隊收到的 SBOM（JSON）是否符合你的品質標準。驗證之後，BomLens 會接著分析授權條款與弱點，並產出風險報告。不需要原始碼，只要有 SBOM 檔案就夠了。
+說明如何驗證從供應者或其他團隊收到的 SBOM (JSON) 是否符合你的品質標準。驗證之後，BomLens 會接著分析授權條款與弱點，並產出風險報告。不需要原始碼，只要有 SBOM 檔案就夠了。
 
 
 ## 何時使用 {#when-to-use-it}
@@ -19,9 +19,9 @@ description: '以 BomLens 驗證收到的 SBOM（CycloneDX/SPDX）是否符合�
 | 必要的後設資料 | timestamp、工具資訊、頂層元件的名稱與版本 |
 | 必要的元件欄位 | name、version，以及標準 `pkg:type/name@version` 形式的 PURL（不允許 `pkg:generic`） |
 | 完整性 | 直接相依與間接相依都要包含 |
-| 建議 | supplier、授權條款（SPDX ID）、hash |
+| 建議 | supplier、授權條款 (SPDX ID)、hash |
 
-> 上面可接受的格式範圍是 SK Telecom 提交基準的預設值。如果你的組織接受不同的範圍，可以用 `CYCLONEDX_SPEC_VERSIONS`、`AI_CYCLONEDX_SPEC_VERSIONS`（AI SBOM）與 `SPDX_SPEC_VERSIONS` 這幾個環境變數覆寫（以空白分隔的清單）。清單收錄在 [Docker 映像檔環境變數](../reference/docker-image.md)。
+> 上面可接受的格式範圍是 SK Telecom 提交基準的預設值。如果你的組織接受不同的範圍，可以用 `CYCLONEDX_SPEC_VERSIONS`、`AI_CYCLONEDX_SPEC_VERSIONS`(AI SBOM) 與 `SPDX_SPEC_VERSIONS` 這幾個環境變數覆寫（以空白分隔的清單）。清單收錄在 [Docker 映像檔環境變數](../reference/docker-image.md)。
 
 ## 一次執行完整流程
 
@@ -29,7 +29,7 @@ description: '以 BomLens 驗證收到的 SBOM（CycloneDX/SPDX）是否符合�
 
 開啟網頁介面，選擇 **SBOM 上傳**，上傳收到的檔案，接著輸入專案名稱與版本並執行。Yocto SPDX 2.2 建置交出來的不是一份文件，而是 `<image>.spdx.tar.zst`；這種壓縮檔也可以直接上傳，因為那是這類建置唯一會產生的 SBOM。
 
-如果這份 SBOM 以 Java（Maven）為主，請在掃描選項裡開啟**深度 CVE 比對（NVD CPE）**。它會把較舊的 Maven 函式庫拿去比對僅存在於 NVD、其他公告來源會漏掉的弱點，代價是掃描時間變長。這個選項不只出現在 SBOM 上傳，凡是使用基礎映像檔的掃描模式都有——只有韌體與 AI 模型掃描會隱藏它，因為那兩種沒有可以擴充的套件 SBOM。第一次執行時會下載 deep-cve 映像檔一次。這與 CLI 的 `--deep-cve` 是同一套比對。
+如果這份 SBOM 以 Java (Maven) 為主，請在掃描選項裡開啟**深度 CVE 比對 (NVD CPE)**。它會把較舊的 Maven 函式庫拿去比對僅存在於 NVD、其他公告來源會漏掉的弱點，代價是掃描時間變長。這個選項不只出現在 SBOM 上傳，凡是使用基礎映像檔的掃描模式都有——只有韌體與 AI 模型掃描會隱藏它，因為那兩種沒有可以擴充的套件 SBOM。第一次執行時會下載 deep-cve 映像檔一次。這與 CLI 的 `--deep-cve` 是同一套比對。
 
 ```bash
 ./scripts/scan-sbom.sh --ui     # 會開啟 http://localhost:8080
@@ -42,7 +42,7 @@ description: '以 BomLens 驗證收到的 SBOM（CycloneDX/SPDX）是否符合�
 
 不想用指令列嗎？請先看[免指令列快速開始](../start/no-cli.md)。以下是 CLI 的做法。
 
-先把掃描器映像檔下載下來（`docker pull ghcr.io/sktelecom/bomlens:latest`），然後把 SBOM 檔案傳給 `--analyze`：
+先把掃描器映像檔下載下來 (`docker pull ghcr.io/sktelecom/bomlens:latest`)，然後把 SBOM 檔案傳給 `--analyze`：
 
 ```bash
 ./scripts/scan-sbom.sh --project supplier-app --version 2.0.0 \
@@ -78,7 +78,7 @@ description: '以 BomLens 驗證收到的 SBOM（CycloneDX/SPDX）是否符合�
 
 ## 如何讀風險報告
 
-風險報告（`_risk-report`）是不重新掃描、僅將上述產出物重新彙整而成的文件，共分四個部分。
+風險報告 (`_risk-report`) 是不重新掃描、僅將上述產出物重新彙整而成的文件，共分四個部分。
 
 1. 已滿足的要求——符合性結果表。若為 `fail`，會列出未滿足的項目。
 2. 弱點統計與修補期限——依嚴重程度統計，並以表格列出建議期限（Critical 於 7 天內、High 於 30 天內備妥修補計畫或風險理由說明）。
@@ -145,7 +145,7 @@ INHERIT += "vex"
 
 開始之前，有兩項限制值得知道。
 
-SPDX 2.2 也讀得進來，只是內容比較少。Yocto 4.0（Kirkstone）與 5.0（Scarthgap）預設產出 SPDX 2.2，而那種形式根本不是一份文件：deploy 目錄裡只會有一個 `<image>.spdx.tar.zst`，別無其他。壓縮檔內含映像檔文件，以及每個已安裝套件與每個 recipe 各一份文件。BomLens 會直接讀這個壓縮檔——以公開發佈的 Yocto 5.0.14 `core-image-minimal` 實測，取得的正是映像檔 manifest 所列的同樣 36 個套件，連授權條款與 CPE 一併帶出。它們沒有的是建置的 CVE 判定——只有 SPDX 3.0 會記錄 recipe 修補了哪些 CVE——所以弱點會像其他 SBOM 一樣依 CPE 比對，建置其實已經修補的 CVE 也可能顯示為未處理。若只從壓縮檔裡取出映像檔文件單獨上傳，結果幾乎是空的；這件事會明確告知，不會放著讓它看起來像是一次乾淨的掃描。建置目錄同時存在兩種格式時，即使 2.2 那份較新，仍然會分析 SPDX 3.0 文件。壓縮檔不會產生符合性報告：它是一綑文件，而不是一份提交的文件，因此沒有可以對照提交標準衡量的對象。
+SPDX 2.2 也讀得進來，只是內容比較少。Yocto 4.0 (Kirkstone) 與 5.0 (Scarthgap) 預設產出 SPDX 2.2，而那種形式根本不是一份文件：deploy 目錄裡只會有一個 `<image>.spdx.tar.zst`，別無其他。壓縮檔內含映像檔文件，以及每個已安裝套件與每個 recipe 各一份文件。BomLens 會直接讀這個壓縮檔——以公開發佈的 Yocto 5.0.14 `core-image-minimal` 實測，取得的正是映像檔 manifest 所列的同樣 36 個套件，連授權條款與 CPE 一併帶出。它們沒有的是建置的 CVE 判定——只有 SPDX 3.0 會記錄 recipe 修補了哪些 CVE——所以弱點會像其他 SBOM 一樣依 CPE 比對，建置其實已經修補的 CVE 也可能顯示為未處理。若只從壓縮檔裡取出映像檔文件單獨上傳，結果幾乎是空的；這件事會明確告知，不會放著讓它看起來像是一次乾淨的掃描。建置目錄同時存在兩種格式時，即使 2.2 那份較新，仍然會分析 SPDX 3.0 文件。壓縮檔不會產生符合性報告：它是一綑文件，而不是一份提交的文件，因此沒有可以對照提交標準衡量的對象。
 
 依賴 PURL 的符合性檢查會未通過。Yocto 是以 CPE 而不是 PURL 來識別套件，因此 PURL 涵蓋率以及由它衍生的檢查都無法通過。報告會另外說明有多少個元件帶有 CPE，該列也會引用兩份都接受任一種識別碼的基準——BSI TR-03183-2 與美國 SBOM 最低要素。做出這個判定的是提交標準，不是那兩份基準：這裡之所以要求 PURL，是因為預設的弱點比對以它為鍵。
 
@@ -155,7 +155,7 @@ SPDX 2.2 也讀得進來，只是內容比較少。Yocto 4.0（Kirkstone）與 5
 
 ## 要求對方修補
 
-驗證與分析完成後，把風險報告（`_risk-report.html`）交給寄來 SBOM 的一方，並提出以下要求。
+驗證與分析完成後，把風險報告 (`_risk-report.html`) 交給寄來 SBOM 的一方，並提出以下要求。
 
 - 補齊符合性的 `fail` 項目後重新寄出 SBOM。
 - Critical 弱點於 7 天內、High 弱點於 30 天內備妥修補計畫或風險理由說明（建議期限）。

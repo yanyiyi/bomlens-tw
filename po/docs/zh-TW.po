@@ -1,19 +1,26 @@
-# SOME DESCRIPTIVE TITLE
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Traditional Chinese (zh-TW) translation of the BomLens documentation site.
+# Copyright (C) 2026 SK Telecom and the BomLens contributors.
+# This file is distributed under the same license as the BomLens package.
+#
+# The .zh-TW.md pages are GENERATED from this catalogue by po4a. Do not
+# hand-edit a .zh-TW.md file -- run scripts/update-po.sh instead.
+#
+# Wording follows the Traditional Chinese L10N guidelines:
+#   https://hackmd.io/@l10n-tw/translation_guidelines
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: BomLens docs\n"
+"Report-Msgid-Bugs-To: https://github.com/sktelecom/bomlens/issues\n"
 "POT-Creation-Date: 2026-09-08 15:57+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2026-09-11 00:00+0800\n"
+"Last-Translator: BomLens zh-TW translators <noreply@invalid>\n"
+"Language-Team: zh-TW\n"
+"Language: zh-TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. type: Yaml Front Matter Hash Value: description
 #: docs/concepts/architecture.md:1
@@ -50,7 +57,7 @@ msgstr ""
 #: docs/concepts/architecture.md:12
 #, no-wrap
 msgid "> This document reflects the 2-stage architecture as currently implemented. The Stage 1 routing in the source code (detect the language, then run the official cdxgen language image) is implemented and working in `scripts/scan-sbom.sh`.\n"
-msgstr "> 這份文件以目前已實作的兩階段（2-stage）架構為準。原始碼的 Stage 1 分流（先偵測語言，再執行 cdxgen 官方語言映像檔）已在 `scripts/scan-sbom.sh` 實作並運作中。\n"
+msgstr "> 這份文件以目前已實作的兩階段 (2-stage) 架構為準。原始碼的 Stage 1 分流（先偵測語言，再執行 cdxgen 官方語言映像檔）已在 `scripts/scan-sbom.sh` 實作並運作中。\n"
 
 #. type: Title ##
 #: docs/concepts/architecture.md:13 docs/guides/by-input.md:37
@@ -72,8 +79,8 @@ msgid ""
 "images generate the SBOM (CycloneDX 1.6); for container images, binaries, "
 "and directories, syft does."
 msgstr ""
-"**Stage 1——產生**：原始碼由 cdxgen 各語言的官方映像檔產生 SBOM（CycloneDX "
-"1.6）；容器映像檔、二進位檔與目錄則由 syft 產生。"
+"**Stage 1——產生**：原始碼由 cdxgen 各語言的官方映像檔產生 SBOM (CycloneDX "
+"1.6)；容器映像檔、二進位檔與目錄則由 syft 產生。"
 
 #. type: Bullet: '- '
 #: docs/concepts/architecture.md:19
@@ -131,7 +138,7 @@ msgid ""
 "| **Acquisition** | Pulled **on demand** after detecting the project language | Pulled once and reused |\n"
 "| **Benefit** | cdxgen maintains up-to-date per-language toolchains | Small image; pinned tool versions ensure reproducibility |\n"
 msgstr ""
-"| | Stage 1 映像檔 | Stage 2 映像檔（`bomlens`） |\n"
+"| | Stage 1 映像檔 | Stage 2 映像檔 (`bomlens`) |\n"
 "|---|---|---|\n"
 "| **角色** | 從原始碼**產生** SBOM | SBOM **後處理**（正規化、授權聲明、安全、簽章、上傳）以及 syft 掃描 |\n"
 "| **內容** | cdxgen 官方**各語言**映像檔（java、python、node…） | **沒有**語言 toolchain——輕量的 `debian:12-slim` |\n"
@@ -142,7 +149,7 @@ msgstr ""
 #: docs/concepts/architecture.md:38
 #, no-wrap
 msgid "> For the five mainstream languages (java, python, node, dotnet, php), detection with the official cdxgen images is identical, and for go, ruby, and rust the toolchain preparation (`build-prep.sh`) is markedly better. For the measurement data, see [README \"Why a Docker image?\"](https://github.com/sktelecom/bomlens#why-a-docker-image-vs-plain-cdxgen).\n"
-msgstr "> 五個主流語言（java、python、node、dotnet、php）用 cdxgen 官方映像檔的偵測結果完全相同；go、ruby 與 rust 則因為有 toolchain 的事前準備（`build-prep.sh`）而明顯更好。測量數據請看 [README「Why a Docker image?」](https://github.com/sktelecom/bomlens#why-a-docker-image-vs-plain-cdxgen)。\n"
+msgstr "> 五個主流語言（java、python、node、dotnet、php）用 cdxgen 官方映像檔的偵測結果完全相同；go、ruby 與 rust 則因為有 toolchain 的事前準備 (`build-prep.sh`) 而明顯更好。測量數據請看 [README「Why a Docker image?」](https://github.com/sktelecom/bomlens#why-a-docker-image-vs-plain-cdxgen)。\n"
 
 #. type: Title ##
 #: docs/concepts/architecture.md:41
@@ -176,14 +183,14 @@ msgid ""
 msgstr ""
 "| 工具 | 版本 | 階段 | 角色 | 啟用條件 |\n"
 "|------|------|------|------|-----------|\n"
-"| **cdxgen** | 隨語言映像檔一併提供 | Stage 1 | 從原始碼產生 SBOM（`--spec-version 1.6`） | `MODE=SOURCE` |\n"
+"| **cdxgen** | 隨語言映像檔一併提供 | Stage 1 | 從原始碼產生 SBOM (`--spec-version 1.6`) | `MODE=SOURCE` |\n"
 "| **build-prep.sh** | — | Stage 1 | cdxgen 執行前的相依項目準備（cargo、go、bundle、mvn、pip） | `MODE=SOURCE` |\n"
 "| **syft** | `v1.51.0` | Stage 1 | 掃描映像檔、二進位檔與根檔案系統 | `MODE=IMAGE/BINARY/ROOTFS` |\n"
 "| **jq** (`normalize-sbom.sh`) | — | Stage 2 | 正規化並排序 SBOM | 一律執行 |\n"
 "| **ScanCode Toolkit** | `32.5.0` | Stage 2 | 對自有原始碼進行精確的授權條款偵測 | `--deep-license`（opt-in 建置） |\n"
-"| **SCANOSS** | `1.54.2` | Stage 2 | 識別被複製納入（vendored）到沒有套件管理器的 C/C++ 原始碼裡的開放原始碼 | `--identify-vendored` |\n"
-"| **jq** (`generate-notice.sh`) | — | Stage 2 | 產生開放原始碼授權聲明（NOTICE） | `--notice` / `--all` |\n"
-"| **Trivy** | `v0.74.0` | Stage 2 | 弱點（CVE）安全報告 | `--security` / `--all` |\n"
+"| **SCANOSS** | `1.54.2` | Stage 2 | 識別被複製納入 (vendored) 到沒有套件管理器的 C/C++ 原始碼裡的開放原始碼 | `--identify-vendored` |\n"
+"| **jq** (`generate-notice.sh`) | — | Stage 2 | 產生開放原始碼授權聲明 (NOTICE) | `--notice` / `--all` |\n"
+"| **Trivy** | `v0.74.0` | Stage 2 | 弱點 (CVE) 安全報告 | `--security` / `--all` |\n"
 "| **Cosign** | `v2.6.5` | Stage 2 | SBOM 的 detached 簽章 | `--sign` |\n"
 "| **curl** | — | Stage 2 | 上傳到 Dependency-Track | 預設（除非用 `--generate-only`） |\n"
 
@@ -191,7 +198,7 @@ msgstr ""
 #: docs/concepts/architecture.md:59
 #, no-wrap
 msgid "> Versions are pinned as `ARG`s in `docker/Dockerfile`. To keep the image lean, ScanCode is an **opt-in** build arg (`--build-arg SBOM_DEEP_LICENSE=true`). The SCANOSS client is included by default; build with `--build-arg SBOM_SCANOSS=false` to drop it. Firmware unpacking/identification (unblob, cve-bin-tool) ships in the separate opt-in `bomlens-firmware` image, and AI-model SBOM generation (OWASP AIBOM Generator) in `bomlens-aibom`. For the per-input tool flow, see [Pipeline by input type](pipeline-by-input.md).\n"
-msgstr "> 版本以 `docker/Dockerfile` 裡的 `ARG` 固定。為了讓映像檔保持精簡，ScanCode 是 **opt-in** 的建置參數（`--build-arg SBOM_DEEP_LICENSE=true`）。SCANOSS 用戶端預設包含在內，若要移除請用 `--build-arg SBOM_SCANOSS=false` 建置。韌體的解包與識別（unblob、cve-bin-tool）放在另一個 opt-in 的 `bomlens-firmware` 映像檔，AI 模型的 SBOM 產生（OWASP AIBOM Generator）則放在 `bomlens-aibom`。各輸入類型的工具流程請看[各輸入類型的流程](pipeline-by-input.md)。\n"
+msgstr "> 版本以 `docker/Dockerfile` 裡的 `ARG` 固定。為了讓映像檔保持精簡，ScanCode 是 **opt-in** 的建置參數 (`--build-arg SBOM_DEEP_LICENSE=true`)。SCANOSS 用戶端預設包含在內，若要移除請用 `--build-arg SBOM_SCANOSS=false` 建置。韌體的解包與識別（unblob、cve-bin-tool）放在另一個 opt-in 的 `bomlens-firmware` 映像檔，AI 模型的 SBOM 產生 (OWASP AIBOM Generator) 則放在 `bomlens-aibom`。各輸入類型的工具流程請看[各輸入類型的流程](pipeline-by-input.md)。\n"
 
 #. type: Title ##
 #: docs/concepts/architecture.md:62
@@ -291,7 +298,7 @@ msgstr "產生工具依目標類型而異。"
 #: docs/concepts/architecture.md:103
 #, no-wrap
 msgid "Source code (`MODE=SOURCE`) — cdxgen language image"
-msgstr "原始碼（`MODE=SOURCE`）——cdxgen 語言映像檔"
+msgstr "原始碼 (`MODE=SOURCE`)——cdxgen 語言映像檔"
 
 #. type: Plain text
 #: docs/concepts/architecture.md:106
@@ -304,7 +311,7 @@ msgid ""
 msgstr ""
 "`scan-sbom.sh` 會用 `detect_lang()` 偵測專案語言，再用 `img_for_lang()` 挑出"
 "對應的 **cdxgen 官方語言映像檔**，下載後在該映像檔裡執行 `build-prep.sh`"
-"（`scripts/scan-sbom.sh:138-208`）。輕量的後處理映像檔沒有語言 toolchain，因"
+"(`scripts/scan-sbom.sh:138-208`)。輕量的後處理映像檔沒有語言 toolchain，因"
 "此產生工作完全由語言映像檔負責。"
 
 #. type: Plain text
@@ -344,7 +351,7 @@ msgstr ""
 "| php | `cdxgen-debian-php84` |\n"
 "| dotnet | `cdxgen-debian-dotnet9` |\n"
 "| android | 自行建置的 `bomlens-android-sdk<API>`（compileSdk 會自動取出） |\n"
-"| mixed / unknown | cdxgen all-in-one（`CDXGEN_ALLINONE`） |\n"
+"| mixed / unknown | cdxgen all-in-one (`CDXGEN_ALLINONE`) |\n"
 
 #. type: Plain text
 #: docs/concepts/architecture.md:123
@@ -359,7 +366,7 @@ msgid ""
 "resolve on its own (notably Rust and Go), exposing transitive dependencies. "
 "POSIX `sh`, best-effort (it never fails the scan)."
 msgstr ""
-"**`build-prep.sh`**（`docker/lib/build-prep.sh`）——在 cdxgen **執行前**準備相"
+"**`build-prep.sh`** (`docker/lib/build-prep.sh`)——在 cdxgen **執行前**準備相"
 "依項目。它會為 cdxgen 無法自行解析的生態系（尤其是 Rust 與 Go）建立 "
 "lockfile，讓間接相依也能被看見。以 POSIX `sh` 撰寫，盡力而為（絕不會讓掃描失"
 "敗）。"
@@ -379,7 +386,7 @@ msgstr ""
 "   | 生態系 | 動作 | 備註 |\n"
 "   |--------|------|------|\n"
 "   | Rust | `cargo generate-lockfile` | cdxgen 不會自動執行 cargo——**必要** |\n"
-"   | Go | `go mod download`（`-mod=mod`） | 解析出模組關係圖 |\n"
+"   | Go | `go mod download`(`-mod=mod`) | 解析出模組關係圖 |\n"
 "   | Ruby | `bundle lock` / `install` | 只在沒有 lockfile 時執行 |\n"
 "   | Maven | `mvn dependency:resolve` | 輕量的安全網 |\n"
 "   | Python | `pip install -r requirements.txt` | 沒有 lockfile 時讓間接相依被看見 |\n"
@@ -393,8 +400,8 @@ msgid ""
 "(`MODE=POSTPROCESS`) post-processing image."
 msgstr ""
 "**執行 cdxgen**——`build-prep.sh` 會自動偵測各映像檔不同的 cdxgen 執行檔路徑，"
-"然後執行 `cdxgen -r --spec-version 1.6 -o bom.json`（`build-"
-"prep.sh:60-73`）。產生的 SBOM 接著交給 Stage 2（`MODE=POSTPROCESS`）的後處理"
+"然後執行 `cdxgen -r --spec-version 1.6 -o bom.json`(`build-"
+"prep.sh:60-73`)。產生的 SBOM 接著交給 Stage 2 (`MODE=POSTPROCESS`) 的後處理"
 "映像檔。"
 
 #. type: Title ###
@@ -407,7 +414,7 @@ msgstr "映像檔／二進位檔／目錄——syft"
 #: docs/concepts/architecture.md:139
 #, no-wrap
 msgid "**syft**, included in the `bomlens` image, generates the SBOM directly. (`docker/entrypoint.sh`)\n"
-msgstr "`bomlens` 映像檔內含的 **syft** 會直接產生 SBOM。（`docker/entrypoint.sh`）\n"
+msgstr "`bomlens` 映像檔內含的 **syft** 會直接產生 SBOM。(`docker/entrypoint.sh`)\n"
 
 #. type: Plain text
 #: docs/concepts/architecture.md:145
@@ -439,7 +446,7 @@ msgid ""
 "environment variable (equivalent to a CLI flag), and outputs accumulate in "
 "the `ARTIFACTS` list."
 msgstr ""
-"`bomlens` 映像檔的進入點 `run-scan`（`docker/entrypoint.sh`）接手 SBOM，並以"
+"`bomlens` 映像檔的進入點 `run-scan`(`docker/entrypoint.sh`) 接手 SBOM，並以"
 "**固定的順序**執行各步驟。每個步驟由一個環境變數開啟（等同於一個 CLI 旗標），"
 "輸出會累積到 `ARTIFACTS` 清單裡。"
 
@@ -569,7 +576,7 @@ msgstr ""
 "| 模式 | 觸發條件 | 產生工具 | 備註 |\n"
 "|------|--------|-----------|------|\n"
 "| `SOURCE` | 未指定目標、`--git <url>`，或 `--target *.zip/*.tar.gz` | cdxgen | 語言偵測決定要用哪個語言映像檔。git 目標會被 clone；壓縮檔會解開後當作原始碼處理。（網頁介面的 SOURCE 是在容器內使用 `syft dir:`） |\n"
-"| `ANALYZE` | `--analyze <sbom>`（別名 `--sbom`） | — | 驗證供應者 SBOM（CycloneDX/SPDX）、轉成 CDX 並重新彙整。會產生 `_conformance.*` |\n"
+"| `ANALYZE` | `--analyze <sbom>`（別名 `--sbom`） | — | 驗證供應者 SBOM (CycloneDX/SPDX)、轉成 CDX 並重新彙整。會產生 `_conformance.*` |\n"
 "| `FIRMWARE` | `--target <file> --firmware`，或韌體副檔名 | unblob + syft + cve-bin-tool | **opt-in 映像檔** `bomlens-firmware`。細節請看[韌體分析指南](../guides/firmware.md) |\n"
 "| `BINARY` | `--target <file>` | syft | `file:` scheme |\n"
 "| `ROOTFS` | `--target <directory>` | syft | `dir:` scheme |\n"
@@ -637,7 +644,7 @@ msgstr ""
 #: docs/concepts/architecture.md:233
 #, no-wrap
 msgid "> The **risk report** (`_risk-report.{md,html}`) is generated **by default** in every mode (it aggregates licenses and vulnerabilities). To support it, the notice and security scans are turned on automatically alongside it; disable with `--no-report`.\n"
-msgstr "> **風險報告**（`_risk-report.{md,html}`）在所有模式下都會**預設產生**（它會彙整授權條款與弱點）。為了支援它，授權聲明與安全掃描會自動一併開啟；要停用請用 `--no-report`。\n"
+msgstr "> **風險報告** (`_risk-report.{md,html}`) 在所有模式下都會**預設產生**（它會彙整授權條款與弱點）。為了支援它，授權聲明與安全掃描會自動一併開啟；要停用請用 `--no-report`。\n"
 
 #. type: Plain text
 #: docs/concepts/architecture.md:235
@@ -764,7 +771,7 @@ msgid ""
 "**Separation of concerns** — generation (Stage 1) and post-processing (Stage "
 "2) are split, keeping the post-processing image small."
 msgstr ""
-"**關注點分離**——把產生（Stage 1）與後處理（Stage 2）拆開，讓後處理映像檔保持"
+"**關注點分離**——把產生 (Stage 1) 與後處理 (Stage 2) 拆開，讓後處理映像檔保持"
 "精簡。"
 
 #. type: Bullet: '- '
@@ -799,7 +806,7 @@ msgstr "**單一介面**——所有語言與模式都透過同一個 `scan-sbom
 #: docs/concepts/architecture.md:279
 #, no-wrap
 msgid "Division of roles (TRUSCA)"
-msgstr "角色分工（TRUSCA）"
+msgstr "角色分工 (TRUSCA)"
 
 #. type: Plain text
 #: docs/concepts/architecture.md:282
@@ -812,7 +819,7 @@ msgid ""
 msgstr ""
 "BomLens 專精於**產生**。**治理**——全公司的專案管理、弱點分類與授權條款政策關"
 "卡——則交給姊妹專案 [TRUSCA](https://github.com/trustedoss/trusca)（前身為 "
-"TrustedOSS Portal）。兩個工具共用 cdxgen 與 Trivy，因此產出物（CycloneDX）可"
+"TrustedOSS Portal）。兩個工具共用 cdxgen 與 Trivy，因此產出物 (CycloneDX) 可"
 "以直接互通。"
 
 #. type: Fenced code block (mermaid)
@@ -906,7 +913,7 @@ msgid ""
 "license conflict check all read data baked into the image at build time, so "
 "they keep working with no connection at all."
 msgstr ""
-"BomLens 可在實體隔離（air-gapped）與離線網路中執行。少數需要對外查詢的功能可"
+"BomLens 可在實體隔離 (air-gapped) 與離線網路中執行。少數需要對外查詢的功能可"
 "以關閉，其餘一切照樣產生。安全報告的 EPSS 與 CISA KEV 補強是主要的例子：設定 "
 "`SECURITY_ENRICH=false` 就會略過它，報告的其餘部分仍會產生。授權條款查詢同樣"
 "可以用 `FETCH_LICENSE=false` 略過。反過來說，有三項檢查聽起來需要網路，其實不"
@@ -1044,8 +1051,8 @@ msgid ""
 "directory, which captures direct dependencies from lock files."
 msgstr ""
 "原始碼資料夾、GitHub URL，或 ZIP 壓縮檔。語言偵測會挑出對應的官方 [cdxgen]"
-"(https://github.com/CycloneDX/cdxgen) 語言映像檔，由它準備相依項目（`build-"
-"prep.sh`）並產生 SBOM。BomLens 無法執行 sibling 容器時（例如網頁介面的原始碼"
+"(https://github.com/CycloneDX/cdxgen) 語言映像檔，由它準備相依項目 (`build-"
+"prep.sh`) 並產生 SBOM。BomLens 無法執行 sibling 容器時（例如網頁介面的原始碼"
 "掃描），會後備改用 [syft](https://github.com/anchore/syft) 掃描該目錄，此時是"
 "從鎖定檔案取得直接相依。"
 
@@ -1217,7 +1224,7 @@ msgid ""
 "processing then adds a G7 minimum-element conformance check. Because an AI "
 "model has no package CVEs, the security report is skipped."
 msgstr ""
-"HuggingFace 的模型 id（`org/model`），由 opt-in 的 `bomlens-aibom` 映像檔負"
+"HuggingFace 的模型 id (`org/model`)，由 opt-in 的 `bomlens-aibom` 映像檔負"
 "責。[OWASP AIBOM Generator](https://github.com/GenAI-Security-Project/aibom-"
 "generator) 會透過網路取得模型卡的後設資料，建立以模型與其資料集為核心的 "
 "CycloneDX 1.7 ML-BOM。後處理接著加上 G7 最低要素的符合性檢查。AI 模型沒有套"
@@ -1278,7 +1285,7 @@ msgid ""
 msgstr ""
 "不論輸入是什麼，SBOM 都會走過同一組固定順序的步驟。正規化跑在最前面，讓後續每"
 "個步驟拿到的輸入都是穩定的；簽章跑在最後，這樣它涵蓋的才是最終的 SBOM。虛線的"
-"步驟是選用或只適用於特定輸入。每個步驟都是盡力而為（best-effort）——失敗時只會"
+"步驟是選用或只適用於特定輸入。每個步驟都是盡力而為 (best-effort)——失敗時只會"
 "發出警告並略過，不會中止整次掃描（簽章與上傳例外）。"
 
 #. type: Plain text
@@ -1346,15 +1353,15 @@ msgstr ""
 "|------|------|-------|---------|-------|---------|\n"
 "| cdxgen | 從原始碼產生 SBOM | 原始碼 | Apache-2.0 | 語言映像檔 | [CycloneDX/cdxgen](https://github.com/CycloneDX/cdxgen) |\n"
 "| syft | 映像檔、二進位檔案、目錄與韌體 rootfs 的 SBOM | 原始碼（後備）、映像檔、二進位檔案、rootfs、韌體 | Apache-2.0 | base / firmware | [anchore/syft](https://github.com/anchore/syft) |\n"
-"| SCANOSS (scanoss.py) | 以檔案指紋偵測複製進來的開放原始碼 | 原始碼（`--identify-vendored`） | MIT | base | [scanoss/scanoss.py](https://github.com/scanoss/scanoss.py) |\n"
-"| ScanCode Toolkit | 自家原始碼的精確授權條款偵測 | 原始碼（`--deep-license`） | Apache-2.0 | base（opt-in） | [aboutcode-org/scancode-toolkit](https://github.com/aboutcode-org/scancode-toolkit) |\n"
+"| SCANOSS (scanoss.py) | 以檔案指紋偵測複製進來的開放原始碼 | 原始碼 (`--identify-vendored`) | MIT | base | [scanoss/scanoss.py](https://github.com/scanoss/scanoss.py) |\n"
+"| ScanCode Toolkit | 自家原始碼的精確授權條款偵測 | 原始碼 (`--deep-license`) | Apache-2.0 | base (opt-in) | [aboutcode-org/scancode-toolkit](https://github.com/aboutcode-org/scancode-toolkit) |\n"
 "| unblob | 韌體解開封裝（主要） | 韌體 | MIT | firmware | [onekey-sec/unblob](https://github.com/onekey-sec/unblob) |\n"
 "| sasquatch | 標準 unsquashfs 拒絕處理的廠商變體 squashfs | 韌體 | GPL-2.0 | firmware（選用） | [onekey-sec/sasquatch](https://github.com/onekey-sec/sasquatch) |\n"
 "| cve-bin-tool | 識別經過 strip 的二進位檔案 + 比對 CVE | 韌體 | GPL-3.0 | firmware | [intel/cve-bin-tool](https://github.com/intel/cve-bin-tool) |\n"
 "| OWASP AIBOM Generator | 從 HuggingFace 模型卡產生 ML-BOM | AI 模型 | Apache-2.0 | aibom | [GenAI-Security-Project/aibom-generator](https://github.com/GenAI-Security-Project/aibom-generator) |\n"
-"| Trivy | 弱點（CVE）安全報告 | 全部 | Apache-2.0 | base | [aquasecurity/trivy](https://github.com/aquasecurity/trivy) |\n"
-"| cosign | SBOM 的 detached 簽章 | 全部（`--sign`） | Apache-2.0 | base | [sigstore/cosign](https://github.com/sigstore/cosign) |\n"
-"| WeasyPrint | 授權聲明的 PDF 輸出（選用） | 全部（`SBOM_PDF` 建置） | BSD-3-Clause | base（opt-in） | [Kozea/WeasyPrint](https://github.com/Kozea/WeasyPrint) |\n"
+"| Trivy | 弱點 (CVE) 安全報告 | 全部 | Apache-2.0 | base | [aquasecurity/trivy](https://github.com/aquasecurity/trivy) |\n"
+"| cosign | SBOM 的 detached 簽章 | 全部 (`--sign`) | Apache-2.0 | base | [sigstore/cosign](https://github.com/sigstore/cosign) |\n"
+"| WeasyPrint | 授權聲明的 PDF 輸出（選用） | 全部（`SBOM_PDF` 建置） | BSD-3-Clause | base (opt-in) | [Kozea/WeasyPrint](https://github.com/Kozea/WeasyPrint) |\n"
 "| jq | SBOM 正規化、授權聲明與報告組裝 | 全部 | MIT | base | [jqlang/jq](https://github.com/jqlang/jq) |\n"
 
 #. type: Plain text
@@ -1402,7 +1409,7 @@ msgid ""
 "The open-source notice (NOTICE) groups components by license. Beyond that "
 "grouping, it also handles the following."
 msgstr ""
-"開放原始碼授權聲明（NOTICE）會依授權條款把元件分組。除了分組之外，它還一併處"
+"開放原始碼授權聲明 (NOTICE) 會依授權條款把元件分組。除了分組之外，它還一併處"
 "理下列事項。"
 
 #. type: Bullet: '- '
@@ -1435,7 +1442,7 @@ msgstr ""
 #. type: Bullet: '- '
 #: docs/concepts/reports-explained.md:17
 msgid "If the SBOM has a copyright value, it is shown per component."
-msgstr "SBOM 裡有著作權（copyright）值時，會逐一元件顯示。"
+msgstr "SBOM 裡有著作權 (copyright) 值時，會逐一元件顯示。"
 
 #. type: Bullet: '- '
 #: docs/concepts/reports-explained.md:17
@@ -1475,7 +1482,7 @@ msgid ""
 "**CVSS** — the technical severity score of the vulnerability (0–10). The V3 "
 "score is used first, falling back to V2 if absent."
 msgstr ""
-"**CVSS**——弱點的技術性嚴重程度分數（0–10）。優先採用 V3 分數，沒有時才後備採"
+"**CVSS**——弱點的技術性嚴重程度分數 (0–10)。優先採用 V3 分數，沒有時才後備採"
 "用 V2。"
 
 #. type: Bullet: '- '
@@ -1485,7 +1492,7 @@ msgid ""
 "days (0–1). Queried from FIRST.org; a higher score means a greater chance of "
 "being used in an attack."
 msgstr ""
-"**EPSS**——未來 30 天內在真實環境遭到利用的機率（0–1）。查詢自 FIRST.org；分數"
+"**EPSS**——未來 30 天內在真實環境遭到利用的機率 (0–1)。查詢自 FIRST.org；分數"
 "越高，被用於攻擊的機會越大。"
 
 #. type: Bullet: '- '
@@ -1595,7 +1602,7 @@ msgid ""
 "could reach; there is no version to upgrade to."
 msgstr ""
 "弱點指的是一個正常的套件有缺陷。惡意套件性質不同：它是為了攻擊安裝它的人而發"
-"佈的——針對你想輸入的名稱所做的錯字仿冒（typosquat）、從被挾持的維護者帳號推上"
+"佈的——針對你想輸入的名稱所做的錯字仿冒 (typosquat)、從被挾持的維護者帳號推上"
 "去的發行版本，或是在安裝過程中執行的惡意程式碼。BomLens 把這類項目與弱點表格"
 "分開標示，因為應對方式不一樣。你必須移除該套件，並輪替建置過程可能接觸到的所"
 "有認證資訊；沒有可以升級過去的版本。"
@@ -1646,7 +1653,7 @@ msgstr ""
 #: docs/concepts/reports-explained.md:51
 #, no-wrap
 msgid "Component end-of-life (EOL)"
-msgstr "元件已終止支援（EOL） {#component-end-of-life-eol}"
+msgstr "元件已終止支援 (EOL) {#component-end-of-life-eol}"
 
 #. type: Plain text
 #: docs/concepts/reports-explained.md:54
@@ -1671,7 +1678,7 @@ msgid ""
 msgstr ""
 "日期來自內建於掃描器映像檔的 endoflife.date 快照，因此這項檢查不需任何網路呼"
 "叫就能離線執行，封閉網路也能用。來源與快照日期會記錄在每個被標記的元件上"
-"（`bomlens:eol:source`）。"
+" (`bomlens:eol:source`)。"
 
 #. type: Bullet: '- '
 #: docs/concepts/reports-explained.md:59
@@ -1764,9 +1771,9 @@ msgid ""
 msgstr ""
 "deps.dev 層是 opt-in。設定 `STALENESS_ENRICH=true` 之後，會把每個元件拿到 "
 "deps.dev（Google 的公開套件後設資料）查詢，記錄絕對最新的版本"
-"（`bomlens:staleness:latest`）、已安裝的版本落後幾個發行版本"
-"（`bomlens:staleness:releasesBehind`），以及最新版本是什麼時候發行的"
-"（`bomlens:staleness:lastReleased`）。它每個元件都會發出一次網路呼叫，因此是"
+" (`bomlens:staleness:latest`)、已安裝的版本落後幾個發行版本"
+" (`bomlens:staleness:releasesBehind`)，以及最新版本是什麼時候發行的"
+" (`bomlens:staleness:lastReleased`)。它每個元件都會發出一次網路呼叫，因此是"
 "拿掃描的離線決定性去換資料的新鮮度。它不適合封閉網路的執行環境，所以預設關"
 "閉。它是盡力而為且有時間上限的，因此查詢失敗絕不會中斷掃描。支援的生態系有 "
 "npm、PyPI、Maven、Go、Cargo、NuGet 與 RubyGems。專案是否仍在積極維護不在這個"
@@ -1841,7 +1848,7 @@ msgid ""
 "vulnerability management system (Dependency-Track, TRUSCA, etc.) to handle "
 "it."
 msgstr ""
-"分級處理（triage）——判斷誤判（實際上沒有影響）與核准例外——以及歷程管理，都超"
+"分級處理 (triage)——判斷誤判（實際上沒有影響）與核准例外——以及歷程管理，都超"
 "出 BomLens 的範圍。請把 SBOM 上傳到弱點管理系統（Dependency-Track、TRUSCA "
 "等）來處理。"
 
@@ -1972,7 +1979,7 @@ msgstr "**CycloneDX** 是 BomLens 寫出 SBOM 所採用的標準檔案格式—�
 #: docs/concepts/what-is-sbom.md:24
 #, no-wrap
 msgid "**PURL** (Package URL) is the identifier each component carries inside the SBOM, such as `pkg:npm/express@4.18.2`. It names the ecosystem (npm, Maven, PyPI, and so on), the package, and the exact version in one string, so every tool that reads the SBOM agrees on which component is meant.\n"
-msgstr "**PURL**（Package URL）是 SBOM 內部每個元件所帶的識別碼，例如 `pkg:npm/express@4.18.2`。它以一個字串同時記下生態系（npm、Maven、PyPI 等）、套件與確切版本，讓每個讀取這份 SBOM 的工具都對「指的是哪個元件」有一致的理解。\n"
+msgstr "**PURL** (Package URL) 是 SBOM 內部每個元件所帶的識別碼，例如 `pkg:npm/express@4.18.2`。它以一個字串同時記下生態系（npm、Maven、PyPI 等）、套件與確切版本，讓每個讀取這份 SBOM 的工具都對「指的是哪個元件」有一致的理解。\n"
 
 #. type: Plain text
 #: docs/concepts/what-is-sbom.md:26
@@ -2147,8 +2154,8 @@ msgid ""
 msgstr ""
 "如果該生態系在沒有鎖定檔案的情況下，cdxgen 無法解析間接相依，就把準備邏輯加"
 "到 `docker/lib/build-prep.sh`——它會在 cdxgen 執行前建立鎖定檔案。Rust"
-"（`cargo generate-lockfile`）與 Go（`go mod download`）是既有的先例。這段準備"
-"要寫成盡力而為（best-effort）的形式，絕對不能讓掃描因此失敗。"
+" (`cargo generate-lockfile`) 與 Go (`go mod download`) 是既有的先例。這段準備"
+"要寫成盡力而為 (best-effort) 的形式，絕對不能讓掃描因此失敗。"
 
 #. type: Title ###
 #: docs/contribute/package-managers.md:37
@@ -2541,7 +2548,7 @@ msgstr ""
 "tests/\n"
 "├── test-scan.sh          # 整合測試進入點（執行全部測試）\n"
 "├── helpers/\n"
-"│   ├── assert.sh         # 斷言（assertion）輔助函式\n"
+"│   ├── assert.sh         # 斷言 (assertion) 輔助函式\n"
 "│   └── setup.sh          # 測試環境的初始化／清理\n"
 "└── cases/\n"
 "    ├── test-java.sh      # Java 測試案例\n"
@@ -2591,7 +2598,7 @@ msgstr ""
 "[PASS] Node.js npm 原始碼分析\n"
 "[PASS] Python pip 原始碼分析\n"
 "[PASS] Go modules 原始碼分析\n"
-"[PASS] Docker 映像檔分析（nginx:alpine）\n"
+"[PASS] Docker 映像檔分析 (nginx:alpine)\n"
 "─────────────────────────────────\n"
 "6 個測試中有 6 個通過（0 個未通過）\n"
 
@@ -2960,7 +2967,7 @@ msgstr "> **相關文件**：[貢獻指南](https://github.com/sktelecom/bomlens
 #: docs/guides/ai-model.md:1
 #, no-wrap
 msgid "Generate an AI SBOM (CycloneDX ML-BOM) for a HuggingFace model with BomLens and check it against the G7 minimum elements for AI — the 50-element checklist whose clusters overlap with the EU AI Act's Annex IV technical documentation. From the model id, no source code or model download needed."
-msgstr "以 BomLens 為 HuggingFace 模型產生 AI SBOM（CycloneDX ML-BOM），並依 AI 的 G7 最低要素檢查——這份 50 項要素的檢查清單，其叢集與 EU AI Act 的 Annex IV 技術文件有相當程度的重疊。只要給模型 id，不需要原始碼，也不需要下載模型。"
+msgstr "以 BomLens 為 HuggingFace 模型產生 AI SBOM (CycloneDX ML-BOM)，並依 AI 的 G7 最低要素檢查——這份 50 項要素的檢查清單，其叢集與 EU AI Act 的 Annex IV 技術文件有相當程度的重疊。只要給模型 id，不需要原始碼，也不需要下載模型。"
 
 #. type: Title #
 #: docs/guides/ai-model.md:5
@@ -3003,7 +3010,7 @@ msgstr ""
 "github.com/GenAI-Security-Project/aibom-generator) 讀取 HuggingFace 模型卡，"
 "建立一份以模型與它所參考的資料集為中心的 **CycloneDX 1.7 ML-BOM**，接著加上一"
 "輪 **G7 最低要素符合性**檢查（建議性質）。由於模型沒有套件相依性，因此不會產"
-"生安全（CVE）報告。"
+"生安全 (CVE) 報告。"
 
 #. type: Plain text
 #: docs/guides/ai-model.md:14
@@ -3073,7 +3080,7 @@ msgstr ""
 "**一種執行 BomLens 的方式。**桌面版應用程式不需要下任何指令；要用指令列的話，"
 "[快速開始](../start/first-scan.md)說明了如何 clone 儲存庫。AI 模型掃描需要另"
 "一個內含 OWASP AIBOM Generator 的映像檔。它是 opt-in 的，而且會連上網路"
-"（HuggingFace），因此與基礎映像檔分開發佈。"
+" (HuggingFace)，因此與基礎映像檔分開發佈。"
 
 #. type: Fenced code block (bash)
 #: docs/guides/ai-model.md:26
@@ -3203,7 +3210,7 @@ msgstr ""
 #: docs/guides/ai-model.md:64
 #, no-wrap
 msgid "Private and gated models"
-msgstr "私有與受管制（gated）的模型 {#private-and-gated-models}"
+msgstr "私有與受管制 (gated) 的模型 {#private-and-gated-models}"
 
 #. type: Plain text
 #: docs/guides/ai-model.md:67
@@ -3212,7 +3219,7 @@ msgid ""
 "you have been granted access to, needs a HuggingFace access token with read "
 "scope in `HF_TOKEN`:"
 msgstr ""
-"公開的模型 id 可以匿名解析。私有儲存庫，或是你已獲准存取的受管制（gated）儲存"
+"公開的模型 id 可以匿名解析。私有儲存庫，或是你已獲准存取的受管制 (gated) 儲存"
 "庫，需要在 `HF_TOKEN` 中提供具備 read 權限的 HuggingFace 存取權杖："
 
 #. type: Fenced code block (bash)
@@ -3310,7 +3317,7 @@ msgid ""
 "component instead of being quietly corrected."
 msgstr ""
 "唯一的資料來源是檔案自身的標頭，而且不會下載任何映像檔——這是在基礎映像檔中離"
-"線執行的。格式由魔術位元組（magic bytes）而非檔名決定，兩者不一致時會記錄在元"
+"線執行的。格式由魔術位元組 (magic bytes) 而非檔名決定，兩者不一致時會記錄在元"
 "件上，而不是默默地更正過去。"
 
 #. type: Plain text
@@ -3450,7 +3457,7 @@ msgid ""
 msgstr ""
 "有兩件，出於設計。它沒有模型卡，所以 G7 中詢問訓練資料、預期用途與評估的檢查"
 "會回報為缺漏——這是準確的，因為檔案對這些一字未提。另外它描述的是單一檔案：分"
-"成多個分片（shard）的模型，目前是一個分片掃描一次。"
+"成多個分片 (shard) 的模型，目前是一個分片掃描一次。"
 
 #. type: Title ##
 #: docs/guides/ai-model.md:126
@@ -3496,7 +3503,7 @@ msgid ""
 "and the conformance report (`_conformance.*`)."
 msgstr ""
 "同樣的資料也在產出物裡：ML-BOM（`_bom.json`，CycloneDX 1.7）與符合性報告"
-"（`_conformance.*`）。"
+" (`_conformance.*`)。"
 
 #. type: Title ##
 #: docs/guides/ai-model.md:140 docs/guides/supplier-sbom.md:66
@@ -3529,9 +3536,9 @@ msgid ""
 "verdict can only come from the base format checks — the required CycloneDX "
 "ones."
 msgstr ""
-"每項檢查都有三種狀態之一。通過（pass）表示該要素存在於 ML-BOM 中。建議"
-"（warn）表示它缺漏或無法確認；那 10 項只能人工檢視的要素一律是這個狀態，並標"
-"示為需人工檢視。未通過（fail）在 G7 檢查中實際上不會出現：每一項 G7 要素都屬"
+"每項檢查都有三種狀態之一。通過 (pass) 表示該要素存在於 ML-BOM 中。建議"
+" (warn) 表示它缺漏或無法確認；那 10 項只能人工檢視的要素一律是這個狀態，並標"
+"示為需人工檢視。未通過 (fail) 在 G7 檢查中實際上不會出現：每一項 G7 要素都屬"
 "建議性質，因此少了一項絕不會讓整份 SBOM 未通過。整體的未通過判定只可能來自基"
 "本格式檢查，也就是 CycloneDX 的必要項目。"
 
@@ -3884,7 +3891,7 @@ msgid ""
 "national guideline, and the European harmonized standard that will carry the "
 "binding wording is still a draft."
 msgstr ""
-"EU Cyber Resilience Act（EU CRA）——透過 BSI TR-03183-2 連結，那是德國為 CRA "
+"EU Cyber Resilience Act (EU CRA)——透過 BSI TR-03183-2 連結，那是德國為 CRA "
 "合規所撰寫的技術指引，也是目前公開文件中最詳盡的 SBOM 欄位規格（CRA 本文並未"
 "指名任何資料欄位）。TR-03183-2 是國家層級的指引，而將承載具約束力條文的歐洲調"
 "和標準目前仍是草案。"
@@ -3915,8 +3922,8 @@ msgid ""
 "EU AI Act — the technical-documentation sections of Annex IV (Regulation "
 "(EU) 2024/1689, Article 11(1))."
 msgstr ""
-"EU AI Act——Annex IV 的技術文件章節（Regulation (EU) 2024/1689, Article "
-"11(1)）。"
+"EU AI Act——Annex IV 的技術文件章節 (Regulation (EU) 2024/1689, Article "
+"11(1))。"
 
 #. type: Bullet: '- '
 #: docs/guides/ai-model.md:224
@@ -3926,8 +3933,8 @@ msgid ""
 "assessment (제35조). The Act sets framework-level duties, so these links are "
 "coarser than the EU ones."
 msgstr ""
-"AI 基本法（韓國）——該法關於透明性（제31조）、安全性與風險管理（제32조）、高影"
-"響 AI（제33·34조）與影響評估（제35조）的條文。這部法律訂的是框架層級的義務，"
+"AI 基本法（韓國）——該法關於透明性 (제31조)、安全性與風險管理 (제32조)、高影"
+"響 AI (제33·34조) 與影響評估 (제35조) 的條文。這部法律訂的是框架層級的義務，"
 "因此這些連結比 EU 的更為粗略。"
 
 #. type: Plain text
@@ -3979,11 +3986,11 @@ msgid ""
 "model (`--model`) and supplier-SBOM (`--analyze`) paths, and is a no-op for "
 "a plain (non-AI) SBOM."
 msgstr ""
-"對 AI SBOM，BomLens 還會產出一份單頁的 AI 合規概況（`_ai-profile."
-"{json,md,html}`），把原本散落在各個產出物中的內容彙整到一處：各叢集的 G7 狀"
+"對 AI SBOM，BomLens 還會產出一份單頁的 AI 合規概況 (`_ai-profile."
+"{json,md,html}`)，把原本散落在各個產出物中的內容彙整到一處：各叢集的 G7 狀"
 "態、法規對照，以及授權條款被標記待檢視的元件（AI 行為限制或非商業）。它不執行"
 "任何掃描，也不做任何合規判定——它只是把流程已經產生的結果重新分組，讓檢視者能"
-"一眼讀完整體樣貌。它會在 AI 模型（`--model`）與供應者 SBOM（`--analyze`）兩條"
+"一眼讀完整體樣貌。它會在 AI 模型 (`--model`) 與供應者 SBOM (`--analyze`) 兩條"
 "路徑上產生，對一般（非 AI）SBOM 則不做任何事。"
 
 #. type: Title ##
@@ -4017,10 +4024,10 @@ msgid ""
 msgstr ""
 "| 判定 | 含意 |\n"
 "| --- | --- |\n"
-"| 未發現限制訊號（ok） | 只有已知的無限制訊號——例如寬鬆式的授權條款。 |\n"
-"| 有條件使用（conditional） | 滿足所列條件即可使用——例如 Llama 社群授權條款的使用者數門檻與命名規則，或是 copyleft 授權條款的聲明義務。 |\n"
-"| 注意（caution） | 存在已知的阻斷訊號——例如非商業或僅限研究的授權條款。 |\n"
-"| 需人工檢視（review） | 工具無法判定：無法辨識的授權條款、缺少授權條款，或是讀不到的資料集。必須由人來看。 |\n"
+"| 未發現限制訊號 (ok) | 只有已知的無限制訊號——例如寬鬆式的授權條款。 |\n"
+"| 有條件使用 (conditional) | 滿足所列條件即可使用——例如 Llama 社群授權條款的使用者數門檻與命名規則，或是 copyleft 授權條款的聲明義務。 |\n"
+"| 注意 (caution) | 存在已知的阻斷訊號——例如非商業或僅限研究的授權條款。 |\n"
+"| 需人工檢視 (review) | 工具無法判定：無法辨識的授權條款、缺少授權條款，或是讀不到的資料集。必須由人來看。 |\n"
 
 #. type: Plain text
 #: docs/guides/ai-model.md:245
@@ -4054,7 +4061,7 @@ msgid ""
 "worst across its assessed axes, and an axis nothing evaluated shows as not "
 "assessed rather than being read as safe."
 msgstr ""
-"授權條款判定來自一份人工整理的知識庫（`docker/lib/ai-risk-knowledge.json`），"
+"授權條款判定來自一份人工整理的知識庫 (`docker/lib/ai-risk-knowledge.json`)，"
 "涵蓋 Hugging Face 完整的授權條款標籤清單。每一筆都記錄了是否允許商業使用、再"
 "散布與製作衍生物，適用哪些條件，以及授權條款原文的連結；概況會把摘要與條件印"
 "在判定旁邊，讓依據隨著判定一起移動。知識庫不認識的授權條款會落到需人工檢視——"
@@ -4194,7 +4201,7 @@ msgid ""
 "deliberately cautious — it never under-warns — but it may over-flag; the "
 "report names the exact expression so a reviewer can confirm."
 msgstr ""
-"複合的 SPDX 授權條款表達式（`MIT OR Apache-2.0`）會整體評估，不會去解析其中的"
+"複合的 SPDX 授權條款表達式 (`MIT OR Apache-2.0`) 會整體評估，不會去解析其中的"
 "選擇，因此一個雙重授權的模型可能讀成 `review`，即使單獨採用任一邊都會是 "
 "`ok`。這個方向刻意保守——它絕不會低估警示——但可能過度標記；報告會寫出確切的表"
 "達式，讓檢視者自行確認。"
@@ -4364,15 +4371,15 @@ msgstr ""
 "|------------|------|------------------------|--------------|\n"
 "| GitHub URL | SOURCE | `$SBOM --git <url> --all --generate-only` | 授權聲明、SBOM、風險報告 |\n"
 "| 原始碼 ZIP | SOURCE | `$SBOM --target app.zip --all --generate-only` | 同上 |\n"
-"| 本機目錄（C/C++） | SOURCE | `cd dir && $SBOM --all --generate-only` | 同上 |\n"
+"| 本機目錄 (C/C++) | SOURCE | `cd dir && $SBOM --all --generate-only` | 同上 |\n"
 "| 既有的 SBOM JSON | ANALYZE | `$SBOM --analyze sbom.json --generate-only` | 同上，另加符合性報告 |\n"
 "| Yocto 建置目錄 | ANALYZE | `$SBOM --target ~/poky/build --generate-only` | 同上，另加符合性報告 |\n"
 "| 建置產出物（`.jar`、`.deb`…） | BINARY | `$SBOM --target app.jar --all --generate-only` | 同上 |\n"
 "| 安裝程式（`.exe`、`.msi`、`.dmg`） | FIRMWARE | `$SBOM --target installer.exe --all --generate-only` | 同上 |\n"
 "| 行動應用程式（`.apk`、`.ipa`） | FIRMWARE | `$SBOM --target app.apk --all --generate-only` | 同上 |\n"
 "| 韌體 `.bin` | FIRMWARE | `$SBOM --target dev.bin --firmware --all --generate-only` | 同上 |\n"
-"| AI 模型（HuggingFace） | AIBOM | `$SBOM --model owner/name --generate-only` | 授權聲明、ML-BOM（1.7）、風險報告（無安全報告） |\n"
-"| AI 模型檔案（GGUF、safetensors…） | MODELFILE | `$SBOM --model-file ./model.gguf --generate-only` | 授權聲明、ML-BOM（1.7）、風險報告（無安全報告） |\n"
+"| AI 模型 (HuggingFace) | AIBOM | `$SBOM --model owner/name --generate-only` | 授權聲明、ML-BOM (1.7)、風險報告（無安全報告） |\n"
+"| AI 模型檔案（GGUF、safetensors…） | MODELFILE | `$SBOM --model-file ./model.gguf --generate-only` | 授權聲明、ML-BOM (1.7)、風險報告（無安全報告） |\n"
 
 #. type: Plain text
 #: docs/guides/by-input.md:58
@@ -4444,7 +4451,7 @@ msgid ""
 "only the deliverables remain, in a `{Project}_{Version}/` subfolder under "
 "the current directory."
 msgstr ""
-"淺層 clone（`--depth 1`）會取到暫存目錄後分析；最後只留下產出物，放在目前目錄"
+"淺層 clone (`--depth 1`) 會取到暫存目錄後分析；最後只留下產出物，放在目前目錄"
 "底下的 `{Project}_{Version}/` 子資料夾。"
 
 #. type: Plain text
@@ -4511,7 +4518,7 @@ msgid ""
 "A team shared the source via a folder you copied locally (`~/project/c-"
 "dev`). Run from inside the directory."
 msgstr ""
-"某個團隊以資料夾分享原始碼，你已複製到本機（`~/project/c-dev`）。請在該目錄裡"
+"某個團隊以資料夾分享原始碼，你已複製到本機 (`~/project/c-dev`)。請在該目錄裡"
 "執行。"
 
 #. type: Fenced code block (bash)
@@ -4555,11 +4562,11 @@ msgid ""
 msgstr ""
 "純 CMake／Make 的原始碼沒有套件管理器的後設資料，SBOM 因此可能很稀疏。可用 "
 "`--deep-license` 補上自家程式碼的授權條款檔頭，並用 `$SBOM --target <build-"
-"dir> --all --generate-only`（syft）另外分析建置輸出（放有已安裝函式庫的 "
+"dir> --all --generate-only`(syft) 另外分析建置輸出（放有已安裝函式庫的 "
 "staging／rootfs）。完整的伺服器 SBOM 流程——把 OS rootfs、應用程式與靜態連結的"
 "相依項目分成獨立層——請看[伺服器 SBOM 指南](server-delivery.md)。在網頁介面"
-"中，`--deep-license` 就是進階掃描選項裡的**逐檔授權條款掃描（ScanCode）**開"
-"關；它掃的是你自己的原始碼檔案（`/src`），不是已宣告的相依項目，而且很慢，所"
+"中，`--deep-license` 就是進階掃描選項裡的**逐檔授權條款掃描 (ScanCode)**開"
+"關；它掃的是你自己的原始碼檔案 (`/src`)，不是已宣告的相依項目，而且很慢，所"
 "以只在真的需要逐檔偵測授權條款時才開啟。"
 
 #. type: Bullet: '- '
@@ -4599,7 +4606,7 @@ msgstr "情境 4——既有的 SBOM JSON"
 msgid ""
 "A team handed you an SBOM (JSON). Validate and analyze it even without the "
 "source."
-msgstr "某個團隊交給你一份 SBOM（JSON）。即使沒有原始碼，也能驗證並分析它。"
+msgstr "某個團隊交給你一份 SBOM (JSON)。即使沒有原始碼，也能驗證並分析它。"
 
 #. type: Fenced code block (bash)
 #: docs/guides/by-input.md:115
@@ -4634,7 +4641,7 @@ msgid ""
 "produced, and the first section of the risk report includes the conformance "
 "result (whether required fields are present)."
 msgstr ""
-"另外還會產生格式符合性報告（`_conformance.{json,md,html}`），風險報告的第一個"
+"另外還會產生格式符合性報告 (`_conformance.{json,md,html}`)，風險報告的第一個"
 "區段也會納入符合性結果（必要欄位是否具備）。"
 
 #. type: Plain text
@@ -4758,7 +4765,7 @@ msgid ""
 "A team handed you a built firmware image (`dev.bin`). Unpack it and identify "
 "components."
 msgstr ""
-"某個團隊交給你一份已建置好的韌體映像檔（`dev.bin`）。解開封裝後識別元件。"
+"某個團隊交給你一份已建置好的韌體映像檔 (`dev.bin`)。解開封裝後識別元件。"
 
 #. type: Fenced code block (bash)
 #: docs/guides/by-input.md:150
@@ -4780,8 +4787,8 @@ msgid ""
 "default (`ghcr.io/sktelecom/bomlens-firmware:latest`)."
 msgstr ""
 "韌體分析需要 opt-in 的韌體映像檔，其中包含 GPL 工具（unblob、cve-bin-tool "
-"等）。可用 `SBOM_FIRMWARE_IMAGE` 指定，或直接下載預設值（`ghcr.io/sktelecom/"
-"bomlens-firmware:latest`）。"
+"等）。可用 `SBOM_FIRMWARE_IMAGE` 指定，或直接下載預設值 (`ghcr.io/sktelecom/"
+"bomlens-firmware:latest`)。"
 
 #. type: Bullet: '- '
 #: docs/guides/by-input.md:159
@@ -4789,7 +4796,7 @@ msgid ""
 "Recognized extensions (`.bin/.img/.squashfs/.ubi/...`) are auto-detected "
 "even without `--firmware`, but being explicit is recommended."
 msgstr ""
-"可辨識的副檔名（`.bin/.img/.squashfs/.ubi/...`）即使不加 `--firmware` 也會自"
+"可辨識的副檔名 (`.bin/.img/.squashfs/.ubi/...`) 即使不加 `--firmware` 也會自"
 "動偵測，但建議明確指定。"
 
 #. type: Bullet: '- '
@@ -4803,7 +4810,7 @@ msgstr "行為與限制請看[韌體分析指南](../guides/firmware.md)。"
 #: docs/guides/by-input.md:162
 #, no-wrap
 msgid "Scenario 7 — AI model (HuggingFace)"
-msgstr "情境 7——AI 模型（HuggingFace）"
+msgstr "情境 7——AI 模型 (HuggingFace)"
 
 #. type: Plain text
 #: docs/guides/by-input.md:165
@@ -4832,7 +4839,7 @@ msgid ""
 "Needs the opt-in aibom image (`ghcr.io/sktelecom/bomlens-aibom:latest`), "
 "pulled automatically. Set a different tag via `SBOM_AIBOM_IMAGE`."
 msgstr ""
-"需要 opt-in 的 aibom 映像檔（`ghcr.io/sktelecom/bomlens-aibom:latest`），會自"
+"需要 opt-in 的 aibom 映像檔 (`ghcr.io/sktelecom/bomlens-aibom:latest`)，會自"
 "動下載。想換別的標籤請用 `SBOM_AIBOM_IMAGE` 指定。"
 
 #. type: Bullet: '- '
@@ -4863,7 +4870,7 @@ msgstr "模型卡、資料集與 G7 的細節請看[AI 模型指南](ai-model.md
 #: docs/guides/by-input.md:178
 #, no-wrap
 msgid "**Deliverables**: notice, ML-BOM (CycloneDX 1.7), risk report, G7 conformance\n"
-msgstr "**產出物**：授權聲明、ML-BOM（CycloneDX 1.7）、風險報告、G7 符合性\n"
+msgstr "**產出物**：授權聲明、ML-BOM (CycloneDX 1.7)、風險報告、G7 符合性\n"
 
 #. type: Title ###
 #: docs/guides/by-input.md:179
@@ -4908,7 +4915,7 @@ msgid ""
 "pickle, npz, npy, ONNX. A file it cannot identify is refused rather than "
 "described."
 msgstr ""
-"可辨識的格式：GGUF、safetensors、PyTorch（`.pt`/`.pth`/`.ckpt`）、pickle、"
+"可辨識的格式：GGUF、safetensors、PyTorch (`.pt`/`.pth`/`.ckpt`)、pickle、"
 "npz、npy 與 ONNX。無法辨識的檔案會直接拒絕，而不是勉強描述它。"
 
 #. type: Bullet: '- '
@@ -4943,7 +4950,7 @@ msgid ""
 "**Notice (NOTICE)**: components grouped by license. Use it to satisfy the "
 "obligation to include or disclose notices when distributing."
 msgstr ""
-"**授權聲明（NOTICE）**：依授權條款分組的元件清單。散布時用它來滿足隨附或公開"
+"**授權聲明 (NOTICE)**：依授權條款分組的元件清單。散布時用它來滿足隨附或公開"
 "聲明的義務。"
 
 #. type: Bullet: '- '
@@ -5010,7 +5017,7 @@ msgstr ""
 "| GitHub URL | 輸入 URL |\n"
 "| ZIP 上傳 | 上傳 `.zip`／tar 檔案 |\n"
 "| 套件上傳 | 上傳建置產出物——`.jar`、`.war`、`.ear`、`.deb`、`.rpm`、`.whl` |\n"
-"| SBOM 上傳 | 上傳既有的 SBOM（JSON），ANALYZE 模式 |\n"
+"| SBOM 上傳 | 上傳既有的 SBOM (JSON)，ANALYZE 模式 |\n"
 "| 韌體上傳 | 上傳 `.bin` 等檔案——只要 Docker 正在執行，這個方塊就會自動出現 |\n"
 "| Docker 映像檔 | 輸入映像檔名稱 |\n"
 "| AI 模型 | 輸入 HuggingFace 模型 id——只要 Docker 正在執行，這個方塊就會自動出現 |\n"
@@ -5042,7 +5049,7 @@ msgid ""
 "your own source files for per-file license text and headers (1st-party). It "
 "does not download or scan the declared dependencies."
 msgstr ""
-"**逐檔授權條款掃描（ScanCode）**——網頁介面中相當於 `--deep-license`。它會掃過"
+"**逐檔授權條款掃描 (ScanCode)**——網頁介面中相當於 `--deep-license`。它會掃過"
 "你自己的原始碼檔案，找出逐檔的授權條款文字與檔頭（自家程式碼），不會下載或掃"
 "描已宣告的相依項目。"
 
@@ -5053,7 +5060,7 @@ msgid ""
 "copied straight into the tree (mainly C/C++). See [Identify bundled open "
 "source](identify-vendored.md)."
 msgstr ""
-"**偵測複製進來的開放原始碼（SCANOSS）**——找出直接複製進原始碼樹的第三方開放原"
+"**偵測複製進來的開放原始碼 (SCANOSS)**——找出直接複製進原始碼樹的第三方開放原"
 "始碼（主要是 C/C++）。參考[識別內含的開放原始碼](identify-vendored.md)。"
 
 #. type: Plain text
@@ -5112,7 +5119,7 @@ msgid ""
 "**ZIP/tar**: archives containing a path escape (zip-slip) are rejected. If "
 "Git Bash on Windows has no `unzip`, `tar` is used."
 msgstr ""
-"**ZIP／tar**：含有路徑逃脫（zip-slip）的壓縮檔會被拒絕。Windows 的 Git Bash "
+"**ZIP／tar**：含有路徑逃脫 (zip-slip) 的壓縮檔會被拒絕。Windows 的 Git Bash "
 "沒有 `unzip` 時，會改用 `tar`。"
 
 #. type: Bullet: '- '
@@ -5176,7 +5183,7 @@ msgstr ""
 #: docs/guides/ci-cd.md:10
 #, no-wrap
 msgid "> **Important**: the scanner is report-only — it reports vulnerabilities but always exits successfully. To fail a build on Critical findings, add a step that inspects the generated `*_security.json` (gate example below).\n"
-msgstr "> **重要**：掃描器只回報、不中斷建置（report-only）——它會回報弱點，但一律以成功狀態結束。若要在出現 Critical（嚴重）弱點時讓建置失敗，請自行加上一個檢查所產生 `*_security.json` 的步驟（閘門範例見下文）。\n"
+msgstr "> **重要**：掃描器只回報、不中斷建置 (report-only)——它會回報弱點，但一律以成功狀態結束。若要在出現 Critical（嚴重）弱點時讓建置失敗，請自行加上一個檢查所產生 `*_security.json` 的步驟（閘門範例見下文）。\n"
 
 #. type: Plain text
 #: docs/guides/ci-cd.md:12
@@ -5185,8 +5192,8 @@ msgid ""
 "generate-only --no-report`); on `main` and releases generate everything (`--"
 "all --generate-only`) and apply the gate."
 msgstr ""
-"想降低負擔，可依觸發條件切分分析深度：在 PR 只快速產生 SBOM（`--generate-"
-"only --no-report`）；在 `main` 與發佈則全部產生（`--all --generate-only`）並"
+"想降低負擔，可依觸發條件切分分析深度：在 PR 只快速產生 SBOM (`--generate-"
+"only --no-report`)；在 `main` 與發佈則全部產生 (`--all --generate-only`) 並"
 "套用閘門。"
 
 #. type: Plain text
@@ -5617,8 +5624,8 @@ msgid ""
 "The outputs are the same three as a normal scan: the notice (`_NOTICE`), the "
 "SBOM (`_bom.json`), and the risk report (`_risk-report`)."
 msgstr ""
-"產出物與一般掃描相同，共三種：開放原始碼授權聲明（`_NOTICE`）、SBOM"
-"（`_bom.json`）與風險報告（`_risk-report`）。"
+"產出物與一般掃描相同，共三種：開放原始碼授權聲明 (`_NOTICE`)、SBOM"
+" (`_bom.json`) 與風險報告 (`_risk-report`)。"
 
 #. type: Title ##
 #: docs/guides/firmware.md:78
@@ -5634,7 +5641,7 @@ msgid ""
 "the same image works both air-gapped and online."
 msgstr ""
 "靜態二進位檔案的 CVE 比對是用 cve-bin-tool 搭配它自己的弱點資料庫。韌體映像檔"
-"採用混合式安排出貨，因此同一個映像檔在實體隔離（air-gapped）與連網環境都能運"
+"採用混合式安排出貨，因此同一個映像檔在實體隔離 (air-gapped) 與連網環境都能運"
 "作。"
 
 #. type: Bullet: '- '
@@ -5696,7 +5703,7 @@ msgid ""
 "single scan, so the data is downloaded directly on your machine rather than "
 "shipped in the image."
 msgstr ""
-"OSV（Open Source Vulnerabilities）的安全公告沒有內建，這是為了讓再散布的映像"
+"OSV (Open Source Vulnerabilities) 的安全公告沒有內建，這是為了讓再散布的映像"
 "檔不含 share-alike 資料。網頁介面提供一個 opt-in 開關「Include OSV "
 "advisories」，開啟後只會為那一次掃描從 osv.dev 取得 OSV，也就是資料直接下載到"
 "你自己的機器上，而不是隨映像檔一起出貨。"
@@ -5763,7 +5770,7 @@ msgid ""
 "The resulting SBOM is a best-effort estimate, so do not use it as the sole "
 "basis for legal license compliance."
 msgstr ""
-"產出的 SBOM 是盡力而為（best-effort）的估計值，因此請不要把它當成法律上授權條"
+"產出的 SBOM 是盡力而為 (best-effort) 的估計值，因此請不要把它當成法律上授權條"
 "款合規的唯一依據。"
 
 #. type: Plain text
@@ -5776,13 +5783,13 @@ msgstr "> **相關文件**：[第一次掃描](../start/first-scan.md) | [依輸
 #: docs/guides/identify-vendored.md:1
 #, no-wrap
 msgid "Identify open source copied (vendored) into C/C++ embedded source that has no package manager, so a normal BomLens scan that finds almost nothing turns into a real component list with versions and CVEs."
-msgstr "識別被複製納入（vendored）到沒有套件管理器的 C/C++ 嵌入式原始碼裡的開放原始碼，讓幾乎找不到東西的一般 BomLens 掃描，變成帶有版本與 CVE 的實際元件清單。"
+msgstr "識別被複製納入 (vendored) 到沒有套件管理器的 C/C++ 嵌入式原始碼裡的開放原始碼，讓幾乎找不到東西的一般 BomLens 掃描，變成帶有版本與 CVE 的實際元件清單。"
 
 #. type: Title #
 #: docs/guides/identify-vendored.md:5
 #, no-wrap
 msgid "Identify bundled open source (C/C++)"
-msgstr "識別內含的開放原始碼（C/C++）"
+msgstr "識別內含的開放原始碼 (C/C++)"
 
 #. type: Plain text
 #: docs/guides/identify-vendored.md:8
@@ -5812,7 +5819,7 @@ msgstr ""
 "一般掃描會讀取套件管理器（npm、Maven、pip、Go、Conan 等）來判斷專案用了哪些開"
 "放原始碼。C/C++ 嵌入式韌體通常沒有套件管理器：開放原始碼是直接複製到原始碼樹"
 "裡的，例如 `third_party/` 底下放一份 openssl、zlib 或 liblfds 的副本，這種做"
-"法稱為「已複製納入」（*vendored*）。cdxgen 無法辨識這些檔案的名稱，因此產出"
+"法稱為「已複製納入」(*vendored*)。cdxgen 無法辨識這些檔案的名稱，因此產出"
 "的 SBOM 幾乎是空的，每個檔案只會列成未識別的 `pkg:generic` 項目。"
 
 #. type: Plain text
@@ -6075,7 +6082,7 @@ msgid ""
 "desktop app today. If you need one, run from the CLI or `sbom-ui.bat` with "
 "the variable set."
 msgstr ""
-"端點網址（`SCANOSS_API_URL`）與回報門檻（`SCANOSS_MIN_FILES`）只能透過 CLI 或"
+"端點網址 (`SCANOSS_API_URL`) 與回報門檻 (`SCANOSS_MIN_FILES`) 只能透過 CLI 或"
 "容器環境變數設定，網頁介面與桌面版應用程式都沒有對應的輸入欄位。特別是桌面版"
 "應用程式不會把 `SCANOSS_API_URL` 傳進容器，所以目前無法從桌面版應用程式使用商"
 "業或自架端點。需要這類端點時，請改從 CLI 或 `sbom-ui.bat` 執行，並一併設定該"
@@ -6146,7 +6153,7 @@ msgstr ""
 #: docs/guides/reports.md:1
 #, no-wrap
 msgid "How to generate the open-source notice (NOTICE), the security vulnerability report, and related artifacts from an SBOM with BomLens."
-msgstr "如何用 BomLens 從 SBOM 產生開源授權聲明（NOTICE）、安全弱點報告與相關產出物。"
+msgstr "如何用 BomLens 從 SBOM 產生開源授權聲明 (NOTICE)、安全弱點報告與相關產出物。"
 
 #. type: Title #
 #: docs/guides/reports.md:5
@@ -6162,7 +6169,7 @@ msgid ""
 "those outputs. For how to read and interpret them, see [What the reports "
 "mean](../concepts/reports-explained.md)."
 msgstr ""
-"除了產生 SBOM 之外，BomLens 還會在同一次執行中產出開源授權聲明（NOTICE）與安"
+"除了產生 SBOM 之外，BomLens 還會在同一次執行中產出開源授權聲明 (NOTICE) 與安"
 "全弱點報告。這一頁說明如何產生這些輸出；至於如何閱讀與解讀它們，請看[如何讀報"
 "告](../concepts/reports-explained.md)。"
 
@@ -6282,7 +6289,7 @@ msgstr "> 輸出旗標建議搭配 `--generate-only`（只存在本機）一起�
 #: docs/guides/reports.md:50
 #, no-wrap
 msgid "Generate everything at once (`--all`)"
-msgstr "一次產生全部產出物（`--all`）"
+msgstr "一次產生全部產出物 (`--all`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:53
@@ -6328,9 +6335,9 @@ msgid ""
 "MyApp_1.0.0_risk-report.md      # open-source risk report (summary)\n"
 "MyApp_1.0.0_risk-report.html    # open-source risk report (visual)\n"
 msgstr ""
-"MyApp_1.0.0_bom.json            # SBOM（CycloneDX 1.6）\n"
+"MyApp_1.0.0_bom.json            # SBOM (CycloneDX 1.6)\n"
 "MyApp_1.0.0_NOTICE.txt          # 授權聲明（文字）\n"
-"MyApp_1.0.0_NOTICE.html         # 授權聲明（HTML）\n"
+"MyApp_1.0.0_NOTICE.html         # 授權聲明 (HTML)\n"
 "MyApp_1.0.0_security.json       # 安全報告（Trivy 原始輸出）\n"
 "MyApp_1.0.0_security.md         # 安全報告（摘要）\n"
 "MyApp_1.0.0_security.html       # 安全報告（視覺化）\n"
@@ -6341,7 +6348,7 @@ msgstr ""
 #: docs/guides/reports.md:73
 #, no-wrap
 msgid "> The open-source risk report (`_risk-report`) is generated by default in every analysis mode (license + vulnerability tally, with response deadlines). To skip it, use `--no-report`. For handling each of the six input forms, see the [Scenarios guide](by-input.md).\n"
-msgstr "> 開放原始碼風險分析報告（`_risk-report`）在所有分析模式下都會預設產生（授權條款加弱點統計，並附上修補期限）。想略過就用 `--no-report`。六種輸入形式各自的處理方式，請看[依輸入類型的指南](by-input.md)。\n"
+msgstr "> 開放原始碼風險分析報告 (`_risk-report`) 在所有分析模式下都會預設產生（授權條款加弱點統計，並附上修補期限）。想略過就用 `--no-report`。六種輸入形式各自的處理方式，請看[依輸入類型的指南](by-input.md)。\n"
 
 #. type: Plain text
 #: docs/guides/reports.md:75
@@ -6357,7 +6364,7 @@ msgstr ""
 #: docs/guides/reports.md:78
 #, no-wrap
 msgid "Open-source notice (`--notice`)"
-msgstr "開源授權聲明（`--notice`）"
+msgstr "開源授權聲明 (`--notice`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:81
@@ -6423,7 +6430,7 @@ msgstr ""
 #: docs/guides/reports.md:101
 #, no-wrap
 msgid "Security vulnerability report (`--security`)"
-msgstr "安全弱點報告（`--security`）"
+msgstr "安全弱點報告 (`--security`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:104
@@ -6431,7 +6438,7 @@ msgid ""
 "Scans the generated SBOM with Trivy and reports known vulnerabilities "
 "(CVEs). (NVD + OSV + GHSA DB)"
 msgstr ""
-"以 Trivy 掃描產生出來的 SBOM，回報已知弱點（CVE）。（NVD + OSV + GHSA DB）"
+"以 Trivy 掃描產生出來的 SBOM，回報已知弱點 (CVE)。(NVD + OSV + GHSA DB)"
 
 #. type: Fenced code block (bash)
 #: docs/guides/reports.md:105
@@ -6463,7 +6470,7 @@ msgid ""
 "The report does not fail the scan even when vulnerabilities exist (report-"
 "only). If you need a gate, post-process `_security.json`."
 msgstr ""
-"即使存在弱點，報告也不會讓掃描失敗（report-only）。如果需要閘門，請對 "
+"即使存在弱點，報告也不會讓掃描失敗 (report-only)。如果需要閘門，請對 "
 "`_security.json` 做後處理。"
 
 #. type: Plain text
@@ -6480,7 +6487,7 @@ msgstr ""
 #: docs/guides/reports.md:119
 #, no-wrap
 msgid "Deep CVE matching (`--deep-cve`)"
-msgstr "深度 CVE 比對（`--deep-cve`）"
+msgstr "深度 CVE 比對 (`--deep-cve`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:122
@@ -6495,7 +6502,7 @@ msgid ""
 "most of the extra findings are still Maven, since that is where the "
 "enrichment adds a CPE the SBOM did not already carry."
 msgstr ""
-"Trivy 以套件身分（PURL）比對弱點，對各生態系的公告資料庫覆蓋得很好。不過較舊"
+"Trivy 以套件身分 (PURL) 比對弱點，對各生態系的公告資料庫覆蓋得很好。不過較舊"
 "的 Java 函式庫有些 CVE 只記錄在 NVD，而且是以 CPE 識別碼登錄，因此以 PURL 為"
 "基礎的掃描永遠碰不到它們。`--deep-cve` 會多加一輪比對：BomLens 依 groupId 為"
 "每個 Maven 元件推導出可與 NVD 比對的 CPE（這個補強步驟以 Maven 為對象），接著"
@@ -6517,7 +6524,7 @@ msgid ""
 "source."
 msgstr ""
 "`--deep-cve` 會一併開啟 `--security`。多找到的結果會合併進同一份安全報告"
-"（`_security.json/.md/.html`），並標上 `nvd:cpe` 來源。"
+" (`_security.json/.md/.html`)，並標上 `nvd:cpe` 來源。"
 
 #. type: Bullet: '- '
 #: docs/guides/reports.md:131
@@ -6547,7 +6554,7 @@ msgid ""
 "in-process if the UI itself was launched from that image."
 msgstr ""
 "在網頁介面（以及桌面版應用程式）中，同一個選項是掃描選項裡的**深度 CVE 比對"
-"（NVD CPE）**開關。凡是使用基礎映像檔的掃描模式都提供它——原始碼、Docker 映像"
+" (NVD CPE)** 開關。凡是使用基礎映像檔的掃描模式都提供它——原始碼、Docker 映像"
 "檔、rootfs、套件上傳與 SBOM 上傳——並且和 CLI 一樣，只在韌體與 AI 模型掃描時隱"
 "藏。開啟它會連安全報告一起開啟；deep-cve 映像檔會在第一次使用時下載一次，以並"
 "列的容器執行，若介面本身就是從該映像檔啟動的，則直接在同一個行程內處理。"
@@ -6585,7 +6592,7 @@ msgstr ""
 #: docs/guides/reports.md:139
 #, no-wrap
 msgid "Deep license detection (`--deep-license`)"
-msgstr "逐檔授權條款掃描（`--deep-license`）"
+msgstr "逐檔授權條款掃描 (`--deep-license`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:142
@@ -6640,7 +6647,7 @@ msgstr "額外產出物：`MyApp_1.0.0_scancode.json`"
 #: docs/guides/reports.md:159
 #, no-wrap
 msgid "Outbound-license conflicts (`--license`)"
-msgstr "對外授權條款衝突（`--license`）"
+msgstr "對外授權條款衝突 (`--license`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:162
@@ -6676,7 +6683,7 @@ msgstr ""
 #: docs/guides/reports.md:171
 #, no-wrap
 msgid "Deterministic output (`--byte-stable`)"
-msgstr "決定性輸出（`--byte-stable`）"
+msgstr "決定性輸出 (`--byte-stable`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:174
@@ -6707,7 +6714,7 @@ msgstr ""
 #: docs/guides/reports.md:183
 #, no-wrap
 msgid "SBOM signing (`--sign`)"
-msgstr "SBOM 簽章（`--sign`）"
+msgstr "SBOM 簽章 (`--sign`)"
 
 #. type: Plain text
 #: docs/guides/reports.md:186
@@ -6717,7 +6724,7 @@ msgid ""
 "network or OIDC is needed."
 msgstr ""
 "以 cosign 為 SBOM 建立 detached 簽章，藉此建立供應鏈信任。這是離線的金鑰簽章"
-"（`--tlog-upload=false`），不需要網路或 OIDC。"
+" (`--tlog-upload=false`)，不需要網路或 OIDC。"
 
 #. type: Fenced code block (bash)
 #: docs/guides/reports.md:187
@@ -6783,7 +6790,7 @@ msgstr ""
 "| `--deep-license requested but scancode not in image` | 請以 `--build-arg SBOM_DEEP_LICENSE=true` 建置映像檔。 |\n"
 "| 介面出現 `Docker is not running` | 請啟動 Docker 引擎（Rancher Desktop／Docker Desktop 等），然後重新執行。 |\n"
 "| 授權聲明中出現大量 `NOASSERTION` | 表示這些相依項目沒有授權條款後設資料。請用 `--deep-license` 補強，或手動確認。 |\n"
-"| 連接埠衝突（`--ui`） | 請用 `UI_PORT` 指定其他連接埠。 |\n"
+"| 連接埠衝突 (`--ui`) | 請用 `UI_PORT` 指定其他連接埠。 |\n"
 
 #. type: Yaml Front Matter Hash Value: description
 #: docs/guides/server-delivery.md:1
@@ -6898,7 +6905,7 @@ msgid ""
 "installed package with a real purl (`pkg:rpm/...`)."
 msgstr ""
 "掃描伺服器的 rootfs（解開後的根檔案系統），或是它的容器映像檔。Syft 會讀取 "
-"rpm/dpkg/apk 資料庫，把每個已安裝的套件都以實際的 purl（`pkg:rpm/...`）記錄下"
+"rpm/dpkg/apk 資料庫，把每個已安裝的套件都以實際的 purl (`pkg:rpm/...`) 記錄下"
 "來。"
 
 #. type: Fenced code block (bash)
@@ -7019,7 +7026,7 @@ msgid ""
 "complementary check."
 msgstr ""
 "掃描仍然漏掉的部分，請從建置腳本裡手動記下來源與版本，例如建置實際拉進來的 "
-"openssl 版本（`openssl 1.1.1za`）。想要更精確地盤點靜態連結的元件，可以再搭配"
+"openssl 版本 (`openssl 1.1.1za`)。想要更精確地盤點靜態連結的元件，可以再搭配"
 "二進位組成分析工具作為補充檢查。"
 
 #. type: Title ##
@@ -7119,8 +7126,8 @@ msgid ""
 msgstr ""
 "這會寫出 `mms-relay-server_1.0.0_bom.json`，其中 `metadata.component` 設為該"
 "伺服器產品，並針對合併後的元件集合產生開放原始碼授權聲明與風險分析報告。每個"
-"元件都保留 `bomlens:layer` 屬性，因此仍然可以依層過濾（`jq '.components[] | "
-"select(.properties[]?.value == \"centos\")'`）。"
+"元件都保留 `bomlens:layer` 屬性，因此仍然可以依層過濾 (`jq '.components[] | "
+"select(.properties[]?.value == \"centos\")'`)。"
 
 #. type: Plain text
 #: docs/guides/server-delivery.md:108
@@ -7186,7 +7193,7 @@ msgstr "使用網頁介面"
 #: docs/guides/server-delivery.md:119
 #, no-wrap
 msgid "The OS and application layers can also run from the web UI (`$SBOM --ui`). Put the rootfs under the folder where you launch the UI and use the **Directory path** input, or scan a container image with the **Docker image** input. Paths outside the launch folder are rejected for safety; to scan a rootfs stored elsewhere, launch the UI with `--ui --mount <dir>` and the folder appears as a read-only location in the Directory path input. `--mount /` exposes the running host OS itself the same way (pseudo filesystems such as `/proc` and `/sys` are skipped automatically, and results still save under the launch folder). The static-link layer and the optional merge are most direct from the CLI.\n"
-msgstr "OS 層與應用程式層也可以從網頁介面（`$SBOM --ui`）執行。把 rootfs 放在啟動介面的資料夾底下，使用**目錄路徑**輸入欄；或是用 **Docker 映像檔**輸入欄掃描容器映像檔。啟動資料夾以外的路徑為了安全會被拒絕；要掃描放在別處的 rootfs，請用 `--ui --mount <dir>` 啟動介面，該資料夾就會以唯讀位置的形式出現在目錄路徑輸入欄中。`--mount /` 會以同樣的方式開放正在執行的主機 OS 本身（`/proc`、`/sys` 這類虛擬檔案系統會自動略過，結果仍然存放在啟動資料夾底下）。靜態連結那一層與選用的合併，從 CLI 執行最直接。\n"
+msgstr "OS 層與應用程式層也可以從網頁介面 (`$SBOM --ui`) 執行。把 rootfs 放在啟動介面的資料夾底下，使用**目錄路徑**輸入欄；或是用 **Docker 映像檔**輸入欄掃描容器映像檔。啟動資料夾以外的路徑為了安全會被拒絕；要掃描放在別處的 rootfs，請用 `--ui --mount <dir>` 啟動介面，該資料夾就會以唯讀位置的形式出現在目錄路徑輸入欄中。`--mount /` 會以同樣的方式開放正在執行的主機 OS 本身（`/proc`、`/sys` 這類虛擬檔案系統會自動略過，結果仍然存放在啟動資料夾底下）。靜態連結那一層與選用的合併，從 CLI 執行最直接。\n"
 
 #. type: Plain text
 #: docs/guides/server-delivery.md:122
@@ -7198,7 +7205,7 @@ msgstr "> **相關文件**：[依輸入類型](by-input.md) | [韌體分析](fir
 #: docs/guides/supplier-sbom.md:1
 #, no-wrap
 msgid "Validate that an SBOM (CycloneDX/SPDX) you received meets your quality criteria with BomLens, then analyze licenses and vulnerabilities into a risk report."
-msgstr "以 BomLens 驗證收到的 SBOM（CycloneDX/SPDX）是否符合你的品質標準，接著分析授權條款與弱點，產出風險報告。"
+msgstr "以 BomLens 驗證收到的 SBOM (CycloneDX/SPDX) 是否符合你的品質標準，接著分析授權條款與弱點，產出風險報告。"
 
 #. type: Title #
 #: docs/guides/supplier-sbom.md:5
@@ -7214,7 +7221,7 @@ msgid ""
 "and vulnerabilities and produces a risk report. You only need the SBOM file "
 "— no source code required."
 msgstr ""
-"說明如何驗證從供應者或其他團隊收到的 SBOM（JSON）是否符合你的品質標準。驗證之"
+"說明如何驗證從供應者或其他團隊收到的 SBOM (JSON) 是否符合你的品質標準。驗證之"
 "後，BomLens 會接著分析授權條款與弱點，並產出風險報告。不需要原始碼，只要有 "
 "SBOM 檔案就夠了。"
 
@@ -7268,13 +7275,13 @@ msgstr ""
 "| 必要的後設資料 | timestamp、工具資訊、頂層元件的名稱與版本 |\n"
 "| 必要的元件欄位 | name、version，以及標準 `pkg:type/name@version` 形式的 PURL（不允許 `pkg:generic`） |\n"
 "| 完整性 | 直接相依與間接相依都要包含 |\n"
-"| 建議 | supplier、授權條款（SPDX ID）、hash |\n"
+"| 建議 | supplier、授權條款 (SPDX ID)、hash |\n"
 
 #. type: Plain text
 #: docs/guides/supplier-sbom.md:25
 #, no-wrap
 msgid "> The accepted format ranges above are the SK Telecom submission defaults. If your organization accepts a different range, override them with the `CYCLONEDX_SPEC_VERSIONS`, `AI_CYCLONEDX_SPEC_VERSIONS` (AI SBOMs), and `SPDX_SPEC_VERSIONS` environment variables (space-separated lists). They are listed in the [Docker image environment variables](../reference/docker-image.md).\n"
-msgstr "> 上面可接受的格式範圍是 SK Telecom 提交基準的預設值。如果你的組織接受不同的範圍，可以用 `CYCLONEDX_SPEC_VERSIONS`、`AI_CYCLONEDX_SPEC_VERSIONS`（AI SBOM）與 `SPDX_SPEC_VERSIONS` 這幾個環境變數覆寫（以空白分隔的清單）。清單收錄在 [Docker 映像檔環境變數](../reference/docker-image.md)。\n"
+msgstr "> 上面可接受的格式範圍是 SK Telecom 提交基準的預設值。如果你的組織接受不同的範圍，可以用 `CYCLONEDX_SPEC_VERSIONS`、`AI_CYCLONEDX_SPEC_VERSIONS`(AI SBOM) 與 `SPDX_SPEC_VERSIONS` 這幾個環境變數覆寫（以空白分隔的清單）。清單收錄在 [Docker 映像檔環境變數](../reference/docker-image.md)。\n"
 
 #. type: Title ##
 #: docs/guides/supplier-sbom.md:26
@@ -7299,8 +7306,8 @@ msgid ""
 "package SBOM to extend. The first run downloads the deep-cve image once. It "
 "is the same matching as the CLI's `--deep-cve`."
 msgstr ""
-"如果這份 SBOM 以 Java（Maven）為主，請在掃描選項裡開啟**深度 CVE 比對（NVD "
-"CPE）**。它會把較舊的 Maven 函式庫拿去比對僅存在於 NVD、其他公告來源會漏掉的"
+"如果這份 SBOM 以 Java (Maven) 為主，請在掃描選項裡開啟**深度 CVE 比對 (NVD "
+"CPE)**。它會把較舊的 Maven 函式庫拿去比對僅存在於 NVD、其他公告來源會漏掉的"
 "弱點，代價是掃描時間變長。這個選項不只出現在 SBOM 上傳，凡是使用基礎映像檔的"
 "掃描模式都有——只有韌體與 AI 模型掃描會隱藏它，因為那兩種沒有可以擴充的套件 "
 "SBOM。第一次執行時會下載 deep-cve 映像檔一次。這與 CLI 的 `--deep-cve` 是同一"
@@ -7336,7 +7343,7 @@ msgid ""
 "Pull the scanner image once (`docker pull ghcr.io/sktelecom/"
 "bomlens:latest`), then pass the SBOM file to `--analyze`:"
 msgstr ""
-"先把掃描器映像檔下載下來（`docker pull ghcr.io/sktelecom/bomlens:latest`），"
+"先把掃描器映像檔下載下來 (`docker pull ghcr.io/sktelecom/bomlens:latest`)，"
 "然後把 SBOM 檔案傳給 `--analyze`："
 
 #. type: Fenced code block (bash)
@@ -7519,7 +7526,7 @@ msgid ""
 "The risk report (`_risk-report`) is a document built by re-aggregating the "
 "outputs above without a new scan. It has four parts."
 msgstr ""
-"風險報告（`_risk-report`）是不重新掃描、僅將上述產出物重新彙整而成的文件，共"
+"風險報告 (`_risk-report`) 是不重新掃描、僅將上述產出物重新彙整而成的文件，共"
 "分四個部分。"
 
 #. type: Bullet: '1. '
@@ -7775,7 +7782,7 @@ msgstr "開始之前，有兩項限制值得知道。"
 #: docs/guides/supplier-sbom.md:149
 #, no-wrap
 msgid "SPDX 2.2 is read, but with less in it. Yocto 4.0 (Kirkstone) and 5.0 (Scarthgap) emit SPDX 2.2 by default, and that form is not a document at all: the deploy directory holds one `<image>.spdx.tar.zst` and nothing else. Inside it are the image document, a document per installed package and one per recipe. BomLens reads the archive itself — measured against the published Yocto 5.0.14 `core-image-minimal`, it yields the same 36 packages the image manifest lists, with their licenses and CPEs. What they do not give is the build's CVE verdicts — only SPDX 3.0 records which CVEs a recipe patched — so vulnerabilities are matched from the CPEs like any other SBOM, and a CVE the build already patched can appear as open. Pull the image document out of the archive and upload it alone and you get an almost empty result, which is said rather than left to look like a clean scan. When a build directory holds both formats, the SPDX 3.0 document is the one analyzed even if the 2.2 one is newer. No conformance report is produced for an archive: it is a bundle of documents rather than a submitted one, so there is nothing to measure against the submission criteria.\n"
-msgstr "SPDX 2.2 也讀得進來，只是內容比較少。Yocto 4.0（Kirkstone）與 5.0（Scarthgap）預設產出 SPDX 2.2，而那種形式根本不是一份文件：deploy 目錄裡只會有一個 `<image>.spdx.tar.zst`，別無其他。壓縮檔內含映像檔文件，以及每個已安裝套件與每個 recipe 各一份文件。BomLens 會直接讀這個壓縮檔——以公開發佈的 Yocto 5.0.14 `core-image-minimal` 實測，取得的正是映像檔 manifest 所列的同樣 36 個套件，連授權條款與 CPE 一併帶出。它們沒有的是建置的 CVE 判定——只有 SPDX 3.0 會記錄 recipe 修補了哪些 CVE——所以弱點會像其他 SBOM 一樣依 CPE 比對，建置其實已經修補的 CVE 也可能顯示為未處理。若只從壓縮檔裡取出映像檔文件單獨上傳，結果幾乎是空的；這件事會明確告知，不會放著讓它看起來像是一次乾淨的掃描。建置目錄同時存在兩種格式時，即使 2.2 那份較新，仍然會分析 SPDX 3.0 文件。壓縮檔不會產生符合性報告：它是一綑文件，而不是一份提交的文件，因此沒有可以對照提交標準衡量的對象。\n"
+msgstr "SPDX 2.2 也讀得進來，只是內容比較少。Yocto 4.0 (Kirkstone) 與 5.0 (Scarthgap) 預設產出 SPDX 2.2，而那種形式根本不是一份文件：deploy 目錄裡只會有一個 `<image>.spdx.tar.zst`，別無其他。壓縮檔內含映像檔文件，以及每個已安裝套件與每個 recipe 各一份文件。BomLens 會直接讀這個壓縮檔——以公開發佈的 Yocto 5.0.14 `core-image-minimal` 實測，取得的正是映像檔 manifest 所列的同樣 36 個套件，連授權條款與 CPE 一併帶出。它們沒有的是建置的 CVE 判定——只有 SPDX 3.0 會記錄 recipe 修補了哪些 CVE——所以弱點會像其他 SBOM 一樣依 CPE 比對，建置其實已經修補的 CVE 也可能顯示為未處理。若只從壓縮檔裡取出映像檔文件單獨上傳，結果幾乎是空的；這件事會明確告知，不會放著讓它看起來像是一次乾淨的掃描。建置目錄同時存在兩種格式時，即使 2.2 那份較新，仍然會分析 SPDX 3.0 文件。壓縮檔不會產生符合性報告：它是一綑文件，而不是一份提交的文件，因此沒有可以對照提交標準衡量的對象。\n"
 
 #. type: Plain text
 #: docs/guides/supplier-sbom.md:151
@@ -7829,7 +7836,7 @@ msgid ""
 "After validation and analysis, send the risk report (`_risk-report.html`) to "
 "whoever sent the SBOM and ask for the following."
 msgstr ""
-"驗證與分析完成後，把風險報告（`_risk-report.html`）交給寄來 SBOM 的一方，並提"
+"驗證與分析完成後，把風險報告 (`_risk-report.html`) 交給寄來 SBOM 的一方，並提"
 "出以下要求。"
 
 #. type: Bullet: '- '
@@ -7929,7 +7936,7 @@ msgid ""
 "the project."
 msgstr ""
 "`dependency-track`（預設）：一般的 Dependency-Track 伺服器。以 `API_URL` 與 "
-"`API_KEY`（`X-Api-Key`）驗證身分，並自動建立專案。"
+"`API_KEY`(`X-Api-Key`) 驗證身分，並自動建立專案。"
 
 #. type: Bullet: '- '
 #: docs/guides/upload.md:13
@@ -7963,7 +7970,7 @@ msgid ""
 "project_id: the target TRUSCA project id (UUID). It must already exist; "
 "there is no auto-create."
 msgstr ""
-"project_id：目標 TRUSCA 專案的 id（UUID）。它必須事先存在，不會自動建立。"
+"project_id：目標 TRUSCA 專案的 id (UUID)。它必須事先存在，不會自動建立。"
 
 #. type: Fenced code block (bash)
 #: docs/guides/upload.md:20
@@ -7983,13 +7990,13 @@ msgstr ""
 #: docs/guides/upload.md:28
 #, no-wrap
 msgid "`--trusca <id>` is shorthand for `--upload-target trusca` plus `TRUSCA_PROJECT_ID`. Adjust the ref and release labels with `TRUSCA_REF` (default `main`) and `TRUSCA_RELEASE` (default the `--version` value). On acceptance it prints `202` and a scan id; track progress in the TRUSCA UI (`GET /v1/scans/{id}`).\n"
-msgstr "`--trusca <id>` 是 `--upload-target trusca` 加上 `TRUSCA_PROJECT_ID` 的簡寫。ref 與 release 標籤可用 `TRUSCA_REF`（預設 `main`）與 `TRUSCA_RELEASE`（預設為 `--version` 的值）調整。上傳被接受時會印出 `202` 與一組 scan id；進度可在 TRUSCA 介面追蹤（`GET /v1/scans/{id}`）。\n"
+msgstr "`--trusca <id>` 是 `--upload-target trusca` 加上 `TRUSCA_PROJECT_ID` 的簡寫。ref 與 release 標籤可用 `TRUSCA_REF`（預設 `main`）與 `TRUSCA_RELEASE`（預設為 `--version` 的值）調整。上傳被接受時會印出 `202` 與一組 scan id；進度可在 TRUSCA 介面追蹤 (`GET /v1/scans/{id}`)。\n"
 
 #. type: Plain text
 #: docs/guides/upload.md:30
 #, no-wrap
 msgid "> TRUSCA ingest fills components, vulnerabilities, declared licenses, the dependency graph, and the build gate. It cannot fill scancode-detected licenses (`--deep-license`), the cosign signature (`--sign`), or source preservation, since there is no source tree. Generate those locally with `--generate-only` if you need them.\n"
-msgstr "> TRUSCA ingest 會填入元件、弱點、宣告的授權條款、相依關係圖與建置閘門。由於沒有原始碼樹，它無法填入 scancode 偵測到的授權條款（`--deep-license`）、cosign 簽章（`--sign`）與原始碼保存。若需要這些，請以 `--generate-only` 在本機一併產生。\n"
+msgstr "> TRUSCA ingest 會填入元件、弱點、宣告的授權條款、相依關係圖與建置閘門。由於沒有原始碼樹，它無法填入 scancode 偵測到的授權條款 (`--deep-license`)、cosign 簽章 (`--sign`) 與原始碼保存。若需要這些，請以 `--generate-only` 在本機一併產生。\n"
 
 #. type: Plain text
 #: docs/guides/upload.md:33
@@ -8039,7 +8046,7 @@ msgstr ""
 "針對單一專案、以本機優先為原則的 SBOM 產生器與開放原始碼風險評估工具——不需要 "
 "SaaS，也不需要帳號。輸入可以是原始碼、容器映像檔、二進位檔案、韌體、你收到的 "
 "SBOM，或是 HuggingFace 上的 AI 模型，一次執行就能產出 [SBOM](concepts/what-"
-"is-sbom.md)（CycloneDX 1.6）、開放原始碼授權聲明與安全風險報告。遇到 AI 模型"
+"is-sbom.md)(CycloneDX 1.6)、開放原始碼授權聲明與安全風險報告。遇到 AI 模型"
 "時會建立 CycloneDX ML-BOM，並依 [AI 的 G7 最低要素](guides/ai-model.md)檢查，"
 "這些要素的叢集與 EU AI Act 的 Annex IV 有相當程度的重疊。"
 
@@ -8052,7 +8059,7 @@ msgid ""
 "BomLens-Setup.exe){ .md-button }"
 msgstr ""
 "[開始使用](start/first-scan.md){ .md-button .md-button--primary } [試用示範]"
-"(https://bomlens.ospo.tw/demo/){ .md-button } [下載 Windows 版（.exe）]"
+"(https://bomlens.ospo.tw/demo/){ .md-button } [下載 Windows 版 (.exe)]"
 "(https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-"
 "Setup.exe){ .md-button }"
 
@@ -8304,7 +8311,7 @@ msgid ""
 msgstr ""
 "| 檔案 | 產生條件 | 說明 |\n"
 "|------|----------------|-------------|\n"
-"| `{Project}_{Version}_bom.json` | 一律產生 | SBOM（CycloneDX 1.6） |\n"
+"| `{Project}_{Version}_bom.json` | 一律產生 | SBOM (CycloneDX 1.6) |\n"
 "| `{Project}_{Version}_bom.spdx.json` | `--spdx` / `--all`，或在介面中使用「匯出為 SPDX 2.3」 | SBOM（SPDX 2.3，由 CycloneDX 輸出轉換而來） |\n"
 "| `{Project}_{Version}_NOTICE.txt` / `.html` | `--notice` / `--all` / 風險報告預設產生 | 開放原始碼授權聲明 |\n"
 "| `{Project}_{Version}_security.json` / `.md` / `.html` | `--security` / `--all` / 風險報告預設產生 | Trivy 安全報告 |\n"
@@ -8367,14 +8374,14 @@ msgstr ""
 "bomFormat          \"CycloneDX\"\n"
 "specVersion        \"1.6\"\n"
 "metadata\n"
-"  ├── timestamp    產生時間（ISO 8601）\n"
+"  ├── timestamp    產生時間 (ISO 8601)\n"
 "  └── component    專案資訊（name、version、type）\n"
 "components[]\n"
 "  ├── type         \"library\" | \"framework\" | \"application\"\n"
 "  ├── name         元件名稱\n"
 "  ├── version      版本\n"
 "  ├── purl         Package URL（唯一識別碼）\n"
-"  └── licenses[]   授權條款資訊（SPDX ID）\n"
+"  └── licenses[]   授權條款資訊 (SPDX ID)\n"
 
 #. type: Plain text
 #: docs/reference/artifacts.md:45
@@ -8474,12 +8481,12 @@ msgstr ""
 "| `--project <name>` | — | **（必要）**專案名稱 |\n"
 "| `--version <version>` | — | **（必要）**專案版本 |\n"
 "| `--target <target>` | 目前目錄 | 分析對象：目錄（原始碼樹，或是 OS rootfs、建置產出物的 staging 目錄）、Docker 映像檔、二進位檔案，或 `.zip`/`.tar.gz` 壓縮檔。Yocto 建置目錄會被辨識出來，此時不會走訪建置樹，而是改為分析建置發佈在 `tmp/deploy/images/` 底下的映像檔 SBOM（參考[供應者 SBOM 指南](../guides/supplier-sbom.md#yocto-images)） |\n"
-"| `--git <url>` | — | 以淺層 clone（shallow）取得 git/GitHub URL 並當作原始碼分析（私有儲存庫：`GIT_TOKEN` 環境變數） |\n"
+"| `--git <url>` | — | 以淺層 clone (shallow) 取得 git/GitHub URL 並當作原始碼分析（私有儲存庫：`GIT_TOKEN` 環境變數） |\n"
 "| `--branch <ref>` | 預設分支 | `--git` 目標的分支、標籤或 commit（別名 `--ref`） |\n"
 "| `--firmware` | false | 強制以韌體模式處理 `--target` 指定的檔案（opt-in 韌體映像檔） |\n"
 "| `--analyze <sbom>` | — | 驗證並分析供應者 SBOM（別名 `--sbom`）。支援 CycloneDX/SPDX。與 `--target` 互斥 |\n"
-"| `--model <owner/name>` | — | 透過 OWASP AIBOM Generator 為 HuggingFace 模型產生 AI SBOM（CycloneDX 1.7 ML-BOM）；使用 opt-in 的 `bomlens-aibom` 映像檔，會透過網路取得模型卡後設資料。與 `--target`/`--analyze`/`--git`/`--merge` 互斥 |\n"
-"| `--model-file <path>` | — | 讀取單一 AI 模型檔案，只依檔案自身的標頭來描述它：支援 GGUF、safetensors、PyTorch（`.pt`/`.pth`/`.ckpt`）、pickle、npz、npy 與 ONNX。離線運作，不需要 HuggingFace 帳號，連從未發佈的模型也能處理。可填入的資訊依格式而異——GGUF 帶有名稱、授權條款與架構，safetensors 通常只有張量形狀；檔案沒有宣告的欄位會留空，不會用猜測值填補。傳給 `--target` 的 `.gguf`/`.safetensors`/`.pt`/… 路徑也會以這種方式讀取。與 `--target`/`--analyze`/`--git` 互斥 |\n"
+"| `--model <owner/name>` | — | 透過 OWASP AIBOM Generator 為 HuggingFace 模型產生 AI SBOM (CycloneDX 1.7 ML-BOM)；使用 opt-in 的 `bomlens-aibom` 映像檔，會透過網路取得模型卡後設資料。與 `--target`/`--analyze`/`--git`/`--merge` 互斥 |\n"
+"| `--model-file <path>` | — | 讀取單一 AI 模型檔案，只依檔案自身的標頭來描述它：支援 GGUF、safetensors、PyTorch (`.pt`/`.pth`/`.ckpt`)、pickle、npz、npy 與 ONNX。離線運作，不需要 HuggingFace 帳號，連從未發佈的模型也能處理。可填入的資訊依格式而異——GGUF 帶有名稱、授權條款與架構，safetensors 通常只有張量形狀；檔案沒有宣告的欄位會留空，不會用猜測值填補。傳給 `--target` 的 `.gguf`/`.safetensors`/`.pt`/… 路徑也會以這種方式讀取。與 `--target`/`--analyze`/`--git` 互斥 |\n"
 "| `--license <spdx-id>` | — | 專案對外散布時採用的授權條款（例如 `Apache-2.0`）。會記錄在 SBOM 的根元件上，並用來標記條款與它衝突的相依項目。原始碼掃描無法推斷這個值——cdxgen 在 maven 與 gradle 會把根授權條款留空——因此未指定時不會產生衝突判定。SBOM 中已有的根授權條款（供應者自己宣告的值）絕不會被取代 |\n"
 "| `--sbom-author <name>` | — | 產生這份 SBOM 的主體——指執行掃描的組織或個人，既不是工具，也不是撰寫軟體的一方。以不含縮寫的完整名稱記錄在 `metadata.authors`。掃描過程無從得知這個值，因此未指定時會直接省略該欄位，而不是填入佔位字串 |\n"
 "| `--usage <scenario>` | — | 依模型實際的使用方式調整 AI 模型風險評估（`--model` 與 `--model-file`）：`internal`、`product`、`redistribute` 或 `outputs-only`。只有約束該情境的授權條件會決定判定結果，報告中也會註明是以哪個情境判定。未指定時會以全部條件判定 |\n"
@@ -8489,14 +8496,14 @@ msgstr ""
 "| `--upload-target <target>` | `dependency-track` | 上傳目的地：`dependency-track`（DT 相容）或 `trusca`（原生 ingest） |\n"
 "| `--trusca <project_id>` | — | 上傳到 TRUSCA（等同 `--upload-target trusca` 加上 project id）。需要 `API_URL` 與 Bearer `API_KEY` |\n"
 "| `--notice` | （預設開啟） | 產生開放原始碼授權聲明（NOTICE，txt+html） |\n"
-"| `--security` | （預設開啟） | 產生 Trivy 安全報告（json+md+html），包含 CVSS、EPSS 與 CISA KEV 優先順序訊號 |\n"
-"| `--spdx` | false | 額外把 SBOM 匯出為 SPDX 2.3 JSON（`_bom.spdx.json`），內容由最終的 CycloneDX 輸出轉換而來 |\n"
+"| `--security` | （預設開啟） | 產生 Trivy 安全報告 (json+md+html)，包含 CVSS、EPSS 與 CISA KEV 優先順序訊號 |\n"
+"| `--spdx` | false | 額外把 SBOM 匯出為 SPDX 2.3 JSON (`_bom.spdx.json`)，內容由最終的 CycloneDX 輸出轉換而來 |\n"
 "| `--all` | — | `--notice --security --spdx` |\n"
 "| `--no-report` | false | 略過開放原始碼風險分析報告（見下文） |\n"
-"| `--lang <en\\|ko\\|zh-TW>` | `en` | 給人閱讀的符合性報告與 AI 合規概況報告（`.md`/`.html`）所使用的語言。SBOM 與 JSON 報告不受此設定影響，一律維持英文 |\n"
+"| `--lang <en\\|ko\\|zh-TW>` | `en` | 給人閱讀的符合性報告與 AI 合規概況報告 (`.md`/`.html`) 所使用的語言。SBOM 與 JSON 報告不受此設定影響，一律維持英文 |\n"
 "| `--deep-license` | false | 以 scancode 進行精確的授權條款偵測（opt-in 映像檔） |\n"
 "| `--deep-cve` | false | 透過 grype 的 NVD CPE 比對器再加一輪 CVE 比對（opt-in `bomlens-deep-cve` 映像檔，會自動下載）。可補回 Trivy 漏掉的 NVD 專有 CVE，這類 CVE 大多出現在較舊的 Maven 函式庫，因為 BomLens 只為 Maven 元件附上可與 NVD 比對的 CPE；會一併開啟 `--security`。未與即時 NVD 版本範圍核對過的結果，會在報告中標示為版本未驗證——參考[深度 CVE 比對指南](../guides/reports.md) |\n"
-"| `--identify-vendored` | false | 識別被複製納入（vendored）到沒有套件管理器的 C/C++ 原始碼裡的開放原始碼。會把檔案指紋與 OSSKB 服務比對（已包含在發佈的映像檔中；傳送的是雜湊值，不是原始碼）。參考[識別內含的開放原始碼指南](../guides/identify-vendored.md) |\n"
+"| `--identify-vendored` | false | 識別被複製納入 (vendored) 到沒有套件管理器的 C/C++ 原始碼裡的開放原始碼。會把檔案指紋與 OSSKB 服務比對（已包含在發佈的映像檔中；傳送的是雜湊值，不是原始碼）。參考[識別內含的開放原始碼指南](../guides/identify-vendored.md) |\n"
 "| `--byte-stable` | false | 決定性（可重現）的 SBOM 輸出 |\n"
 "| `--sign` | false | cosign 簽章（需要 `COSIGN_KEY`） |\n"
 "| `--output-dir <dir>` | 目前目錄 | 產出物的基準目錄（別名 `-o`）。每次掃描都會落在它底下的 `{Project}_{Version}/` 子資料夾，讓同一次執行的檔案集中在一起，也不會散落到原始碼樹裡 |\n"
@@ -8553,7 +8560,7 @@ msgstr ""
 "|----------|---------|-------------|\n"
 "| `SBOM_SCANNER_IMAGE` | `ghcr.io/sktelecom/bomlens:latest` | 覆寫掃描器映像檔 |\n"
 "| `SBOM_FIRMWARE_IMAGE` | `ghcr.io/sktelecom/bomlens-firmware:latest` | 韌體分析所使用的映像檔 |\n"
-"| `SBOM_AIBOM_IMAGE` | `ghcr.io/sktelecom/bomlens-aibom:latest` | 產生 AI 模型（ML-BOM）時所使用的映像檔 |\n"
+"| `SBOM_AIBOM_IMAGE` | `ghcr.io/sktelecom/bomlens-aibom:latest` | 產生 AI 模型 (ML-BOM) 時所使用的映像檔 |\n"
 "| `SBOM_DEEP_CVE_IMAGE` | `ghcr.io/sktelecom/bomlens-deep-cve:latest` | `--deep-cve`（grype CPE 比對）所使用的映像檔，網頁介面中同一個開關也會用它 |\n"
 "| `SBOM_OUTPUT_FLAT` | — | 設為 `1` 時，產出物會平鋪寫在輸出基準目錄，不建立每次執行的子資料夾（隔離之前的舊配置，供仍預期舊路徑的 CI 使用） |\n"
 "| `SBOM_OUTPUT_DIR` | `~/sbom-output` | 桌面版應用程式與網頁介面的輸出基準目錄（CLI 則改用 `--output-dir`）。每次掃描同樣會落在它底下的 `{Project}_{Version}/` 子資料夾 |\n"
@@ -8563,12 +8570,12 @@ msgstr ""
 "| `SBOM_IMAGE_TAR` | — | 由 `docker save` 產生的映像檔 tar 路徑。Windows 啟動程式會載入它，而不是從網路 pull；放在指令碼旁邊、檔名為 `bomlens-image.tar` 的檔案會被自動採用。搭配 `SBOM_PULL=never` 就能做到完全離線安裝 |\n"
 "| `CVE_BIN_TOOL_MODE` | `auto` | 韌體的 CVE 比對方式。`auto` 在內建 CVE 資料庫存在時使用它，否則在網路可連線時從 NVD 下載。`offline` 只與內建資料庫比對。`online` 一律從網路更新。`components-only` 略過 CVE 比對，只產生僅含元件的 SBOM |\n"
 "| `CVE_BIN_TOOL_HOME` | `/opt/cve-bin-tool-home` | 內建的 cve-bin-tool CVE 資料庫位置。cve-bin-tool 會讀取 `$CVE_BIN_TOOL_HOME/.cache/cve-bin-tool/cve.db`（它的快取是以 `HOME` 為索引） |\n"
-"| `CVE_BIN_TOOL_DISABLE_SOURCES` | `GAD` | 韌體掃描時要停用的 cve-bin-tool 資料來源。`GAD`（GitLab Advisory）預設停用，因為它在抓取資料時會讓內建的 cve-bin-tool 當掉 |\n"
+"| `CVE_BIN_TOOL_DISABLE_SOURCES` | `GAD` | 韌體掃描時要停用的 cve-bin-tool 資料來源。`GAD`(GitLab Advisory) 預設停用，因為它在抓取資料時會讓內建的 cve-bin-tool 當掉 |\n"
 "| `SCANOSS_API_URL` | OSSKB 免費 API | `--identify-vendored` 使用的端點。在封閉網路或大量使用的情境下，可指向 SCANOSS 的商業或自架端點 |\n"
 "| `SCANOSS_API_KEY` | — | `SCANOSS_API_URL` 需要時所使用的認證資訊 |\n"
 "| `SCANOSS_MIN_FILES` | `2` | 一個函式庫要被列出所需的最少相符檔案數，用來濾掉一次性的下游 fork 雜訊。設為 `1` 就會保留所有僅單一檔案相符的結果 |\n"
 "| `GIT_TOKEN` | — | clone 私有 git 儲存庫所使用的權杖 |\n"
-"| `HF_TOKEN` | — | `--model` 以及 AI SBOM 分析期間查詢資料集後設資料所使用的 HuggingFace 讀取權杖。私有或受管制（gated）的儲存庫必須提供，這也是在發佈模型之前先檢視它的做法。`HUGGING_FACE_HUB_TOKEN` 也可以當作別名使用 |\n"
+"| `HF_TOKEN` | — | `--model` 以及 AI SBOM 分析期間查詢資料集後設資料所使用的 HuggingFace 讀取權杖。私有或受管制 (gated) 的儲存庫必須提供，這也是在發佈模型之前先檢視它的做法。`HUGGING_FACE_HUB_TOKEN` 也可以當作別名使用 |\n"
 "| `ENRICH_HF_SECURITY` | `true` | 在 `--model` 掃描中讀取 HuggingFace 自己執行的檔案安全掃描結果（逐檔的 ClamAV 與 picklescan），並記錄到 ML-BOM 裡。只讀取後設資料，不下載檔案。設為 `false` 可略過這項查詢 |\n"
 "| `COSIGN_KEY` | — | `--sign` 所使用的簽章金鑰路徑 |\n"
 "| `FETCH_LICENSE` | `true` | 在原始碼掃描期間解析相依項目的授權條款。設為 `false` 可略過查詢，執行得更快 |\n"
@@ -8580,7 +8587,7 @@ msgstr ""
 "| `API_URL` | — | 上傳伺服器的 URL（DT 伺服器，或 TRUSCA 的基準網址） |\n"
 "| `API_KEY` | — | 上傳用的認證資訊。在 DT 用作 `X-Api-Key`，在 TRUSCA 用作 Bearer 權杖 |\n"
 "| `UPLOAD_TARGET` | `dependency-track` | 上傳目的地：`dependency-track` 或 `trusca` |\n"
-"| `TRUSCA_PROJECT_ID` | — | TRUSCA 的 project id（UUID）。目標為 `trusca` 時必填 |\n"
+"| `TRUSCA_PROJECT_ID` | — | TRUSCA 的 project id (UUID)。目標為 `trusca` 時必填 |\n"
 "| `TRUSCA_REF` | `main` | ingest 的 ref 標籤 |\n"
 "| `TRUSCA_RELEASE` | `--version` 的值 | ingest 的 release 標籤 |\n"
 
@@ -8635,7 +8642,7 @@ msgid ""
 "**CLI** (`scan-sbom.sh`): the base is the directory you ran the command in. "
 "Override it with `--output-dir <dir>` (alias `-o`)."
 msgstr ""
-"**CLI**（`scan-sbom.sh`）：基準目錄就是你執行指令時所在的目錄。可用 `--"
+"**CLI** (`scan-sbom.sh`)：基準目錄就是你執行指令時所在的目錄。可用 `--"
 "output-dir <dir>`（別名 `-o`）覆寫。"
 
 #. type: Bullet: '- '
@@ -8718,14 +8725,14 @@ msgid ""
 "results to the host."
 msgstr ""
 "掃描結束了卻找不到輸出檔案時，請確認你執行指令的資料夾位在 Docker 的檔案共享"
-"路徑內。家目錄（`C:\\Users\\...`）底下的路徑在 Rancher Desktop 與 Docker "
+"路徑內。家目錄 (`C:\\Users\\...`) 底下的路徑在 Rancher Desktop 與 Docker "
 "Desktop 都預設共享。在未共享的位置執行時，容器無法把結果寫回主機。"
 
 #. type: Title ###
 #: docs/reference/cli.md:131
 #, no-wrap
 msgid "Docker permission error (Linux/WSL2)"
-msgstr "Docker 權限錯誤（Linux/WSL2）"
+msgstr "Docker 權限錯誤 (Linux/WSL2)"
 
 #. type: Fenced code block
 #: docs/reference/cli.md:133
@@ -8782,7 +8789,7 @@ msgid ""
 "from the app's own Preferences screen."
 msgstr ""
 "使用 Rancher Desktop 或 Docker Desktop 的話，也可以在應用程式本身的偏好設定"
-"（Preferences）畫面做同樣的清理。"
+" (Preferences) 畫面做同樣的清理。"
 
 #. type: Title ###
 #: docs/reference/cli.md:158
@@ -8868,7 +8875,7 @@ msgstr ""
 "| `ghcr.io/sktelecom/bomlens` | 掃描與後處理（正式名稱） |\n"
 "| `ghcr.io/sktelecom/sbom-generator`、`ghcr.io/sktelecom/sbom-scanner` | 同一個映像檔的別名（舊名稱，雜湊值相同） |\n"
 "| `ghcr.io/sktelecom/bomlens-firmware` | 韌體分析（含 GPL 工具，opt-in）（舊別名：sbom-scanner-firmware） |\n"
-"| `ghcr.io/sktelecom/bomlens-deep-cve` | 內含 grype 以進行深度 CVE 比對（opt-in）。CLI 的 `--deep-cve` 與網頁介面的「深度 CVE 比對」開關都會用它；當目前執行的映像檔不是它時，兩者都會自動把它當作附屬容器下載 |\n"
+"| `ghcr.io/sktelecom/bomlens-deep-cve` | 內含 grype 以進行深度 CVE 比對 (opt-in)。CLI 的 `--deep-cve` 與網頁介面的「深度 CVE 比對」開關都會用它；當目前執行的映像檔不是它時，兩者都會自動把它當作附屬容器下載 |\n"
 
 #. type: Plain text
 #: docs/reference/docker-image.md:19
@@ -8942,7 +8949,7 @@ msgid ""
 "anything (`UPLOAD_ENABLED=false`)."
 msgstr ""
 "用 `MODE` 環境變數選擇分析模式。以下所有範例都把輸出留在目前目錄，也不會上傳"
-"任何東西（`UPLOAD_ENABLED=false`）。"
+"任何東西 (`UPLOAD_ENABLED=false`)。"
 
 #. type: Title ###
 #: docs/reference/docker-image.md:42
@@ -9152,8 +9159,8 @@ msgstr ""
 "| `TARGET_DIR` | 依模式 | — | `ROOTFS` 模式的目錄路徑 |\n"
 "| `UPLOAD_ENABLED` | — | `true` | 設為 `false` 時只儲存在本機，不上傳（等同 CLI 的 `--generate-only`） |\n"
 "| `HOST_OUTPUT_DIR` | — | — | 用來複製輸出的掛載路徑 |\n"
-"| `GENERATE_NOTICE` | — | `false` | 產生開放原始碼授權聲明（CLI `--notice`） |\n"
-"| `GENERATE_SECURITY` | — | `false` | 產生 Trivy 安全報告（CLI `--security`） |\n"
+"| `GENERATE_NOTICE` | — | `false` | 產生開放原始碼授權聲明 (CLI `--notice`) |\n"
+"| `GENERATE_SECURITY` | — | `false` | 產生 Trivy 安全報告 (CLI `--security`) |\n"
 "| `GENERATE_REPORT` | — | `false` | 產生開放原始碼風險分析報告（與 CLI 預設不同，直接執行時是關閉的） |\n"
 "| `ENRICH_MAVEN_CPE` | — | `true` | 為 maven 元件附上可與 NVD 比對的 `cpe:2.3`（由 groupId 推導），讓支援 CPE 的引擎也能找到它們僅存在於 NVD 的 CVE；未能對應的 group 不會附上 CPE（AI SBOM 會略過） |\n"
 "| `ENRICH_GITHUB_CPE` | — | `true` | 為一小批經人工驗證的 `pkg:github/` 元件（只以原始碼儲存庫座標識別，常見於沒有套件管理器生態系的大型 C/C++ 專案）附上可與 NVD 比對的 `cpe:2.3`，讓支援 CPE 的引擎也能找到它們僅存在於 NVD 的 CVE；不在人工整理清單裡的一律不附 CPE（AI SBOM 會略過） |\n"
@@ -9164,17 +9171,17 @@ msgstr ""
 "| `ENRICH_MALICIOUS` | — | `true` | 依內建的離線 OSV 快照，標記已知的惡意套件（名稱仿冒、帳號被劫持）。這是與弱點不同的訊號：應對方式是移除並輪替認證資訊，而不是升級版本 |\n"
 "| `ENRICH_OS_CONTEXT` | — | `true` | 從發行版套件的 PURL（rpm、deb 與 apk）合成出一個 `operating-system` 元件。Trivy 會依這個元件挑選發行版的弱點資料來源，少了它，供應者 SBOM 或 rootfs 掃描裡的 OS 套件就完全比對不到 OS 的 CVE。SBOM 裡沒有可辨識的發行版套件時不會有任何作用——包含 Trivy 沒有提供資料來源的發行版，例如 OpenWRT（AI SBOM 會略過） |\n"
 "| `STALENESS_ENRICH` | — | `false` | 加入 deps.dev 的版本新舊資訊（落後最新版幾個發行版本）；需要網路連線 |\n"
-"| `ENRICH_HF_SECURITY` | — | `true` | AIBOM 模式：把 HuggingFace 逐檔的安全掃描結果（ClamAV + picklescan）讀進 ML-BOM。只讀取後設資料，不下載檔案 |\n"
+"| `ENRICH_HF_SECURITY` | — | `true` | AIBOM 模式：把 HuggingFace 逐檔的安全掃描結果 (ClamAV + picklescan) 讀進 ML-BOM。只讀取後設資料，不下載檔案 |\n"
 "| `API_KEY`、`API_URL` | 上傳時 | — | 上傳用的認證資訊與伺服器 URL。DT 用作 `X-Api-Key`，TRUSCA 用作 Bearer 權杖 |\n"
 "| `UPLOAD_TARGET` | — | `dependency-track` | 上傳目的地：`dependency-track`（DT 相容）或 `trusca`（原生 ingest，不與 DT 相容） |\n"
-"| `TRUSCA_PROJECT_ID` | 目標為 `trusca` 時 | — | 要上傳的 TRUSCA project id（UUID）。必須事先存在（不會自動建立） |\n"
+"| `TRUSCA_PROJECT_ID` | 目標為 `trusca` 時 | — | 要上傳的 TRUSCA project id (UUID)。必須事先存在（不會自動建立） |\n"
 "| `TRUSCA_REF` | — | `main` | ingest 的 ref 標籤 |\n"
 "| `TRUSCA_RELEASE` | — | `PROJECT_VERSION` | ingest 的 release 標籤 |\n"
 "| `BOMLENS_MAVEN_FULL_GRAPH` | — | — | Maven 原始碼掃描：設為 `1` 時保留完整的解析關係圖，不篩選成 compile/runtime 範圍 |\n"
 "| `BOMLENS_NODE_FULL_GRAPH` | — | — | Node.js 原始碼掃描：設為 `1` 時保留 dev 與 production 合併的完整關係圖，而不是只取 production 的集合 |\n"
 "| `BOMLENS_KEEP_BUILD_OUTPUT` | — | — | 原始碼掃描：設為 `1` 時保留解析出的相依樹。預設情況下，掃描會還原解析器改寫過的檔案（`go.mod`、`go.sum`、`Cargo.lock`、`Gemfile.lock`、`Package.resolved`），並移除它們建立的建置目錄，讓被掃描的專案回到原樣 |\n"
 "| `CYCLONEDX_SPEC_VERSIONS` | — | `1.3 1.4 1.5 1.6` | 符合性檢查所接受的 CycloneDX 規格版本（以空白分隔）；會覆寫預設範圍 |\n"
-"| `AI_CYCLONEDX_SPEC_VERSIONS` | — | `1.3 1.4 1.5 1.6 1.7` | AI SBOM（ML-BOM）所接受的 CycloneDX 版本，額外允許 1.7 |\n"
+"| `AI_CYCLONEDX_SPEC_VERSIONS` | — | `1.3 1.4 1.5 1.6 1.7` | AI SBOM (ML-BOM) 所接受的 CycloneDX 版本，額外允許 1.7 |\n"
 "| `SPDX_SPEC_VERSIONS` | — | `SPDX-2.2 SPDX-2.3` | 符合性檢查所接受的 SPDX 規格版本 |\n"
 
 #. type: Plain text
@@ -9659,7 +9666,7 @@ msgstr "比較結果"
 #: docs/reference/ecosystems.md:210
 msgid ""
 "The PURL (Package URL) format in the generated SBOM differs by language."
-msgstr "產生的 SBOM 中，PURL（Package URL）格式會因語言而異。"
+msgstr "產生的 SBOM 中，PURL (Package URL) 格式會因語言而異。"
 
 #. type: Plain text
 #: docs/reference/ecosystems.md:223
@@ -9789,7 +9796,7 @@ msgstr ""
 "**頂端列**——產品標誌（點了回首頁）、目前的專案、「重新掃描」按鈕（只在仍保有"
 "設定的掃描上出現，可用預先填入的開關設定重新掃描同一個目標）、橫跨元件與 CVE "
 "的全域搜尋、掃描管理選單（點選時鐘圖示會展開過去的掃描清單，附有刪除按鈕與前"
-"往完整清單的連結）、「新增掃描」按鈕，以及語言（KO / EN / TW）與淺色／深色切"
+"往完整清單的連結）、「新增掃描」按鈕，以及語言 (KO / EN / TW) 與淺色／深色切"
 "換。"
 
 #. type: Bullet: '- '
@@ -9821,7 +9828,7 @@ msgstr ""
 #: docs/reference/ui.md:31
 #, no-wrap
 msgid "The global actions (New scan, Scan management) live in the top bar, and the rail repeats them as labelled links above its sections so a result screen always shows a named way back. Every navigation element — the logo, New scan, the rail sections, the jump cards and the past-scan links — is a real link backed by a URL hash (`#/scan/<id>/<section>`), so Cmd/Ctrl or middle click opens it in a new tab.\n"
-msgstr "全域動作（新增掃描、掃描管理）放在頂端列，側邊欄則在區段上方以帶文字的連結重複這兩項，因此結果畫面上永遠看得到一條寫著名字的回頭路。每個導覽元素——標誌、新增掃描、側邊欄的各區段、跳轉卡片與過去掃描的連結——都是有 URL hash（`#/scan/<id>/<section>`）支撐的真正連結，因此 Cmd／Ctrl 點擊或中鍵點擊就能在新分頁開啟。\n"
+msgstr "全域動作（新增掃描、掃描管理）放在頂端列，側邊欄則在區段上方以帶文字的連結重複這兩項，因此結果畫面上永遠看得到一條寫著名字的回頭路。每個導覽元素——標誌、新增掃描、側邊欄的各區段、跳轉卡片與過去掃描的連結——都是有 URL hash (`#/scan/<id>/<section>`) 支撐的真正連結，因此 Cmd／Ctrl 點擊或中鍵點擊就能在新分頁開啟。\n"
 
 #. type: Title ##
 #: docs/reference/ui.md:32
@@ -9873,7 +9880,7 @@ msgstr ""
 "| SBOM 上傳 | 上傳既有的 SBOM（JSON，或 Yocto SPDX 2.2 建置所發佈的 `.spdx.tar.zst`） | ANALYZE |\n"
 "| 韌體上傳 | 上傳 `.bin` 等檔案 | FIRMWARE |\n"
 "| Docker 映像檔 | 輸入映像檔名稱 | IMAGE |\n"
-"| AI 模型 | 輸入 HuggingFace 模型 id（`org/model`） | AIBOM |\n"
+"| AI 模型 | 輸入 HuggingFace 模型 id (`org/model`) | AIBOM |\n"
 "| 模型檔案 | 上傳 `.gguf`、`.safetensors`、`.pt` 等（最大 8 GB） | MODELFILE |\n"
 
 #. type: Plain text
@@ -9900,14 +9907,14 @@ msgstr ""
 "產生選項有開放原始碼授權聲明與安全（弱點）報告。掃描一律以 CycloneDX 寫出 "
 "SBOM，SPDX 副本則是在掃描結束後從結果畫面匯出，因此這裡沒有需要事先決定的事。"
 "另外還有一個**進階掃描選項**區段，收攏的是改變原始碼分析方式、而非改變產生哪"
-"些檔案的開關。逐檔授權條款掃描（ScanCode）會掃過專案自己的原始碼檔案，找出逐"
+"些檔案的開關。逐檔授權條款掃描 (ScanCode) 會掃過專案自己的原始碼檔案，找出逐"
 "檔的授權條款文字（自家程式碼；它不會下載已宣告的相依項目），適用於原始碼掃描"
-"（目前資料夾、GitHub URL、ZIP 上傳）。偵測複製進來的開放原始碼（SCANOSS）會找"
+"（目前資料夾、GitHub URL、ZIP 上傳）。偵測複製進來的開放原始碼 (SCANOSS) 會找"
 "出複製進原始碼樹的第三方開放原始碼（主要是 C/C++），同樣適用於原始碼掃描。韌"
-"體的進階選項則是更多弱點公告（OSV）。SCANOSS 使用免費的 OSSKB 服務，該服務有"
+"體的進階選項則是更多弱點公告 (OSV)。SCANOSS 使用免費的 OSSKB 服務，該服務有"
 "速率限制，頻繁使用時可能得不到結果，因此若要經常執行，請到 scanoss.com 取得權"
 "杖填入。Docker 映像檔、SBOM 上傳與 AI 模型沒有進階選項。選擇 SBOM 上傳"
-"（ANALYZE）時，為進行風險分析會強制開啟授權聲明與安全報告；AI 模型掃描只會產"
+" (ANALYZE) 時，為進行風險分析會強制開啟授權聲明與安全報告；AI 模型掃描只會產"
 "生授權聲明（它沒有套件 CVE，因此略過安全報告）。"
 
 #. type: Plain text
@@ -10047,7 +10054,7 @@ msgstr ""
 #: docs/reference/ui.md:78
 #, no-wrap
 msgid "**Components** lists everything detected, with search and filters (has vulnerabilities, direct only, needs review, end of life, outdated) and columns for Scope (direct vs transitive) and Risk (the worst vulnerability severity and count). A component the bundled OSV snapshot knows to be a malicious package carries a \"Malicious package\" badge, ahead of the others, with the advisory id and snapshot date in its tooltip. A component past its upstream end-of-life carries an \"End of life\" badge, with the EOL date where known. A component that is not on its latest version is marked as outdated; with deps.dev enrichment on (`STALENESS_ENRICH=true`) its detail shows how many releases it is behind and its last-release date (see [Version currency](../concepts/reports-explained.md#version-currency)). Large SBOMs render in pages. Click a row to expand its detail in place — the PURL, source/download location, copyright, licenses and any vulnerabilities. Where the detail reports vulnerabilities, it also links into the Vulnerabilities section filtered to that component, and a vulnerability's own detail links back to its package in Components, so an investigation moves between the two lists without retyping the name.\n"
-msgstr "**元件**會列出所有偵測到的項目，附有搜尋與篩選（有弱點、僅直接相依、需人工檢視、已終止支援、非最新），以及「範圍」（直接或間接）與「風險」（最嚴重的弱點等級與數量）兩個欄位。內建的 OSV 快照認定為惡意套件的元件會帶上「惡意套件」標記，排在其他標記之前，公告識別碼與快照日期則放在它的提示（tooltip）裡。上游已終止支援的元件會帶上「已終止支援」標記，知道終止日期時也一併顯示。不是最新版本的元件會標示為「非最新」；開啟 deps.dev 補充資料（`STALENESS_ENRICH=true`）後，它的詳細資訊還會顯示落後幾個版本以及最後一次發行的日期（參考[版本新舊](../concepts/reports-explained.md#version-currency)）。大型 SBOM 會分頁顯示。點選資料列即可就地展開詳細資訊——PURL、來源／下載位置、著作權、授權條款，以及所有弱點。詳細資訊裡有弱點時，也會提供連結帶你到已篩選出該元件的「弱點」區段；弱點自己的詳細資訊則有連回「元件」中該套件的連結，因此追查時可以在兩份清單之間來回，不必重新輸入名稱。\n"
+msgstr "**元件**會列出所有偵測到的項目，附有搜尋與篩選（有弱點、僅直接相依、需人工檢視、已終止支援、非最新），以及「範圍」（直接或間接）與「風險」（最嚴重的弱點等級與數量）兩個欄位。內建的 OSV 快照認定為惡意套件的元件會帶上「惡意套件」標記，排在其他標記之前，公告識別碼與快照日期則放在它的提示 (tooltip) 裡。上游已終止支援的元件會帶上「已終止支援」標記，知道終止日期時也一併顯示。不是最新版本的元件會標示為「非最新」；開啟 deps.dev 補充資料 (`STALENESS_ENRICH=true`) 後，它的詳細資訊還會顯示落後幾個版本以及最後一次發行的日期（參考[版本新舊](../concepts/reports-explained.md#version-currency)）。大型 SBOM 會分頁顯示。點選資料列即可就地展開詳細資訊——PURL、來源／下載位置、著作權、授權條款，以及所有弱點。詳細資訊裡有弱點時，也會提供連結帶你到已篩選出該元件的「弱點」區段；弱點自己的詳細資訊則有連回「元件」中該套件的連結，因此追查時可以在兩份清單之間來回，不必重新輸入名稱。\n"
 
 #. type: Plain text
 #: docs/reference/ui.md:80
@@ -10087,7 +10094,7 @@ msgstr ""
 #: docs/reference/ui.md:90
 #, no-wrap
 msgid "**Licenses** opens with a license classification axis that groups components by copyleft strength — network copyleft (AGPL), strong copyleft (GPL), weak copyleft (LGPL, MPL, EPL, …), permissive, review needed, and uncategorized. An unrecognised license is never assumed permissive; it falls to uncategorized so a person looks at it. Click a class to filter the rest of the section to it. Under the classification is the per-license distribution — how many components declare each license, busiest first, with the unlicensed bucket at the end. Picking a class narrows this list; clicking a license opens the Components table filtered to it, where it combines with the type, scope and risk filters. Below the distribution, when the scan declared an outbound license, come the dependencies whose terms clash with it — grouped worst first, each with the reasoning for its verdict. It is a documentation aid, not a legal determination. If no outbound license was declared the section says the check did not run and how to turn it on, rather than leaving an empty list to read as an all-clear. Then come the components whose terms need human review — AI behavioral-use (RAIL/Llama/Gemma) and non-commercial licenses.\n"
-msgstr "**授權條款**一開頭是授權分類軸，依 Copyleft 強度把元件分組——網路型 Copyleft（AGPL）、強 Copyleft（GPL）、弱 Copyleft（LGPL、MPL、EPL…）、寬鬆式、需人工檢視與未分類。無法辨識的授權條款絕不會被當成寬鬆式，而是落到未分類，交由人來看。點選某個分類，區段的其餘部分就會篩選成該分類。分類之下是各授權條款的分布——每個授權條款有多少元件宣告，數量多的排在前面，沒有授權條款的那一組放在最後。選了分類會讓這份清單縮小；點選某個授權條款則會開啟已依它篩選的「元件」表格，在那裡還能與類型、範圍和風險篩選一起使用。分布下方，若這次掃描宣告了對外授權條款，會列出條款與它衝突的相依項目——最嚴重的排在前面，每一項都附上判定的理由。這是文件輔助資料，不是法律判定。若未宣告對外授權條款，區段會說明這項檢查沒有執行以及如何開啟，而不是留下一份空清單、讓人誤讀成沒有問題。再往下是條款需要人工檢視的元件——AI 行為限制（RAIL／Llama／Gemma）與非商業授權條款。\n"
+msgstr "**授權條款**一開頭是授權分類軸，依 Copyleft 強度把元件分組——網路型 Copyleft (AGPL)、強 Copyleft (GPL)、弱 Copyleft（LGPL、MPL、EPL…）、寬鬆式、需人工檢視與未分類。無法辨識的授權條款絕不會被當成寬鬆式，而是落到未分類，交由人來看。點選某個分類，區段的其餘部分就會篩選成該分類。分類之下是各授權條款的分布——每個授權條款有多少元件宣告，數量多的排在前面，沒有授權條款的那一組放在最後。選了分類會讓這份清單縮小；點選某個授權條款則會開啟已依它篩選的「元件」表格，在那裡還能與類型、範圍和風險篩選一起使用。分布下方，若這次掃描宣告了對外授權條款，會列出條款與它衝突的相依項目——最嚴重的排在前面，每一項都附上判定的理由。這是文件輔助資料，不是法律判定。若未宣告對外授權條款，區段會說明這項檢查沒有執行以及如何開啟，而不是留下一份空清單、讓人誤讀成沒有問題。再往下是條款需要人工檢視的元件——AI 行為限制（RAIL／Llama／Gemma）與非商業授權條款。\n"
 
 #. type: Plain text
 #: docs/reference/ui.md:92
@@ -10120,7 +10127,7 @@ msgstr "**產出物**會把產生的檔案（SBOM、授權聲明、風險報告�
 #: docs/reference/ui.md:100
 #, no-wrap
 msgid "**Source tree** shows what the scan actually looked at, rather than only what it found. The tree on the left lists the files; picking one opens its text beside it. It appears for every scan that had files to read: a source scan, a directory or rootfs scan, a firmware image (after unpacking), a container image, and a build artifact that is an archive (jar, war, whl, zip, tar). A container image and an archive have no folder to walk, so BomLens unpacks a temporary copy, reads it, and deletes it before the scan ends. Symlinks are listed with the path they point at — in a container image nearly every command in `/bin` is a link into busybox, and leaving them out would show a tree in which those commands do not exist. When the scan ran with **License scan (ScanCode)** on, each file also carries the license detected in it.\n"
-msgstr "**原始碼樹**顯示的是這次掃描實際看過哪些東西，而不只是它找到了什麼。左邊的樹列出檔案，挑一個就會在旁邊開啟它的內容。只要掃描有檔案可讀，這個區段就會出現：原始碼掃描、目錄或 rootfs 掃描、韌體映像檔（解開封裝之後）、容器映像檔，以及本身是壓縮檔的建置產出物（jar、war、whl、zip、tar）。容器映像檔與壓縮檔沒有可走訪的資料夾，因此 BomLens 會解開一份暫存副本、讀完它，然後在掃描結束前刪除。符號連結會連同它指向的路徑一起列出——在容器映像檔裡，`/bin` 底下幾乎每個指令都是指向 busybox 的連結，把它們排除掉，樹狀結構看起來就會像那些指令根本不存在。掃描若開啟了**逐檔授權條款掃描（ScanCode）**，每個檔案還會帶上在其中偵測到的授權條款。\n"
+msgstr "**原始碼樹**顯示的是這次掃描實際看過哪些東西，而不只是它找到了什麼。左邊的樹列出檔案，挑一個就會在旁邊開啟它的內容。只要掃描有檔案可讀，這個區段就會出現：原始碼掃描、目錄或 rootfs 掃描、韌體映像檔（解開封裝之後）、容器映像檔，以及本身是壓縮檔的建置產出物（jar、war、whl、zip、tar）。容器映像檔與壓縮檔沒有可走訪的資料夾，因此 BomLens 會解開一份暫存副本、讀完它，然後在掃描結束前刪除。符號連結會連同它指向的路徑一起列出——在容器映像檔裡，`/bin` 底下幾乎每個指令都是指向 busybox 的連結，把它們排除掉，樹狀結構看起來就會像那些指令根本不存在。掃描若開啟了**逐檔授權條款掃描 (ScanCode)**，每個檔案還會帶上在其中偵測到的授權條款。\n"
 
 #. type: Plain text
 #: docs/reference/ui.md:102
@@ -10171,8 +10178,8 @@ msgstr ""
 "BOM 轉換成 `{Project}_{Version}_bom.spdx.json` 並立刻開始下載，不需要重新掃"
 "描。轉換後的檔案會以一般的下載項目加入卡片，也會納入 ZIP；已經有 SPDX 檔案的"
 "掃描則不再提供這個按鈕。CycloneDX 仍然是主要格式，只存在於 CycloneDX 的資料"
-"（弱點、`bomlens:*` 屬性）不會一併帶過去。簽章只有 CLI 支援（`--spdx --"
-"sign`），因此這裡匯出的檔案和介面產生的其他產出物一樣都沒有簽章。"
+"（弱點、`bomlens:*` 屬性）不會一併帶過去。簽章只有 CLI 支援 (`--spdx --"
+"sign`)，因此這裡匯出的檔案和介面產生的其他產出物一樣都沒有簽章。"
 
 #. type: Plain text
 #: docs/reference/ui.md:110
@@ -10284,13 +10291,13 @@ msgstr ""
 "> 只要 Docker 引擎正在執行，韌體上傳方塊就會自動出現。運作方式以及如何改指向其他映像檔標籤，\n"
 "> 請看[韌體指南](../guides/firmware.md)。\n"
 ">\n"
-"> **注意：**介面的原始碼掃描（目前資料夾／ZIP／GitHub）是在容器內以 syft 分析目錄。只有存在鎖定檔（`package-lock.json`、`go.sum` 等）或已安裝的相依項目時，才會擷取到元件。如果你只有資訊清單（manifest）而需要更深入的解析，請改用 CLI 的原始碼模式（cdxgen）。\n"
+"> **注意：**介面的原始碼掃描（目前資料夾／ZIP／GitHub）是在容器內以 syft 分析目錄。只有存在鎖定檔（`package-lock.json`、`go.sum` 等）或已安裝的相依項目時，才會擷取到元件。如果你只有資訊清單 (manifest) 而需要更深入的解析，請改用 CLI 的原始碼模式 (cdxgen)。\n"
 
 #. type: Plain text
 #: docs/reference/ui.md:135
 #, no-wrap
 msgid "**Changing the port / on a conflict:** if the default port (8080) is taken by another service, specify a different port:\n"
-msgstr "**變更連接埠／發生衝突時：**預設連接埠（8080）已被其他服務占用時，請指定不同的連接埠：\n"
+msgstr "**變更連接埠／發生衝突時：**預設連接埠 (8080) 已被其他服務占用時，請指定不同的連接埠：\n"
 
 #. type: Fenced code block (bash)
 #: docs/reference/ui.md:135
@@ -10372,7 +10379,7 @@ msgid ""
 "**Run anyway**. A click-by-click walkthrough is in the [no-CLI quick start]"
 "(../start/no-cli.md)."
 msgstr ""
-"下載 [BomLens Windows 版（.exe）](https://github.com/sktelecom/bomlens/"
+"下載 [BomLens Windows 版 (.exe)](https://github.com/sktelecom/bomlens/"
 "releases/latest/download/BomLens-Setup.exe)後雙擊執行，介面會直接開啟，不會出"
 "現主控台視窗。首次執行時會檢查 Docker、下載掃描器映像檔（約 250 MB），然後開"
 "啟 http://localhost:8080。目前這個應用程式尚未簽章，因此若 Windows "
@@ -10486,7 +10493,7 @@ msgstr "畫面配置與各掃描目標的細節，見[網頁介面參考](../ref
 #: docs/start/first-scan.md:42
 #, no-wrap
 msgid "Your first SBOM (CLI)"
-msgstr "你的第一份 SBOM（CLI）"
+msgstr "你的第一份 SBOM (CLI)"
 
 #. type: Plain text
 #: docs/start/first-scan.md:45
@@ -10537,9 +10544,9 @@ msgid ""
 "image (`--target nginx:latest`) — are in the [input-scenarios guide](../"
 "guides/by-input.md)."
 msgstr ""
-"其他輸入形式——ZIP 原始碼（`--target app.zip`）、既有的 SBOM（`--analyze "
-"sbom.json`）、韌體（`--target dev.bin --firmware`）、Docker 映像檔（`--"
-"target nginx:latest`）——都整理在[依輸入類型的指南](../guides/by-input.md)。"
+"其他輸入形式——ZIP 原始碼 (`--target app.zip`)、既有的 SBOM (`--analyze "
+"sbom.json`)、韌體 (`--target dev.bin --firmware`)、Docker 映像檔 (`--"
+"target nginx:latest`)——都整理在[依輸入類型的指南](../guides/by-input.md)。"
 
 #. type: Plain text
 #: docs/start/first-scan.md:62
@@ -10576,7 +10583,7 @@ msgid ""
 msgstr ""
 "| 檔案 | 內容 |\n"
 "|------|------------|\n"
-"| `{Project}_{Version}_bom.json` | SBOM（CycloneDX 1.6） |\n"
+"| `{Project}_{Version}_bom.json` | SBOM (CycloneDX 1.6) |\n"
 "| `{Project}_{Version}_NOTICE.{txt,html}` | 依授權條款分組的開放原始碼授權聲明 |\n"
 "| `{Project}_{Version}_security.{json,md,html}` | Trivy 弱點報告 |\n"
 "| `{Project}_{Version}_risk-report.{md,html}` | 開放原始碼風險報告（授權條款 + 弱點），預設會產生 |\n"
@@ -10662,7 +10669,7 @@ msgstr ""
 "| `metadata.component` | 被掃描的專案（名稱、版本） |\n"
 "| `components` | 找到的開放原始碼元件 |\n"
 "| `components[].purl` | Package URL——套件的唯一識別碼 |\n"
-"| `components[].licenses` | 授權條款資訊（SPDX ID） |\n"
+"| `components[].licenses` | 授權條款資訊 (SPDX ID) |\n"
 
 #. type: Title ###
 #: docs/start/first-scan.md:112
@@ -10678,7 +10685,7 @@ msgid ""
 "installing it is a hassle, the web UI overview shows the component count and "
 "licenses directly:"
 msgstr ""
-"下面的範例使用 `jq`。在 WSL2（Ubuntu）上用 `sudo apt-get install jq` 安裝，"
+"下面的範例使用 `jq`。在 WSL2 (Ubuntu) 上用 `sudo apt-get install jq` 安裝，"
 "Windows Git Bash 則用 `winget install jqlang.jq`。覺得安裝麻煩的話，網頁介面"
 "的「摘要」會直接顯示元件數量與授權條款："
 
@@ -10786,7 +10793,7 @@ msgstr "wsl --install -d Ubuntu          # reboot, then finish Ubuntu setup\n"
 #. type: Plain text
 #: docs/start/first-scan.md:159
 msgid "Then inside WSL (Ubuntu):"
-msgstr "接著在 WSL（Ubuntu）裡執行："
+msgstr "接著在 WSL (Ubuntu) 裡執行："
 
 #. type: Fenced code block (bash)
 #: docs/start/first-scan.md:160
@@ -10809,7 +10816,7 @@ msgid ""
 msgstr ""
 "之後在 WSL 裡 clone 儲存庫，照上面的方式執行 `./scripts/scan-sbom.sh ...`。若"
 "不使用 WSL2 而要在 Windows 上用 CLI，請安裝 [Git for Windows](https://git-"
-"scm.com/download/win)（Git Bash），並改用 `scripts\\scan-sbom.bat`。"
+"scm.com/download/win)(Git Bash)，並改用 `scripts\\scan-sbom.bat`。"
 
 #. type: Plain text
 #: docs/start/first-scan.md:178
@@ -10888,7 +10895,7 @@ msgid ""
 "concepts/what-is-sbom.md)), then groups components by license to generate "
 "two notice files."
 msgstr ""
-"這個工具會分析原始碼，建立元件清單（[SBOM](../concepts/what-is-sbom.md)），再"
+"這個工具會分析原始碼，建立元件清單 ([SBOM](../concepts/what-is-sbom.md))，再"
 "依授權條款把元件分組，產生兩種授權聲明檔案。"
 
 #. type: Bullet: '- '
@@ -10908,7 +10915,7 @@ msgid ""
 "if the project is `MyApp` and the version is `1.0.0`, the file is "
 "`MyApp_1.0.0_NOTICE.txt`."
 msgstr ""
-"檔名前面那一段（`...`）是你輸入的專案名稱與版本。舉例來說，專案是 `MyApp`、版"
+"檔名前面那一段 (`...`) 是你輸入的專案名稱與版本。舉例來說，專案是 `MyApp`、版"
 "本是 `1.0.0`，檔案就會是 `MyApp_1.0.0_NOTICE.txt`。"
 
 #. type: Title ##
@@ -10955,7 +10962,7 @@ msgid ""
 "First scan of a project, which fetches a language image (0.6–1.7 GB): a few "
 "more minutes, also once per language"
 msgstr ""
-"第一次掃描專案時取得語言映像檔（0.6–1.7 GB）：再多花幾分鐘，這也是每種語言只"
+"第一次掃描專案時取得語言映像檔 (0.6–1.7 GB)：再多花幾分鐘，這也是每種語言只"
 "需一次"
 
 #. type: Plain text
@@ -10989,7 +10996,7 @@ msgid ""
 "    F --> G[\"Download NOTICE.txt / NOTICE.html\"]\n"
 msgstr ""
 "flowchart TD\n"
-"    A[\"安裝 Docker 引擎<br/>（Rancher Desktop）\"] --> B[\"取得桌面版應用程式<br/>releases/latest 的 .exe\"]\n"
+"    A[\"安裝 Docker 引擎<br/>(Rancher Desktop)\"] --> B[\"取得桌面版應用程式<br/>releases/latest 的 .exe\"]\n"
 "    B --> C[\"雙擊執行<br/>（遇到 SmartScreen：其他資訊、仍要執行）\"]\n"
 "    C --> D[\"首次執行下載映像檔<br/>約 250 MB，只有一次\"]\n"
 "    D --> E[\"輸入專案名稱與版本\"]\n"
@@ -11023,7 +11030,7 @@ msgid ""
 "\"Windows protected your PC\" warning, click \"More info\" and choose \"Run "
 "anyway\". The app opens with no console window."
 msgstr ""
-"**取得並執行應用程式**。點選 [下載 Windows 版 BomLens（.exe）](https://"
+"**取得並執行應用程式**。點選 [下載 Windows 版 BomLens (.exe)](https://"
 "github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe)，再"
 "雙擊下載到的檔案。目前還沒有簽章，所以 Windows 若跳出「Windows 已保護您的電"
 "腦」警告，請點「其他資訊」，再選「仍要執行」。應用程式會直接開啟，不會出現主"
@@ -11167,8 +11174,8 @@ msgid ""
 msgstr ""
 "在 macOS 上，你可能會看到「『BomLens』已損毀，無法打開」的警告，而且只給你"
 "「移到垃圾桶」這個選項。應用程式其實沒有損毀。目前的 macOS 版本還沒有用 "
-"Apple Developer ID 完成程式碼簽章與公證（notarization），所以 macOS 會把下載"
-"來的應用程式隔離（quarantine），Gatekeeper 就把它擋下來。這和 Windows 上的 "
+"Apple Developer ID 完成程式碼簽章與公證 (notarization)，所以 macOS 會把下載"
+"來的應用程式隔離 (quarantine)，Gatekeeper 就把它擋下來。這和 Windows 上的 "
 "SmartScreen 警告是同一類的封鎖。"
 
 #. type: Plain text
@@ -11277,8 +11284,8 @@ msgid ""
 "files are saved to the results folder as well."
 msgstr ""
 "掃描結束後，就能在結果畫面依格式（`HTML`、`TXT`）分別下載授權聲明。一起產生"
-"的 SBOM（`..._bom.json`）與開放原始碼風險報告（`..._risk-report.html`）也在同"
-"一個畫面上，你也可以用「全部下載（ZIP）」一次取得全部檔案。下載的檔案同時也會"
+"的 SBOM (`..._bom.json`) 與開放原始碼風險報告 (`..._risk-report.html`) 也在同"
+"一個畫面上，你也可以用「全部下載 (ZIP)」一次取得全部檔案。下載的檔案同時也會"
 "存到結果資料夾。"
 
 #. type: Plain text
@@ -11357,7 +11364,7 @@ msgid ""
 "with the download buttons in the browser."
 msgstr ""
 "**掃描完成了，結果資料夾裡卻沒有檔案**：結果資料夾位在 Docker 的檔案共享範圍"
-"之外時，就可能這樣。這個工具會存到你家目錄（`C:\\Users\\...`）底下的 `sbom-"
+"之外時，就可能這樣。這個工具會存到你家目錄 (`C:\\Users\\...`) 底下的 `sbom-"
 "output`，通常是安全的。若還是看不到檔案，請直接用瀏覽器畫面上的下載按鈕取得。"
 
 #. type: Bullet: '- '
@@ -11384,8 +11391,8 @@ msgid ""
 msgstr ""
 "**在公司網路上出現「映像檔下載失敗」**：這幾乎都是代理伺服器造成的。映像檔是"
 "由 **Docker daemon** 下載，不是啟動程式，所以在命令提示字元裡設定的代理伺服器"
-"沒有作用——請在 Docker Desktop（`Settings > Resources > Proxies`）或 Rancher "
-"Desktop（`Preferences > WSL > Proxy`）裡設定。如果代理伺服器連 `localhost` 都"
+"沒有作用——請在 Docker Desktop (`Settings > Resources > Proxies`) 或 Rancher "
+"Desktop (`Preferences > WSL > Proxy`) 裡設定。如果代理伺服器連 `localhost` 都"
 "一併攔截，請把 `localhost` 加進它的略過清單，否則即使掃描正常執行，瀏覽器還是"
 "會顯示錯誤。"
 
@@ -11502,7 +11509,7 @@ msgid ""
 "community.linuxfoundation.org/events/details/lfhq-ospology-asia-presents-"
 "ospology-asia/)"
 msgstr ""
-"**活動：** [OSPOlogy Asia 2026（Linux Foundation）](https://"
+"**活動：** [OSPOlogy Asia 2026 (Linux Foundation)](https://"
 "community.linuxfoundation.org/events/details/lfhq-ospology-asia-presents-"
 "ospology-asia/)"
 

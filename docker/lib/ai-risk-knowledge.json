@@ -447,7 +447,7 @@
       "conditions": [],
       "summary": "A custom license (license: other) — the terms live in the repository's LICENSE file and need human review.",
       "summary_ko": "커스텀 라이선스(license: other)입니다. 조건이 저장소의 LICENSE 파일에 있으므로 사람이 검토해야 합니다.",
-      "summary_zh": "自訂授權條款（license: other），其條款位於儲存庫的 LICENSE 檔案，需要人工檢視。",
+      "summary_zh": "自訂授權條款 (license: other)，其條款位於儲存庫的 LICENSE 檔案，需要人工檢視。",
       "sourceUrl": "https://huggingface.co/docs/hub/repositories-licenses"
     }
   ],

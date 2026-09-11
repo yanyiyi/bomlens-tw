@@ -33,7 +33,7 @@ SBOM=/path/to/bomlens/scripts/scan-sbom.sh
 
 ## 第 1 層——OS 套件
 
-掃描伺服器的 rootfs（解開後的根檔案系統），或是它的容器映像檔。Syft 會讀取 rpm/dpkg/apk 資料庫，把每個已安裝的套件都以實際的 purl（`pkg:rpm/...`）記錄下來。
+掃描伺服器的 rootfs（解開後的根檔案系統），或是它的容器映像檔。Syft 會讀取 rpm/dpkg/apk 資料庫，把每個已安裝的套件都以實際的 purl (`pkg:rpm/...`) 記錄下來。
 
 ```bash
 # 以 rootfs 目錄為對象：
@@ -72,7 +72,7 @@ $SBOM --project mms-relay-bin --version 2.0.0 \
   --all --generate-only
 ```
 
-掃描仍然漏掉的部分，請從建置腳本裡手動記下來源與版本，例如建置實際拉進來的 openssl 版本（`openssl 1.1.1za`）。想要更精確地盤點靜態連結的元件，可以再搭配二進位組成分析工具作為補充檢查。
+掃描仍然漏掉的部分，請從建置腳本裡手動記下來源與版本，例如建置實際拉進來的 openssl 版本 (`openssl 1.1.1za`)。想要更精確地盤點靜態連結的元件，可以再搭配二進位組成分析工具作為補充檢查。
 
 ## 逐層驗證
 
@@ -102,7 +102,7 @@ $SBOM --project mms-relay-server --version 1.0.0 \
   --generate-only
 ```
 
-這會寫出 `mms-relay-server_1.0.0_bom.json`，其中 `metadata.component` 設為該伺服器產品，並針對合併後的元件集合產生開放原始碼授權聲明與風險分析報告。每個元件都保留 `bomlens:layer` 屬性，因此仍然可以依層過濾（`jq '.components[] | select(.properties[]?.value == "centos")'`）。
+這會寫出 `mms-relay-server_1.0.0_bom.json`，其中 `metadata.component` 設為該伺服器產品，並針對合併後的元件集合產生開放原始碼授權聲明與風險分析報告。每個元件都保留 `bomlens:layer` 屬性，因此仍然可以依層過濾 (`jq '.components[] | select(.properties[]?.value == "centos")'`)。
 
 合併會保留各層的 `dependencies` 關係圖（連線依 ref 取聯集），因此合併後的 BOM 仍保有間接相依資訊，也能通過符合性檢查中的間接相依項目。跨生態系的 `bom-ref` 很少衝突；ref 相同時，它們的 dependsOn 清單會取聯集。
 
@@ -115,7 +115,7 @@ $SBOM --project mms-relay-server --version 1.0.0 \
 
 ## 使用網頁介面
 
-OS 層與應用程式層也可以從網頁介面（`$SBOM --ui`）執行。把 rootfs 放在啟動介面的資料夾底下，使用**目錄路徑**輸入欄；或是用 **Docker 映像檔**輸入欄掃描容器映像檔。啟動資料夾以外的路徑為了安全會被拒絕；要掃描放在別處的 rootfs，請用 `--ui --mount <dir>` 啟動介面，該資料夾就會以唯讀位置的形式出現在目錄路徑輸入欄中。`--mount /` 會以同樣的方式開放正在執行的主機 OS 本身（`/proc`、`/sys` 這類虛擬檔案系統會自動略過，結果仍然存放在啟動資料夾底下）。靜態連結那一層與選用的合併，從 CLI 執行最直接。
+OS 層與應用程式層也可以從網頁介面 (`$SBOM --ui`) 執行。把 rootfs 放在啟動介面的資料夾底下，使用**目錄路徑**輸入欄；或是用 **Docker 映像檔**輸入欄掃描容器映像檔。啟動資料夾以外的路徑為了安全會被拒絕；要掃描放在別處的 rootfs，請用 `--ui --mount <dir>` 啟動介面，該資料夾就會以唯讀位置的形式出現在目錄路徑輸入欄中。`--mount /` 會以同樣的方式開放正在執行的主機 OS 本身（`/proc`、`/sys` 這類虛擬檔案系統會自動略過，結果仍然存放在啟動資料夾底下）。靜態連結那一層與選用的合併，從 CLI 執行最直接。
 
 ---
 

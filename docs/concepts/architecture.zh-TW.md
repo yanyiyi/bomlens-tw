@@ -8,13 +8,13 @@ description: 'BomLens 的整體結構，以及掃描管線的每個步驟由哪�
 
 各輸入類型的工具流程——原始碼（含 ScanCode 與 SCANOSS 選項）、韌體、收到的 SBOM 與 AI 模型——請看[各輸入類型的流程](pipeline-by-input.md)。
 
-> 這份文件以目前已實作的兩階段（2-stage）架構為準。原始碼的 Stage 1 分流（先偵測語言，再執行 cdxgen 官方語言映像檔）已在 `scripts/scan-sbom.sh` 實作並運作中。
+> 這份文件以目前已實作的兩階段 (2-stage) 架構為準。原始碼的 Stage 1 分流（先偵測語言，再執行 cdxgen 官方語言映像檔）已在 `scripts/scan-sbom.sh` 實作並運作中。
 
 ## 一覽
 
 BomLens 是一條由兩種 Docker 映像檔協力運作的兩階段管線。
 
-- **Stage 1——產生**：原始碼由 cdxgen 各語言的官方映像檔產生 SBOM（CycloneDX 1.6）；容器映像檔、二進位檔與目錄則由 syft 產生。
+- **Stage 1——產生**：原始碼由 cdxgen 各語言的官方映像檔產生 SBOM (CycloneDX 1.6)；容器映像檔、二進位檔與目錄則由 syft 產生。
 - **Stage 2——後處理**：輕量的 `bomlens` 映像檔接手 SBOM，依序執行正規化、選用的精確授權條款偵測、產生授權聲明、安全報告、簽章與上傳。
 
 ![BomLens 兩階段管線：各語言的 cdxgen 映像檔或 syft 產生 bom.json，再由 bomlens 映像檔後處理](../images/diagrams/architecture-overview.png)
@@ -27,14 +27,14 @@ BomLens 是一條由兩種 Docker 映像檔協力運作的兩階段管線。
 
 過去所有語言執行環境加上所有分析工具都塞在一個龐大的映像檔裡。重新設計後的管線把責任拆成兩半。
 
-| | Stage 1 映像檔 | Stage 2 映像檔（`bomlens`） |
+| | Stage 1 映像檔 | Stage 2 映像檔 (`bomlens`) |
 |---|---|---|
 | **角色** | 從原始碼**產生** SBOM | SBOM **後處理**（正規化、授權聲明、安全、簽章、上傳）以及 syft 掃描 |
 | **內容** | cdxgen 官方**各語言**映像檔（java、python、node…） | **沒有**語言 toolchain——輕量的 `debian:12-slim` |
 | **取得方式** | 偵測出專案語言後**按需下載** | 下載一次後重複使用 |
 | **好處** | cdxgen 會維護各語言的最新 toolchain | 映像檔小；工具版本固定，確保可重現 |
 
-> 五個主流語言（java、python、node、dotnet、php）用 cdxgen 官方映像檔的偵測結果完全相同；go、ruby 與 rust 則因為有 toolchain 的事前準備（`build-prep.sh`）而明顯更好。測量數據請看 [README「Why a Docker image?」](https://github.com/sktelecom/bomlens#why-a-docker-image-vs-plain-cdxgen)。
+> 五個主流語言（java、python、node、dotnet、php）用 cdxgen 官方映像檔的偵測結果完全相同；go、ruby 與 rust 則因為有 toolchain 的事前準備 (`build-prep.sh`) 而明顯更好。測量數據請看 [README「Why a Docker image?」](https://github.com/sktelecom/bomlens#why-a-docker-image-vs-plain-cdxgen)。
 
 ---
 
@@ -44,18 +44,18 @@ BomLens 是一條由兩種 Docker 映像檔協力運作的兩階段管線。
 
 | 工具 | 版本 | 階段 | 角色 | 啟用條件 |
 |------|------|------|------|-----------|
-| **cdxgen** | 隨語言映像檔一併提供 | Stage 1 | 從原始碼產生 SBOM（`--spec-version 1.6`） | `MODE=SOURCE` |
+| **cdxgen** | 隨語言映像檔一併提供 | Stage 1 | 從原始碼產生 SBOM (`--spec-version 1.6`) | `MODE=SOURCE` |
 | **build-prep.sh** | — | Stage 1 | cdxgen 執行前的相依項目準備（cargo、go、bundle、mvn、pip） | `MODE=SOURCE` |
 | **syft** | `v1.51.0` | Stage 1 | 掃描映像檔、二進位檔與根檔案系統 | `MODE=IMAGE/BINARY/ROOTFS` |
 | **jq** (`normalize-sbom.sh`) | — | Stage 2 | 正規化並排序 SBOM | 一律執行 |
 | **ScanCode Toolkit** | `32.5.0` | Stage 2 | 對自有原始碼進行精確的授權條款偵測 | `--deep-license`（opt-in 建置） |
-| **SCANOSS** | `1.54.2` | Stage 2 | 識別被複製納入（vendored）到沒有套件管理器的 C/C++ 原始碼裡的開放原始碼 | `--identify-vendored` |
-| **jq** (`generate-notice.sh`) | — | Stage 2 | 產生開放原始碼授權聲明（NOTICE） | `--notice` / `--all` |
-| **Trivy** | `v0.74.0` | Stage 2 | 弱點（CVE）安全報告 | `--security` / `--all` |
+| **SCANOSS** | `1.54.2` | Stage 2 | 識別被複製納入 (vendored) 到沒有套件管理器的 C/C++ 原始碼裡的開放原始碼 | `--identify-vendored` |
+| **jq** (`generate-notice.sh`) | — | Stage 2 | 產生開放原始碼授權聲明 (NOTICE) | `--notice` / `--all` |
+| **Trivy** | `v0.74.0` | Stage 2 | 弱點 (CVE) 安全報告 | `--security` / `--all` |
 | **Cosign** | `v2.6.5` | Stage 2 | SBOM 的 detached 簽章 | `--sign` |
 | **curl** | — | Stage 2 | 上傳到 Dependency-Track | 預設（除非用 `--generate-only`） |
 
-> 版本以 `docker/Dockerfile` 裡的 `ARG` 固定。為了讓映像檔保持精簡，ScanCode 是 **opt-in** 的建置參數（`--build-arg SBOM_DEEP_LICENSE=true`）。SCANOSS 用戶端預設包含在內，若要移除請用 `--build-arg SBOM_SCANOSS=false` 建置。韌體的解包與識別（unblob、cve-bin-tool）放在另一個 opt-in 的 `bomlens-firmware` 映像檔，AI 模型的 SBOM 產生（OWASP AIBOM Generator）則放在 `bomlens-aibom`。各輸入類型的工具流程請看[各輸入類型的流程](pipeline-by-input.md)。
+> 版本以 `docker/Dockerfile` 裡的 `ARG` 固定。為了讓映像檔保持精簡，ScanCode 是 **opt-in** 的建置參數 (`--build-arg SBOM_DEEP_LICENSE=true`)。SCANOSS 用戶端預設包含在內，若要移除請用 `--build-arg SBOM_SCANOSS=false` 建置。韌體的解包與識別（unblob、cve-bin-tool）放在另一個 opt-in 的 `bomlens-firmware` 映像檔，AI 模型的 SBOM 產生 (OWASP AIBOM Generator) 則放在 `bomlens-aibom`。各輸入類型的工具流程請看[各輸入類型的流程](pipeline-by-input.md)。
 
 ---
 
@@ -100,9 +100,9 @@ sequenceDiagram
 
 產生工具依目標類型而異。
 
-### 原始碼（`MODE=SOURCE`）——cdxgen 語言映像檔
+### 原始碼 (`MODE=SOURCE`)——cdxgen 語言映像檔
 
-`scan-sbom.sh` 會用 `detect_lang()` 偵測專案語言，再用 `img_for_lang()` 挑出對應的 **cdxgen 官方語言映像檔**，下載後在該映像檔裡執行 `build-prep.sh`（`scripts/scan-sbom.sh:138-208`）。輕量的後處理映像檔沒有語言 toolchain，因此產生工作完全由語言映像檔負責。
+`scan-sbom.sh` 會用 `detect_lang()` 偵測專案語言，再用 `img_for_lang()` 挑出對應的 **cdxgen 官方語言映像檔**，下載後在該映像檔裡執行 `build-prep.sh`(`scripts/scan-sbom.sh:138-208`)。輕量的後處理映像檔沒有語言 toolchain，因此產生工作完全由語言映像檔負責。
 
 各語言的 cdxgen 映像檔對應如下（`scan-sbom.sh:158-177`；標籤由 `CDXGEN_TAG` 固定）。
 
@@ -117,25 +117,25 @@ sequenceDiagram
 | php | `cdxgen-debian-php84` |
 | dotnet | `cdxgen-debian-dotnet9` |
 | android | 自行建置的 `bomlens-android-sdk<API>`（compileSdk 會自動取出） |
-| mixed / unknown | cdxgen all-in-one（`CDXGEN_ALLINONE`） |
+| mixed / unknown | cdxgen all-in-one (`CDXGEN_ALLINONE`) |
 
 映像檔內會執行兩個步驟：
 
-1. **`build-prep.sh`**（`docker/lib/build-prep.sh`）——在 cdxgen **執行前**準備相依項目。它會為 cdxgen 無法自行解析的生態系（尤其是 Rust 與 Go）建立 lockfile，讓間接相依也能被看見。以 POSIX `sh` 撰寫，盡力而為（絕不會讓掃描失敗）。
+1. **`build-prep.sh`** (`docker/lib/build-prep.sh`)——在 cdxgen **執行前**準備相依項目。它會為 cdxgen 無法自行解析的生態系（尤其是 Rust 與 Go）建立 lockfile，讓間接相依也能被看見。以 POSIX `sh` 撰寫，盡力而為（絕不會讓掃描失敗）。
 
    | 生態系 | 動作 | 備註 |
    |--------|------|------|
    | Rust | `cargo generate-lockfile` | cdxgen 不會自動執行 cargo——**必要** |
-   | Go | `go mod download`（`-mod=mod`） | 解析出模組關係圖 |
+   | Go | `go mod download`(`-mod=mod`) | 解析出模組關係圖 |
    | Ruby | `bundle lock` / `install` | 只在沒有 lockfile 時執行 |
    | Maven | `mvn dependency:resolve` | 輕量的安全網 |
    | Python | `pip install -r requirements.txt` | 沒有 lockfile 時讓間接相依被看見 |
 
-2. **執行 cdxgen**——`build-prep.sh` 會自動偵測各映像檔不同的 cdxgen 執行檔路徑，然後執行 `cdxgen -r --spec-version 1.6 -o bom.json`（`build-prep.sh:60-73`）。產生的 SBOM 接著交給 Stage 2（`MODE=POSTPROCESS`）的後處理映像檔。
+2. **執行 cdxgen**——`build-prep.sh` 會自動偵測各映像檔不同的 cdxgen 執行檔路徑，然後執行 `cdxgen -r --spec-version 1.6 -o bom.json`(`build-prep.sh:60-73`)。產生的 SBOM 接著交給 Stage 2 (`MODE=POSTPROCESS`) 的後處理映像檔。
 
 ### 映像檔／二進位檔／目錄——syft
 
-`bomlens` 映像檔內含的 **syft** 會直接產生 SBOM。（`docker/entrypoint.sh`）
+`bomlens` 映像檔內含的 **syft** 會直接產生 SBOM。(`docker/entrypoint.sh`)
 
 | MODE | 輸入 | syft 呼叫方式 |
 |------|------|-----------|
@@ -147,7 +147,7 @@ sequenceDiagram
 
 ## Stage 2——後處理管線
 
-`bomlens` 映像檔的進入點 `run-scan`（`docker/entrypoint.sh`）接手 SBOM，並以**固定的順序**執行各步驟。每個步驟由一個環境變數開啟（等同於一個 CLI 旗標），輸出會累積到 `ARTIFACTS` 清單裡。
+`bomlens` 映像檔的進入點 `run-scan`(`docker/entrypoint.sh`) 接手 SBOM，並以**固定的順序**執行各步驟。每個步驟由一個環境變數開啟（等同於一個 CLI 旗標），輸出會累積到 `ARTIFACTS` 清單裡。
 
 ![Stage 2 後處理：從 normalize 到上傳共八個固定步驟，每個步驟都由各自的環境變數控制](../images/diagrams/architecture-stage2-steps.png)
 
@@ -196,7 +196,7 @@ flowchart TD
 | 模式 | 觸發條件 | 產生工具 | 備註 |
 |------|--------|-----------|------|
 | `SOURCE` | 未指定目標、`--git <url>`，或 `--target *.zip/*.tar.gz` | cdxgen | 語言偵測決定要用哪個語言映像檔。git 目標會被 clone；壓縮檔會解開後當作原始碼處理。（網頁介面的 SOURCE 是在容器內使用 `syft dir:`） |
-| `ANALYZE` | `--analyze <sbom>`（別名 `--sbom`） | — | 驗證供應者 SBOM（CycloneDX/SPDX）、轉成 CDX 並重新彙整。會產生 `_conformance.*` |
+| `ANALYZE` | `--analyze <sbom>`（別名 `--sbom`） | — | 驗證供應者 SBOM (CycloneDX/SPDX)、轉成 CDX 並重新彙整。會產生 `_conformance.*` |
 | `FIRMWARE` | `--target <file> --firmware`，或韌體副檔名 | unblob + syft + cve-bin-tool | **opt-in 映像檔** `bomlens-firmware`。細節請看[韌體分析指南](../guides/firmware.md) |
 | `BINARY` | `--target <file>` | syft | `file:` scheme |
 | `ROOTFS` | `--target <directory>` | syft | `dir:` scheme |
@@ -229,7 +229,7 @@ CLI 旗標會轉換成哪些環境變數、又會開啟哪些步驟（由 `scan-
 | `--generate-only` | `UPLOAD_ENABLED=false` | ⑦ 略過上傳 |
 | `--ui` | `MODE=UI` | 網頁介面 |
 
-> **風險報告**（`_risk-report.{md,html}`）在所有模式下都會**預設產生**（它會彙整授權條款與弱點）。為了支援它，授權聲明與安全掃描會自動一併開啟；要停用請用 `--no-report`。
+> **風險報告** (`_risk-report.{md,html}`) 在所有模式下都會**預設產生**（它會彙整授權條款與弱點）。為了支援它，授權聲明與安全掃描會自動一併開啟；要停用請用 `--no-report`。
 
 各項功能的使用方式請看[授權聲明與安全報告指南](../guides/reports.md)。
 
@@ -268,7 +268,7 @@ CLI 旗標會轉換成哪些環境變數、又會開啟哪些步驟（由 `scan-
 ## 設計原則
 
 - **隔離**——所有分析都在 Docker 容器裡執行，主機環境不受影響。
-- **關注點分離**——把產生（Stage 1）與後處理（Stage 2）拆開，讓後處理映像檔保持精簡。
+- **關注點分離**——把產生 (Stage 1) 與後處理 (Stage 2) 拆開，讓後處理映像檔保持精簡。
 - **可重現**——工具版本以 `ARG` 固定；`--byte-stable` 會產生位元組完全相同的輸出。
 - **符合標準**——遵循 CycloneDX 1.6 規格。
 - **強韌**——後處理步驟都是盡力而為，不會中止整次掃描。
@@ -276,9 +276,9 @@ CLI 旗標會轉換成哪些環境變數、又會開啟哪些步驟（由 `scan-
 
 ---
 
-## 角色分工（TRUSCA）
+## 角色分工 (TRUSCA)
 
-BomLens 專精於**產生**。**治理**——全公司的專案管理、弱點分類與授權條款政策關卡——則交給姊妹專案 [TRUSCA](https://github.com/trustedoss/trusca)（前身為 TrustedOSS Portal）。兩個工具共用 cdxgen 與 Trivy，因此產出物（CycloneDX）可以直接互通。
+BomLens 專精於**產生**。**治理**——全公司的專案管理、弱點分類與授權條款政策關卡——則交給姊妹專案 [TRUSCA](https://github.com/trustedoss/trusca)（前身為 TrustedOSS Portal）。兩個工具共用 cdxgen 與 Trivy，因此產出物 (CycloneDX) 可以直接互通。
 
 ```mermaid
 flowchart TB

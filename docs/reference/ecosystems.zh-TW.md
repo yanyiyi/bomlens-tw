@@ -206,7 +206,7 @@ Docker 映像檔分析請在專案根目錄執行。
 
 ## 比較結果
 
-產生的 SBOM 中，PURL（Package URL）格式會因語言而異。
+產生的 SBOM 中，PURL (Package URL) 格式會因語言而異。
 
 | 語言 | PURL 範例 |
 |------|--------------:|

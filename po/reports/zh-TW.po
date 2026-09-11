@@ -5,7 +5,7 @@
 # After a Weblate push, regenerate the JSON the report generators read:
 #   scripts/po-to-report-strings.sh zh-TW
 #
-# 正體中文（zh-TW）字串，供給人閱讀的符合性報告、AI 合規概況與風險報告使用。
+# 正體中文 (zh-TW) 字串，供給人閱讀的符合性報告、AI 合規概況與風險報告使用。
 # 由 validate-sbom.sh、generate-ai-profile.sh、generate-risk-report.sh 三個
 # 消費者在 REPORT_LANG=zh-TW 時載入；英文預設不讀取本檔，輸出維持逐位元組相
 # 同。
@@ -13,9 +13,9 @@
 # 以下資料與識別碼不得翻譯：狀態碼與表情符號（pass/warn/fail/review、PASS/FAIL/WARN/REVIEW
 # ）、openness 值、G7 元素 id、PURL、授權條款識別碼、CycloneDX 欄位路徑、URL
 # 、框架與條文識別碼。
-# chrome 類鍵使用 %s 佔位符（shell printf），數量與順序須與英文完全一致；label/detail
-#  樣板鍵使用由 jq 填入的具名 token（%n% %a% %b% %v%）。
-# 初版翻譯由 Claude 產出（2026-09），並經母語者校對。
+# chrome 類鍵使用 %s 佔位符 (shell printf)，數量與順序須與英文完全一致；label/detail
+#  樣板鍵使用由 jq 填入的具名 token (%n% %a% %b% %v%)。
+# 初版翻譯由 Claude 產出 (2026-09)，並經母語者校對。
 # 用詞基準見 docs/chinese-style-guide.md。
 msgid ""
 msgstr ""
@@ -58,7 +58,7 @@ msgstr "本次評估以「%s」用途為基準，未適用於該用途的條件�
 #, c-format
 msgctxt "aiprofile.close_intro"
 msgid "These G7 elements have an automated source but are absent from the SBOM. The conformance report (\\`%s_conformance.md\\`) carries the CycloneDX fragment that would satisfy each one."
-msgstr "以下 G7 要素有自動化來源，但 SBOM 中並未載明。符合性報告（`%s_conformance.md`）附有可滿足各要素的 CycloneDX 片段。"
+msgstr "以下 G7 要素有自動化來源，但 SBOM 中並未載明。符合性報告 (`%s_conformance.md`) 附有可滿足各要素的 CycloneDX 片段。"
 
 #. [aiprofile.crosswalk_full]
 #. Consumed by printf via tfmt(). bash printf has NO positional parameters,
@@ -67,7 +67,7 @@ msgstr "以下 G7 要素有自動化來源，但 SBOM 中並未載明。符合�
 #, c-format
 msgctxt "aiprofile.crosswalk_full"
 msgid "The full element-by-element mapping is in the conformance report (\\`%s_conformance.*\\`)."
-msgstr "逐一要素的完整對應在符合性報告（`%s_conformance.*`）中。"
+msgstr "逐一要素的完整對應在符合性報告 (`%s_conformance.*`) 中。"
 
 #. [aiprofile.flag_behavioral]
 #: generate-ai-profile.sh:193
@@ -718,7 +718,7 @@ msgstr "SHA-512 雜湊值涵蓋率（%n%% 以上，建議）"
 #: validate-sbom.sh (jq)
 msgctxt "conformance.label.spec_cdx"
 msgid "Spec version (CycloneDX %v%)"
-msgstr "規格版本（CycloneDX %v%）"
+msgstr "規格版本 (CycloneDX %v%)"
 
 #. [conformance.label.spec_other]
 #. Substituted by jq gsub(). The %x% placeholders are named, so order is
@@ -727,7 +727,7 @@ msgstr "規格版本（CycloneDX %v%）"
 #: validate-sbom.sh (jq)
 msgctxt "conformance.label.spec_other"
 msgid "Spec version (%v%)"
-msgstr "規格版本（%v%）"
+msgstr "規格版本 (%v%)"
 
 #. [conformance.label_exact/Checksums present (recommended)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -743,7 +743,7 @@ msgstr "雜湊值存在（建議）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Component name+version coverage (100%)"
 msgid "Component name+version coverage (100%)"
-msgstr "元件名稱與版本涵蓋率（100%）"
+msgstr "元件名稱與版本涵蓋率 (100%)"
 
 #. [conformance.label_exact/Delivered-file properties (executable/archive/structured)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -791,7 +791,7 @@ msgstr "PURL 外部參考存在"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/PURL syntax (pkg:type/[namespace/]name)"
 msgid "PURL syntax (pkg:type/[namespace/]name)"
-msgstr "PURL 語法（pkg:type/[namespace/]name）"
+msgstr "PURL 語法 (pkg:type/[namespace/]name)"
 
 #. [conformance.label_exact/Package name+version coverage (100%)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -799,7 +799,7 @@ msgstr "PURL 語法（pkg:type/[namespace/]name）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Package name+version coverage (100%)"
 msgid "Package name+version coverage (100%)"
-msgstr "套件名稱與版本涵蓋率（100%）"
+msgstr "套件名稱與版本涵蓋率 (100%)"
 
 #. [conformance.label_exact/PackageName + PackageVersion present]
 #. Matched against the English check label verbatim -- this msgid is
@@ -831,7 +831,7 @@ msgstr "可辨識的 SBOM 格式"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Timestamp (Created:)"
 msgid "Timestamp (Created:)"
-msgstr "時間戳記（Created:）"
+msgstr "時間戳記 (Created:)"
 
 #. [conformance.label_exact/Timestamp (creationInfo.created)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -839,7 +839,7 @@ msgstr "時間戳記（Created:）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Timestamp (creationInfo.created)"
 msgid "Timestamp (creationInfo.created)"
-msgstr "時間戳記（creationInfo.created）"
+msgstr "時間戳記 (creationInfo.created)"
 
 #. [conformance.label_exact/Timestamp (metadata.timestamp)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -847,7 +847,7 @@ msgstr "時間戳記（creationInfo.created）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Timestamp (metadata.timestamp)"
 msgid "Timestamp (metadata.timestamp)"
-msgstr "時間戳記（metadata.timestamp）"
+msgstr "時間戳記 (metadata.timestamp)"
 
 #. [conformance.label_exact/Tool info (Creator: Tool:)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -855,7 +855,7 @@ msgstr "時間戳記（metadata.timestamp）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Tool info (Creator: Tool:)"
 msgid "Tool info (Creator: Tool:)"
-msgstr "工具資訊（Creator: Tool:）"
+msgstr "工具資訊 (Creator: Tool:)"
 
 #. [conformance.label_exact/Tool info (creationInfo.creators Tool:)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -863,7 +863,7 @@ msgstr "工具資訊（Creator: Tool:）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Tool info (creationInfo.creators Tool:)"
 msgid "Tool info (creationInfo.creators Tool:)"
-msgstr "工具資訊（creationInfo.creators Tool:）"
+msgstr "工具資訊 (creationInfo.creators Tool:)"
 
 #. [conformance.label_exact/Tool info (metadata.tools)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -871,7 +871,7 @@ msgstr "工具資訊（creationInfo.creators Tool:）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Tool info (metadata.tools)"
 msgid "Tool info (metadata.tools)"
-msgstr "工具資訊（metadata.tools）"
+msgstr "工具資訊 (metadata.tools)"
 
 #. [conformance.label_exact/Top-level component name+version]
 #. Matched against the English check label verbatim -- this msgid is
@@ -895,7 +895,7 @@ msgstr "可追溯的 PURL（無 pkg:generic，建議）"
 #: validate-sbom.sh (jq llabel)
 msgctxt "conformance.label_exact/Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)"
 msgid "Transitive dependencies (DEPENDS_ON/DEPENDENCY_OF)"
-msgstr "間接相依（DEPENDS_ON/DEPENDENCY_OF）"
+msgstr "間接相依 (DEPENDS_ON/DEPENDENCY_OF)"
 
 #. [conformance.label_exact/Transitive dependencies (graph edges)]
 #. Matched against the English check label verbatim -- this msgid is
@@ -996,7 +996,7 @@ msgstr "需人工檢視："
 #: validate-sbom.sh:952
 msgctxt "conformance.pill_untraceable"
 msgid "Untraceable (pkg:generic):"
-msgstr "無法追溯（pkg:generic）："
+msgstr "無法追溯 (pkg:generic)："
 
 #. [conformance.pill_warnings]
 #: validate-sbom.sh:951
@@ -1286,13 +1286,13 @@ msgstr "每個元件也會以 "
 #: generate-risk-report.sh:266
 msgctxt "risk.licclass_intro_html_b"
 msgid " property. An unrecognized license is left uncategorized rather than assumed permissive."
-msgstr " 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類（Uncategorized）」，不會逕自視為「寬鬆式（Permissive）」。"
+msgstr " 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」，不會逕自視為「寬鬆式 (Permissive)」。"
 
 #. [risk.licclass_intro_md]
 #: generate-risk-report.sh:265
 msgctxt "risk.licclass_intro_md"
 msgid "Each component is also recorded in the SBOM with a \\`bomlens:licenseClass\\` property. An unrecognized license is left uncategorized rather than assumed permissive."
-msgstr "每個元件也會以 `bomlens:licenseClass` 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類（Uncategorized）」，不會逕自視為「寬鬆式（Permissive）」。"
+msgstr "每個元件也會以 `bomlens:licenseClass` 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」，不會逕自視為「寬鬆式 (Permissive)」。"
 
 #. [risk.licconflict_drivers]
 #: generate-risk-report.sh:271
@@ -1430,7 +1430,7 @@ msgstr "若格式驗證未通過，請補齊缺漏項目並重新產生 SBOM。"
 #: generate-risk-report.sh:287
 msgctxt "risk.next2_self_html"
 msgid "Keep and distribute the notice (NOTICE) together with the SBOM."
-msgstr "請將開放原始碼授權聲明（NOTICE）與 SBOM 一併儲存並散布。"
+msgstr "請將開放原始碼授權聲明 (NOTICE) 與 SBOM 一併儲存並散布。"
 
 #. [risk.next2_self_md]
 #. Consumed by printf via tfmt(). bash printf has NO positional parameters,
@@ -1439,7 +1439,7 @@ msgstr "請將開放原始碼授權聲明（NOTICE）與 SBOM 一併儲存並散
 #, c-format
 msgctxt "risk.next2_self_md"
 msgid "Keep and distribute the notice (\\`%s_NOTICE.{txt,html}\\`) together with the SBOM (\\`%s_bom.json\\`)."
-msgstr "請將開放原始碼授權聲明（`%s_NOTICE.{txt,html}`）與 SBOM（`%s_bom.json`）一併儲存並散布。"
+msgstr "請將開放原始碼授權聲明 (`%s_NOTICE.{txt,html}`) 與 SBOM (`%s_bom.json`) 一併儲存並散布。"
 
 #. [risk.presence_only_html]
 #. Consumed by printf via tfmt(). bash printf has NO positional parameters,

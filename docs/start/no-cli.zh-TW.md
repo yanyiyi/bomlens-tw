@@ -10,12 +10,12 @@ description: 不必用指令列，把原始碼變成開放原始碼授權聲明�
 
 一份文件，整理產品內所含的開放原始碼元件與它們的授權條款，隨產品出貨時一併提供。許多開放原始碼授權條款（MIT、Apache-2.0、BSD 等）都要求把著作權標示與授權條款全文隨產品附上，因此需要一份把這些內容集中起來的授權聲明。
 
-這個工具會分析原始碼，建立元件清單（[SBOM](../concepts/what-is-sbom.md)），再依授權條款把元件分組，產生兩種授權聲明檔案。
+這個工具會分析原始碼，建立元件清單 ([SBOM](../concepts/what-is-sbom.md))，再依授權條款把元件分組，產生兩種授權聲明檔案。
 
 - `..._NOTICE.txt` —— 可直接隨散布物出貨的文字格式
 - `..._NOTICE.html` —— 適合用瀏覽器閱讀的格式
 
-檔名前面那一段（`...`）是你輸入的專案名稱與版本。舉例來說，專案是 `MyApp`、版本是 `1.0.0`，檔案就會是 `MyApp_1.0.0_NOTICE.txt`。
+檔名前面那一段 (`...`) 是你輸入的專案名稱與版本。舉例來說，專案是 `MyApp`、版本是 `1.0.0`，檔案就會是 `MyApp_1.0.0_NOTICE.txt`。
 
 ## 需要準備什麼、要花多久
 
@@ -25,7 +25,7 @@ description: 不必用指令列，把原始碼變成開放原始碼授權聲明�
 
 - 安裝 Rancher Desktop 並第一次啟動：約 5–10 分鐘
 - 第一次下載掃描器映像檔（約 250 MB）：通常一兩分鐘（依網路狀況而異，只有第一次需要）
-- 第一次掃描專案時取得語言映像檔（0.6–1.7 GB）：再多花幾分鐘，這也是每種語言只需一次
+- 第一次掃描專案時取得語言映像檔 (0.6–1.7 GB)：再多花幾分鐘，這也是每種語言只需一次
 
 準備好之後，之後每次開啟應用程式並完成掃描只要 1–2 分鐘。
 
@@ -35,7 +35,7 @@ description: 不必用指令列，把原始碼變成開放原始碼授權聲明�
 
 ```mermaid
 flowchart TD
-    A["安裝 Docker 引擎<br/>（Rancher Desktop）"] --> B["取得桌面版應用程式<br/>releases/latest 的 .exe"]
+    A["安裝 Docker 引擎<br/>(Rancher Desktop)"] --> B["取得桌面版應用程式<br/>releases/latest 的 .exe"]
     B --> C["雙擊執行<br/>（遇到 SmartScreen：其他資訊、仍要執行）"]
     C --> D["首次執行下載映像檔<br/>約 250 MB，只有一次"]
     D --> E["輸入專案名稱與版本"]
@@ -46,7 +46,7 @@ flowchart TD
 ### 方法 A——桌面版應用程式（建議）
 
 1. **安裝 Docker 引擎**。到 [rancherdesktop.io](https://rancherdesktop.io/) 下載 Windows 版安裝程式，安裝後執行它。安裝過程若問你要不要使用 Kubernetes，關掉也可以。工作列圖示穩定下來（通常 1–2 分鐘）就代表準備好了。
-2. **取得並執行應用程式**。點選 [下載 Windows 版 BomLens（.exe）](https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe)，再雙擊下載到的檔案。目前還沒有簽章，所以 Windows 若跳出「Windows 已保護您的電腦」警告，請點「其他資訊」，再選「仍要執行」。應用程式會直接開啟，不會出現主控台視窗。
+2. **取得並執行應用程式**。點選 [下載 Windows 版 BomLens (.exe)](https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe)，再雙擊下載到的檔案。目前還沒有簽章，所以 Windows 若跳出「Windows 已保護您的電腦」警告，請點「其他資訊」，再選「仍要執行」。應用程式會直接開啟，不會出現主控台視窗。
 3. **首次執行下載映像檔**。掃描器映像檔只會下載一次。應用程式會像下面這樣顯示進度，請不要關掉視窗，耐心等待。之後啟動時，只要有更新的映像檔發佈，應用程式就會自動下載，因此不需要手動重新下載或重新安裝。
 
 ![在 SmartScreen 警告畫面點「其他資訊」，再以「仍要執行」繼續](../images/smartscreen.png)
@@ -75,7 +75,7 @@ flowchart TD
 
 ## macOS 顯示應用程式已損毀時 {#if-macos-says-the-app-is-damaged}
 
-在 macOS 上，你可能會看到「『BomLens』已損毀，無法打開」的警告，而且只給你「移到垃圾桶」這個選項。應用程式其實沒有損毀。目前的 macOS 版本還沒有用 Apple Developer ID 完成程式碼簽章與公證（notarization），所以 macOS 會把下載來的應用程式隔離（quarantine），Gatekeeper 就把它擋下來。這和 Windows 上的 SmartScreen 警告是同一類的封鎖。
+在 macOS 上，你可能會看到「『BomLens』已損毀，無法打開」的警告，而且只給你「移到垃圾桶」這個選項。應用程式其實沒有損毀。目前的 macOS 版本還沒有用 Apple Developer ID 完成程式碼簽章與公證 (notarization)，所以 macOS 會把下載來的應用程式隔離 (quarantine)，Gatekeeper 就把它擋下來。這和 Windows 上的 SmartScreen 警告是同一類的封鎖。
 
 這個訊息的行為和常見的「未識別的開發者」警告不一樣。在較新的 macOS 上，對應用程式按右鍵選「打開」，或按「系統設定」裡的「強制打開」按鈕，通常都解不開。可靠的做法是從終端機移除隔離屬性。
 
@@ -106,7 +106,7 @@ codesign --force --deep -s - /Applications/BomLens.app
 
 ![掃描結果概要——元件、弱點與授權條款](../images/web-ui-scan.png)
 
-掃描結束後，就能在結果畫面依格式（`HTML`、`TXT`）分別下載授權聲明。一起產生的 SBOM（`..._bom.json`）與開放原始碼風險報告（`..._risk-report.html`）也在同一個畫面上，你也可以用「全部下載（ZIP）」一次取得全部檔案。下載的檔案同時也會存到結果資料夾。
+掃描結束後，就能在結果畫面依格式（`HTML`、`TXT`）分別下載授權聲明。一起產生的 SBOM (`..._bom.json`) 與開放原始碼風險報告 (`..._risk-report.html`) 也在同一個畫面上，你也可以用「全部下載 (ZIP)」一次取得全部檔案。下載的檔案同時也會存到結果資料夾。
 
 ![在結果畫面依格式下載授權聲明，或用一個 ZIP 取得全部檔案](../images/app-results.png)
 
@@ -117,9 +117,9 @@ codesign --force --deep -s - /Applications/BomLens.app
 - **macOS 說應用程式「已損毀」**：這不是真的損毀，而是同一種未簽章封鎖。請看 [macOS 顯示應用程式已損毀時](#if-macos-says-the-app-is-damaged)，那裡有從終端機解開的方法。
 - **顯示「Docker 未安裝」**：請確認 Rancher Desktop 已經安裝並且正在執行。
 - **顯示「Docker 引擎未在執行」**：請啟動 Rancher Desktop，等圖示穩定下來後再執行一次。
-- **掃描完成了，結果資料夾裡卻沒有檔案**：結果資料夾位在 Docker 的檔案共享範圍之外時，就可能這樣。這個工具會存到你家目錄（`C:\Users\...`）底下的 `sbom-output`，通常是安全的。若還是看不到檔案，請直接用瀏覽器畫面上的下載按鈕取得。
+- **掃描完成了，結果資料夾裡卻沒有檔案**：結果資料夾位在 Docker 的檔案共享範圍之外時，就可能這樣。這個工具會存到你家目錄 (`C:\Users\...`) 底下的 `sbom-output`，通常是安全的。若還是看不到檔案，請直接用瀏覽器畫面上的下載按鈕取得。
 - **瀏覽器沒有自動開啟**：請自己在網址欄輸入 `http://localhost:8080`。若 8080 連接埠已被占用，啟動程式會改用下一個空閒的連接埠，並印出它選用的位址，請改用那個位址。
-- **在公司網路上出現「映像檔下載失敗」**：這幾乎都是代理伺服器造成的。映像檔是由 **Docker daemon** 下載，不是啟動程式，所以在命令提示字元裡設定的代理伺服器沒有作用——請在 Docker Desktop（`Settings > Resources > Proxies`）或 Rancher Desktop（`Preferences > WSL > Proxy`）裡設定。如果代理伺服器連 `localhost` 都一併攔截，請把 `localhost` 加進它的略過清單，否則即使掃描正常執行，瀏覽器還是會顯示錯誤。
+- **在公司網路上出現「映像檔下載失敗」**：這幾乎都是代理伺服器造成的。映像檔是由 **Docker daemon** 下載，不是啟動程式，所以在命令提示字元裡設定的代理伺服器沒有作用——請在 Docker Desktop (`Settings > Resources > Proxies`) 或 Rancher Desktop (`Preferences > WSL > Proxy`) 裡設定。如果代理伺服器連 `localhost` 都一併攔截，請把 `localhost` 加進它的略過清單，否則即使掃描正常執行，瀏覽器還是會顯示錯誤。
 - **完全沒有可用的網路**：啟動程式可以改用檔案安裝，不必下載。請索取 `bomlens-image.tar`，放到那些 `.bat` 檔旁邊，它就會被自動採用——不需要網路，也不需要指令列。請參考下面的「設定檔」。
 
 ## 設定檔（不需要指令列）

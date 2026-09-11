@@ -14,7 +14,7 @@
     "run": "執行掃描",
     "running": "掃描中…",
     "demoRunDisabled": "此示範無法執行掃描——這是一個靜態頁面，背後沒有實際運作的機器。",
-    "demoRunDisabledCta": "在你自己的程式碼上執行"
+    "demoRunDisabledCta": "在您自己的程式碼上執行"
   },
   "source": {
     "label": "掃描目標",
@@ -24,9 +24,9 @@
     "rootfsDir": "目錄 / rootfs",
     "yoctoBuildDir": "Yocto 建置目錄",
     "rootfsPlaceholder": "centos-rootfs/（相對於目前資料夾）",
-    "rootfsHint": "將目前資料夾（/src）底下的 OS rootfs 或任一子資料夾當作目錄掃描。Yocto 建置目錄會被自動辨識，並改為分析建置所發佈的映像檔 SBOM，而非建置樹。資料夾以外的路徑會被拒絕——請將 rootfs 放在啟動資料夾底下、以 --mount 掛載，或改用 Docker 映像檔。",
+    "rootfsHint": "將目前資料夾 (/src) 底下的 OS rootfs 或任一子資料夾當作目錄掃描。Yocto 建置目錄會被自動辨識，並改為分析建置所發佈的映像檔 SBOM，而非建置樹。資料夾以外的路徑會被拒絕——請將 rootfs 放在啟動資料夾底下、以 --mount 掛載，或改用 Docker 映像檔。",
     "scanRoot": "掃描位置",
-    "scanRootCurrent": "目前資料夾（{{path}}）",
+    "scanRootCurrent": "目前資料夾 ({{path}})",
     "scanRootCurrentNoPath": "目前資料夾",
     "rootfsSubpath": "子資料夾（選填）",
     "rootfsSubpathHint": "留空則掃描整個掛載的資料夾，也可填入子資料夾以縮小掃描範圍。",
@@ -43,7 +43,7 @@
     "sbomUpload": "SBOM 上傳",
     "sbomAnalyzeHint": "為進行風險分析，會自動啟用開放原始碼授權聲明與安全報告。",
     "firmwareUpload": "韌體上傳",
-    "firmwareHint": "先解開封裝，再以 syft 與 cve-bin-tool 識別元件（.bin/.img/.squashfs…）。",
+    "firmwareHint": "先解開封裝，再以 syft 與 cve-bin-tool 識別元件 (.bin/.img/.squashfs…)。",
     "firmwareUnavailable": "韌體分析需要 Docker 正在執行（韌體映像檔會以 sibling 容器方式執行）。",
     "siblingPullNotice": "首次執行會下載專用映像檔（檔案較大，僅需下載一次）；之後的執行會沿用。",
     "dockerImage": "Docker 映像檔",
@@ -54,12 +54,12 @@
     "aiModelHint": "請以「org/model」格式輸入 HuggingFace 模型 ID（例如 Qwen/Qwen2.5-0.5B），而不是集合名稱或完整 URL。會透過網路取得模型卡後設資料，產生 CycloneDX ML-BOM。",
     "aiModelUnavailable": "AI 模型 SBOM 需要 Docker 正在執行（AIBOM 映像檔會以 sibling 容器方式執行）。",
     "modelUpload": "模型檔案",
-    "modelUploadHint": "直接讀取模型檔案本身的標頭——不需要 HuggingFace 帳號與網路，因此從未發佈的模型也能掃描。可填入的資訊依格式而異：GGUF 帶有名稱、授權條款與架構，safetensors 通常只有張量形狀。超過 8 GB 的檔案請改用 CLI（--model-file），它會就地讀取檔案。",
-    "hfAuthOn": "已向 HuggingFace 完成身分驗證：私有與受管制（gated）的模型儲存庫皆可解析。",
-    "hfAuthOff": "目前以匿名方式執行，只能解析公開模型。若要掃描私有或受管制（gated）的儲存庫——例如在發佈前檢視模型——請設定 HF_TOKEN 後重新啟動 UI。",
+    "modelUploadHint": "直接讀取模型檔案本身的標頭——不需要 HuggingFace 帳號與網路，因此從未發佈的模型也能掃描。可填入的資訊依格式而異：GGUF 帶有名稱、授權條款與架構，safetensors 通常只有張量形狀。超過 8 GB 的檔案請改用 CLI (--model-file)，它會就地讀取檔案。",
+    "hfAuthOn": "已向 HuggingFace 完成身分驗證：私有與受管制 (gated) 的模型儲存庫皆可解析。",
+    "hfAuthOff": "目前以匿名方式執行，只能解析公開模型。若要掃描私有或受管制 (gated) 的儲存庫——例如在發佈前檢視模型——請設定 HF_TOKEN 後重新啟動 UI。",
     "usageContext": "使用情境",
     "usageUnspecified": "未指定",
-    "usageContextHint": "你打算如何使用這個模型。指定後，授權條款評估會以此用途為基準評定。",
+    "usageContextHint": "您打算如何使用這個模型。指定後，授權條款評估會以此用途為基準評定。",
     "uploading": "上傳進度",
     "uploadErrorTooLarge": "檔案太大，伺服器無法接受。請改用較小的壓縮檔，或直接掃描解壓後的資料夾。",
     "uploadErrorNetwork": "無法連線到掃描伺服器。請確認伺服器仍在執行，然後再試一次。",
@@ -75,14 +75,14 @@
   },
   "options": {
     "notice": "授權聲明",
-    "noticeHint": "產生開放原始碼授權聲明（NOTICE）",
+    "noticeHint": "產生開放原始碼授權聲明 (NOTICE)",
     "aiNoticeHint": "對 AI 模型而言，聲明會列出模型與資料集的授權條款，並將有使用限制的條款（RAIL、非商業）標記為待檢視——建議保持開啟。",
     "security": "安全報告",
     "securityHint": "產生 Trivy 弱點報告",
     "deepSource": "解析間接相依",
     "deepSourceHint": "在容器中建置該資料夾，解析出含精確間接相依版本的完整相依樹，與掃描目前資料夾時相同。關閉時退回快速掃描，只涵蓋已宣告的套件。",
     "deepLicense": "逐檔授權條款掃描",
-    "deepLicenseHint": "除了各套件宣告的授權條款外，還以 ScanCode 掃描你自己的原始碼檔案，找出逐檔的授權條款文字與檔頭（較慢）。",
+    "deepLicenseHint": "除了各套件宣告的授權條款外，還以 ScanCode 掃描您自己的原始碼檔案，找出逐檔的授權條款文字與檔頭（較慢）。",
     "scanMethodHint": "針對沒有套件管理器的原始碼所做的進階分析。若專案使用套件管理器建置（Maven、npm、pip、Go modules…），SBOM 已經完整，這些選項可以保持關閉。",
     "identifyVendored": "偵測複製進來的開放原始碼",
     "identifyVendoredHint": "以 SCANOSS 找出複製進原始碼樹的第三方開放原始碼（主要是 C/C++）。只會將檔案指紋——而非原始碼——傳送到 OSSKB 服務。",
@@ -90,14 +90,14 @@
     "scanossTokenHint": "免費的 OSSKB 端點有速率限制——偶爾掃描沒問題，但頻繁執行可能得不到結果。若需經常使用，請至 scanoss.com 取得權杖。權杖只在本次掃描使用一次，絕不儲存也不記錄。",
     "includeOsv": "更多弱點公告",
     "includeOsvHint": "在韌體弱點比對中加入 OSV.dev 公告。OSV 資料庫並未內建於映像檔中，因此會在本次執行時從 osv.dev 下載（進度顯示於下方）。",
-    "deepCve": "深度 CVE 比對（NVD CPE）",
+    "deepCve": "深度 CVE 比對 (NVD CPE)",
     "deepCveHint": "另外比對僅存在於 NVD、其他比對方式可能漏掉的公告。所需時間較長，並會一併開啟安全報告。",
     "byteStable": "可重現的輸出",
     "byteStableHint": "以相同輸入重新掃描時，會產生逐位元組完全相同的 SBOM，因此輸出可以比對差異並以雜湊值核對。會略過每次執行結果可能不同的網路授權條款查詢。",
     "upload": "上傳到伺服器",
     "uploadHint": "掃描完成後，將產生的 SBOM 傳送到 Dependency-Track 或 TRUSCA 伺服器。伺服器 URL 與權杖僅用於本次執行，絕不儲存。",
     "outboundLicense": "對外授權條款（選填）",
-    "outboundLicenseHint": "你的專案對外發行所採用的 SPDX 識別碼，例如 Apache-2.0。指定後會標記條款與其衝突的相依項目。原始碼掃描無法自行推斷這項資訊，未指定時此檢查保持關閉。"
+    "outboundLicenseHint": "您的專案對外發行所採用的 SPDX 識別碼，例如 Apache-2.0。指定後會標記條款與其衝突的相依項目。原始碼掃描無法自行推斷這項資訊，未指定時此檢查保持關閉。"
   },
   "upload": {
     "target": "目的地",
@@ -133,13 +133,13 @@
     "vulnerabilities": "弱點",
     "noSecurity": "未產生安全報告",
     "noSecurityHint": "此次掃描沒有弱點報告，因此這裡的內容未與安全公告資料比對。區段空白不代表沒有弱點。",
-    "aiScanTitle": "AI 模型 SBOM（ML-BOM）",
+    "aiScanTitle": "AI 模型 SBOM (ML-BOM)",
     "aiScanBody": "由 HuggingFace 模型後設資料產生。內容以模型與其資料集為中心，因此元件數量比一般軟體掃描少。",
     "vendoredHintTitle": "找到的元件很少——這是 C/C++ 嵌入式原始碼嗎？",
-    "vendoredHintBody": "沒有套件管理器的 C/C++ 原始碼常會直接納入複製進來的開放原始碼（vendored），一般掃描看不到。請在進階掃描選項開啟「偵測複製進來的開放原始碼」後再執行一次。只會傳送檔案指紋——原始碼不會離開本機。",
+    "vendoredHintBody": "沒有套件管理器的 C/C++ 原始碼常會直接納入複製進來的開放原始碼 (vendored)，一般掃描看不到。請在進階掃描選項開啟「偵測複製進來的開放原始碼」後再執行一次。只會傳送檔案指紋——原始碼不會離開本機。",
     "sbomDegradedTitle": "僅含直接相依項目——未執行深度解析",
-    "sbomDegradedBody": "間接相依性分析器（cdxgen）無法執行，因此這份 SBOM 只列出直接相依項目。請確認 Docker 可用後重新掃描，以取得完整的相依關係圖。",
-    "sbomDegradedDisk": "間接相依性分析器（cdxgen）因 Docker 磁碟空間不足而未能執行，因此這份 SBOM 只列出直接相依項目。請釋出空間（例如「docker system prune」）後重新掃描，以取得完整的相依關係圖。",
+    "sbomDegradedBody": "間接相依性分析器 (cdxgen) 無法執行，因此這份 SBOM 只列出直接相依項目。請確認 Docker 可用後重新掃描，以取得完整的相依關係圖。",
+    "sbomDegradedDisk": "間接相依性分析器 (cdxgen) 因 Docker 磁碟空間不足而未能執行，因此這份 SBOM 只列出直接相依項目。請釋出空間（例如「docker system prune」）後重新掃描，以取得完整的相依關係圖。",
     "scanossUnavailableTitle": "SCANOSS 搜尋未完成",
     "scanossUnavailableBody": "OSSKB 查詢被擋下（達到速率限制、沒有網路或沒有權杖）。免費的 OSSKB 端點對匿名使用有速率限制——請在進階掃描選項加入 SCANOSS 權杖後再執行一次，以取得結果。",
     "scanossNoMatchTitle": "未發現複製進來的開放原始碼",
@@ -159,7 +159,7 @@
     "artifacts": "產出物",
     "artifactsEmpty": "未產生任何產出物。",
     "artifactCount": "{{count}} 個產出物 · {{size}}",
-    "downloadAll": "全部下載（ZIP）",
+    "downloadAll": "全部下載 (ZIP)",
     "copyLink": "複製連結",
     "copied": "已複製連結",
     "downloadStarted": "已開始下載",
@@ -173,7 +173,7 @@
         "desc": "彙整授權條款與弱點的供應鏈風險分析。"
       },
       "sbom": {
-        "title": "SBOM（CycloneDX）",
+        "title": "SBOM (CycloneDX)",
         "desc": "正規化後的軟體物料清單，格式為 CycloneDX JSON。需要時可隨時匯出 SPDX 2.3 副本。"
       },
       "notice": {
@@ -186,7 +186,7 @@
       },
       "security": {
         "title": "安全報告",
-        "desc": "在元件中發現的已知弱點（CVE）。"
+        "desc": "在元件中發現的已知弱點 (CVE)。"
       },
       "license": {
         "title": "深度授權分析",
@@ -209,7 +209,7 @@
     "tabDependencies": "相依性",
     "tabSourceTree": "原始碼樹",
     "componentsEmpty": "未偵測到任何元件。",
-    "componentsEmptyHint": "掃描已結束，但未能識別出任何元件。目標若沒有可辨識的資訊清單（manifest）、鎖定檔或套件資料庫，通常就會是這種結果。",
+    "componentsEmptyHint": "掃描已結束，但未能識別出任何元件。目標若沒有可辨識的資訊清單 (manifest)、鎖定檔或套件資料庫，通常就會是這種結果。",
     "componentsSearch": "搜尋名稱、授權、類型…",
     "allTypes": "所有類型",
     "allLicenses": "所有授權條款",
@@ -246,7 +246,7 @@
     "vulnCvss": "CVSS",
     "colEpss": "EPSS",
     "kevBadge": "KEV",
-    "kevHint": "已知遭利用（CISA Known Exploited Vulnerabilities）",
+    "kevHint": "已知遭利用 (CISA Known Exploited Vulnerabilities)",
     "colNvdSeverity": "NVD 嚴重程度",
     "statusFixed": "已有修正可用",
     "statusAffected": "受影響",
@@ -286,7 +286,7 @@
     "colCurrency": "版本新舊",
     "maliciousBadge": "惡意套件",
     "maliciousBadgeHint": "此套件是為了攻擊安裝者而發佈的。請移除它，並輪替建置過程可能接觸到的所有認證資訊——沒有可升級的版本。",
-    "kernelAdvisories": "另有 {{count}} 筆核心（kernel）安全公告列於安全報告中，未計入上方統計。針對核心的公告大多屬於裝置從未編譯進去的子系統，而 SBOM 無法分辨是哪些。",
+    "kernelAdvisories": "另有 {{count}} 筆核心 (kernel) 安全公告列於安全報告中，未計入上方統計。針對核心的公告大多屬於裝置從未編譯進去的子系統，而 SBOM 無法分辨是哪些。",
     "viewInComponents": "在「元件」中檢視 {{name}}",
     "viewInVulns": "檢視 {{name}} 的弱點",
     "exportCsv": "匯出 CSV",
@@ -434,7 +434,7 @@
     "newScan": "新增掃描",
     "demoGetTool": "取得 BomLens",
     "demoBannerTitle": "唯讀展示",
-    "demoBannerBody": "這些是實際掃描產生的真實結果，已凍結供你四處瀏覽。這裡的掃描、上傳與刪除功能都已停用——在你自己的程式碼上執行 BomLens，就能產生自己的結果。",
+    "demoBannerBody": "這些是實際掃描產生的真實結果，已凍結供您四處瀏覽。這裡的掃描、上傳與刪除功能都已停用——在您自己的程式碼上執行 BomLens，就能產生自己的結果。",
     "demoBannerCta": "如何執行"
   },
   "search": {
@@ -444,7 +444,7 @@
     "vulnerabilities": "弱點"
   },
   "newscan": {
-    "title": "你想掃描什麼？",
+    "title": "您想掃描什麼？",
     "subtitle": "挑選一個目標，BomLens 就會在本機一次產生 SBOM、開放原始碼授權聲明與安全報告。",
     "source": "來源",
     "settings": "掃描設定",
@@ -940,7 +940,7 @@
       "uncategorized": "未分類",
       "permissive": "寬鬆式"
     },
-    "conflictTitle": "與對外授權條款（{{license}}）的衝突",
+    "conflictTitle": "與對外授權條款 ({{license}}) 的衝突",
     "conflictHint": "呈現各相依項目的條款與您散布時採用的授權條款如何相容。這是文件輔助資料，用意在標出需要人工檢視的組合，不做任何法律判定。",
     "conflictIncompatible": "無法滿足",
     "conflictConditional": "視散布方式而定",
@@ -978,7 +978,7 @@
     "typeRootfs": "RootFS",
     "emptyTitle": "產生您的第一份 SBOM",
     "emptyBody": "掃描資料夾、Git 儲存庫、Docker 映像檔、SBOM 或 AI 模型。BomLens 會在本機一次產生軟體物料清單、授權聲明與安全報告。",
-    "emptyOutSbom": "SBOM（CycloneDX）",
+    "emptyOutSbom": "SBOM (CycloneDX)",
     "emptyOutNotice": "開放原始碼授權聲明",
     "emptyOutSecurity": "安全報告",
     "source": "刪除檔案後，該筆掃描也會從此清單消失。",

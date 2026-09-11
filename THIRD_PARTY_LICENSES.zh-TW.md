@@ -2,15 +2,15 @@
 
 > **English**: [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)
 
-BomLens（Apache-2.0）自身的程式碼寫成 shell 指令碼，並把數個開放原始碼工具打包進 Docker 映像檔，用來產生與分析 SBOM。本文件是這些內附工具的授權清單，以及隨之而來的散布義務。
+BomLens (Apache-2.0) 自身的程式碼寫成 shell 指令碼，並把數個開放原始碼工具打包進 Docker 映像檔，用來產生與分析 SBOM。本文件是這些內附工具的授權清單，以及隨之而來的散布義務。
 
 ## 合規要點
 
-- BomLens 的 shell 指令碼是以獨立行程（exec）呼叫內附工具，並未修改工具的原始碼。因此 GPL 與 AGPL 工具的 copyleft 不會傳播到 BomLens 的 Apache-2.0 程式碼（依 FSF 的見解：管線、CLI 呼叫與 exec 構成各自獨立的程式，打包進容器屬於 mere aggregation）。
+- BomLens 的 shell 指令碼是以獨立行程 (exec) 呼叫內附工具，並未修改工具的原始碼。因此 GPL 與 AGPL 工具的 copyleft 不會傳播到 BomLens 的 Apache-2.0 程式碼（依 FSF 的見解：管線、CLI 呼叫與 exec 構成各自獨立的程式，打包進容器屬於 mere aggregation）。
 - 工具的二進位檔仍然隨映像檔一起再次散布，因此我們提供授權條款全文，GPL 工具還額外提供對應原始碼的取得途徑。SPDX 授權條款全文（Apache-2.0、MIT、GPL-2.0、GPL-3.0 等）隨映像檔放在 `/usr/local/lib/sbom/licenses/`，各工具的原始碼可從下方表格的 Source URL 取得。
 - BomLens 自身的使用條款會隨每一份散布物一起提供。在映像檔中位於 `/usr/local/lib/sbom/notices/`，內含 `LICENSE`、`NOTICE` 與本文件；在發行壓縮包中位於解開後的最上層；在桌面版安裝檔中則位於應用程式的資源資料夾。您再次散布映像檔或壓縮包時一併轉交這些檔案，就是 Apache-2.0 §4 所要求的做法。
-- 未收錄任何以 AGPL 授權的工具。因此即使執行網頁介面（`--ui`），也不會觸發 AGPL §13 的網路條款。
-- 以 GPL 授權的分析工具只存在於另一個獨立的選用映像檔（`bomlens-firmware`）。安裝進基礎映像檔（`bomlens`）以及其他選用映像檔（`bomlens-aibom`、`bomlens-deep-cve`）的工具都是 permissive 授權。
+- 未收錄任何以 AGPL 授權的工具。因此即使執行網頁介面 (`--ui`)，也不會觸發 AGPL §13 的網路條款。
+- 以 GPL 授權的分析工具只存在於另一個獨立的選用映像檔 (`bomlens-firmware`)。安裝進基礎映像檔 (`bomlens`) 以及其他選用映像檔（`bomlens-aibom`、`bomlens-deep-cve`）的工具都是 permissive 授權。
 - 每一個映像檔（包含基礎映像檔）都建置在 `python:3.12-slim` 之上，因此也含有以 GPL、LGPL 與其他授權條款釋出的 Debian 系統套件。這是任何 Linux 基礎映像檔的固有性質，沒有不含 GPL 的選擇。這代表什麼、原始碼從哪裡取得，請看下方的[所有映像檔的 Debian 套件](#debian-packages-in-every-image)。
 
 ## 基礎映像檔——`ghcr.io/sktelecom/bomlens`（BomLens 安裝的工具；Debian 基底另見下方）
@@ -22,7 +22,7 @@ BomLens（Apache-2.0）自身的程式碼寫成 shell 指令碼，並把數個�
 | Trivy | 安全弱點掃描 | Apache-2.0 | https://github.com/aquasecurity/trivy |
 | trivy-db | 弱點資料庫 | Apache-2.0 | https://github.com/aquasecurity/trivy-db |
 | cosign | SBOM 簽章 | Apache-2.0 | https://github.com/sigstore/cosign |
-| scancode-toolkit | 精細的授權條款檢出。建置時選用（`SBOM_DEEP_LICENSE=true`）；**發行的映像檔並未收錄**，發行版是以預設值 `false` 建置 | Apache-2.0（資料集部分為 CC-BY-4.0 等） | https://github.com/aboutcode-org/scancode-toolkit |
+| scancode-toolkit | 精細的授權條款檢出。建置時選用 (`SBOM_DEEP_LICENSE=true`)；**發行的映像檔並未收錄**，發行版是以預設值 `false` 建置 | Apache-2.0（資料集部分為 CC-BY-4.0 等） | https://github.com/aboutcode-org/scancode-toolkit |
 | scanoss (scanoss.py) | 已複製納入的開放原始碼識別（預設內附；要停用請設 `SBOM_SCANOSS=false`） | MIT（內附的 `osadl-copyleft.json` 資料集為 CC-BY-4.0） | https://github.com/scanoss/scanoss.py |
 | owasp-aibom-generator | 產生 AI 模型 SBOM（選用 `SBOM_AIBOM`，獨立映像檔 `bomlens-aibom`；會呼叫 HuggingFace API） | Apache-2.0 | https://github.com/GenAI-Security-Project/aibom-generator |
 | picklescan | 對掃描到的 AI 模型檔案做 pickle 分析——判斷載入權重時是否會執行程式碼（一律安裝；純 Python，不連網） | MIT | https://github.com/mmaitre314/picklescan |
@@ -37,7 +37,7 @@ BomLens（Apache-2.0）自身的程式碼寫成 shell 指令碼，並把數個�
 | 資料 | 映像檔內路徑 | 出處 | 授權條款 |
 |------|-----------|--------|---------|
 | 已終止支援日期 | `/usr/local/lib/sbom/eol-data.json`, `eol-purl-map.json` | [endoflife.date](https://endoflife.date)，從它的公開 API 讀取 | MIT |
-| 惡意套件安全公告 | `/usr/local/lib/sbom/malicious-index.json` | OSV 批次封存檔（`osv-vulnerabilities.storage.googleapis.com`）。其中所帶的 `MAL-` 紀錄由 OpenSSF Package Analysis 專案發佈於 [ossf/malicious-packages](https://github.com/ossf/malicious-packages) | Apache-2.0（上游公告儲存庫） |
+| 惡意套件安全公告 | `/usr/local/lib/sbom/malicious-index.json` | OSV 批次封存檔 (`osv-vulnerabilities.storage.googleapis.com`)。其中所帶的 `MAL-` 紀錄由 OpenSSF Package Analysis 專案發佈於 [ossf/malicious-packages](https://github.com/ossf/malicious-packages) | Apache-2.0（上游公告儲存庫） |
 
 兩份資料集都不是原樣完整複製，而是各自縮減到檢查實際會讀取的部分——某個產品的已終止支援日期，或是一個 PURL 對應到它的公告識別碼——快照日期也隨之記錄，既寫在內附檔案裡，也標在檢查所標記的每一個元件上（`bomlens:eol:source`、`bomlens:malicious:source`）。這兩個專案都不為 BomLens 背書或認證，內附資料以現狀提供。
 
@@ -45,7 +45,7 @@ BomLens（Apache-2.0）自身的程式碼寫成 shell 指令碼，並把數個�
 
 ### 網頁介面的 npm 套件
 
-網頁介面（`--ui`）是一個 React 單頁應用程式。npm 套件的程式碼會編譯進建置產出，而該產出會隨基礎映像檔與桌面版安裝檔一起再次散布，因此 MIT 與 ISC 所要求的著作權與許可聲明必須隨之提供。
+網頁介面 (`--ui`) 是一個 React 單頁應用程式。npm 套件的程式碼會編譯進建置產出，而該產出會隨基礎映像檔與桌面版安裝檔一起再次散布，因此 MIT 與 ISC 所要求的著作權與許可聲明必須隨之提供。
 
 正式記錄是建置時產生的 `third-party-licenses.txt`。它只列出實際進入打包結果的套件，並完整重現每一個套件的授權條款全文。在網頁介面中可從 `/third-party-licenses.txt` 開啟；在映像檔內則位於 `/usr/local/lib/sbom-web/dist/third-party-licenses.txt`。它取自打包後的模組關係圖，而不是 `package.json` 的宣告，因為兩者並不一致：只在建置時使用的宣告相依項目（tailwindcss、typescript）不會進入散布物，而一個套件也可能被宣告並安裝了，卻因為沒有任何地方匯入它而從打包結果中被剔除。
 
@@ -79,7 +79,7 @@ shadcn/ui 不是安裝來用的程式庫，它的元件程式碼是複製到專�
 
 ### 網頁介面的字型
 
-網頁介面（`--ui`）內附四種字型，用來維持排版一致，以及支援離線與桌面版（Electron）運作。字型檔（woff2）在建置時編譯進網頁 SPA，並隨基礎映像檔一起散布；不會呼叫任何外部字型 CDN。
+網頁介面 (`--ui`) 內附四種字型，用來維持排版一致，以及支援離線與桌面版 (Electron) 運作。字型檔 (woff2) 在建置時編譯進網頁 SPA，並隨基礎映像檔一起散布；不會呼叫任何外部字型 CDN。
 
 | 字型 | 用途 | 授權條款 (SPDX) | Source |
 |------|---------|----------------|--------|
@@ -99,7 +99,7 @@ OFL-1.1 全文可在 Source 欄所列的各儲存庫中以 `OFL.txt` 取得。Pr
 
 ### 已複製納入的開放原始碼識別與 OSSKB API（選用）
 
-`--identify-vendored` 只內附 `scanoss.py` 用戶端（MIT）。該用戶端是預設建置的一部分；要排除它，請以 `docker build --build-arg SBOM_SCANOSS=false` 建置。實際執行比對的 SCANOSS Engine（GPL-2.0）**並未**收錄——改為呼叫託管的 OSSKB API（`api.osskb.org`）。這也是它與韌體映像檔中的 GPL 工具不同、可以放在基礎映像檔裡的原因（MIT）。內附的 `osadl-copyleft.json` 資料集是 CC-BY-4.0 資料而不是程式碼，只要求標示出處。
+`--identify-vendored` 只內附 `scanoss.py` 用戶端 (MIT)。該用戶端是預設建置的一部分；要排除它，請以 `docker build --build-arg SBOM_SCANOSS=false` 建置。實際執行比對的 SCANOSS Engine (GPL-2.0) **並未**收錄——改為呼叫託管的 OSSKB API (`api.osskb.org`)。這也是它與韌體映像檔中的 GPL 工具不同、可以放在基礎映像檔裡的原因 (MIT)。內附的 `osadl-copyleft.json` 資料集是 CC-BY-4.0 資料而不是程式碼，只要求標示出處。
 
 使用 OSSKB API（由 Software Transparency Foundation 營運）附帶以下條款：
 
@@ -159,7 +159,7 @@ OFL-1.1 全文可在 Source 欄所列的各儲存庫中以 `OFL.txt` 取得。Pr
 |------|----------------------|---------|----------------|----------|--------|
 | grype | v0.112.0 (`GRYPE_VERSION`) | 以 CPE 為基礎的 NVD CVE 比對 | Apache-2.0 | permissive | https://github.com/anchore/grype |
 
-資料：建置時烘進映像檔的 grype 弱點資料庫，由 Anchore 匯整公開的弱點來源而成——NVD（public domain）、GitHub Security Advisories（CC-BY-4.0），以及各發行版的安全資料庫（各自適用自己的條款）。這個資料庫以 `GRYPE_DB_AUTO_UPDATE=false` 釘住，因此掃描期間不會用到網路。
+資料：建置時烘進映像檔的 grype 弱點資料庫，由 Anchore 匯整公開的弱點來源而成——NVD (public domain)、GitHub Security Advisories (CC-BY-4.0)，以及各發行版的安全資料庫（各自適用自己的條款）。這個資料庫以 `GRYPE_DB_AUTO_UPDATE=false` 釘住，因此掃描期間不會用到網路。
 
 ## Android SDK 映像檔——由您自行建置，不對外發行
 
@@ -180,7 +180,7 @@ docker build --build-arg ANDROID_API=35 -t bomlens-android-sdk35 docker/android
 | cdxgen java 映像檔（`cdxgen-temurin-java21`，以 digest 釘住） | https://github.com/CycloneDX/cdxgen | Apache-2.0 |
 | Android SDK 命令列工具、platform-tools、`platforms;android-<API>`、`build-tools;<API>.0.0` | 由 `sdkmanager` 從 https://dl.google.com/android/repository/ 安裝 | Android Software Development Kit License Agreement, https://developer.android.com/studio/terms |
 
-SDK 條款所給的，也只是一份不得再授權的許可，用來開發 Android 應用程式（§3.1），這是這個映像檔不能轉交他人的另一個理由：我們沒有任何可以再授權的東西。
+SDK 條款所給的，也只是一份不得再授權的許可，用來開發 Android 應用程式 (§3.1)，這是這個映像檔不能轉交他人的另一個理由：我們沒有任何可以再授權的東西。
 
 SDK 的每一個元件在映像檔內都帶著自己的 `NOTICE.txt`（位於 `/opt/android-sdk/` 底下），SDK 自身內容的第三方聲明就在那裡。`/opt/android-sdk/licenses/` 底下的檔案是 `sdkmanager` 寫下的接受標記，不是授權條款全文。
 
@@ -195,7 +195,7 @@ SDK 的每一個元件在映像檔內都帶著自己的 `NOTICE.txt`（位於 `/
 
 Chromium 的第三方元件集合中含有 LGPL-2.1-or-later 的元件，FFmpeg 就是其中之一。Electron 並未把 FFmpeg 靜態連結，而是以獨立的共享程式庫散布（Windows 上是 `libffmpeg.dll`，macOS 上是 `libffmpeg.dylib`），這正是 LGPL 的重新連結條款所要求的形式。
 
-BomLens 自身的使用條款同樣隨安裝檔一起提供：`LICENSE`、`NOTICE` 與本文件會放進應用程式的資源資料夾（`electron/electron-builder.yml`）。
+BomLens 自身的使用條款同樣隨安裝檔一起提供：`LICENSE`、`NOTICE` 與本文件會放進應用程式的資源資料夾 (`electron/electron-builder.yml`)。
 
 ## 所有映像檔的 Debian 套件 {#debian-packages-in-every-image}
 

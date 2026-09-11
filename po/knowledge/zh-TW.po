@@ -168,7 +168,7 @@ msgstr "儲存庫將授權條款宣告為 unknown；在確認實際授權條款�
 #: ai-risk-knowledge.json
 msgctxt "ai-risk-knowledge.json:licenseTerms.22.summary"
 msgid "A custom license (license: other) — the terms live in the repository's LICENSE file and need human review."
-msgstr "自訂授權條款（license: other），其條款位於儲存庫的 LICENSE 檔案，需要人工檢視。"
+msgstr "自訂授權條款 (license: other)，其條款位於儲存庫的 LICENSE 檔案，需要人工檢視。"
 
 #: ai-risk-knowledge.json
 msgctxt "ai-risk-knowledge.json:customLicensePatterns.0.label"
@@ -523,7 +523,7 @@ msgstr "AI 基本法"
 #: regulation-crosswalk.json
 msgctxt "regulation-crosswalk.json:frameworks.bsi-tr-03183-2.title"
 msgid "BSI TR-03183-2 — SBOM data fields (EU CRA)"
-msgstr "BSI TR-03183-2 — SBOM 資料欄位（EU CRA）"
+msgstr "BSI TR-03183-2 — SBOM 資料欄位 (EU CRA)"
 
 #: regulation-crosswalk.json
 msgctxt "regulation-crosswalk.json:frameworks.bsi-tr-03183-2.short"

@@ -12,7 +12,7 @@ description: 'BomLens 的測試結構——如何執行測試套件、撰寫新�
 tests/
 ├── test-scan.sh          # 整合測試進入點（執行全部測試）
 ├── helpers/
-│   ├── assert.sh         # 斷言（assertion）輔助函式
+│   ├── assert.sh         # 斷言 (assertion) 輔助函式
 │   └── setup.sh          # 測試環境的初始化／清理
 └── cases/
     ├── test-java.sh      # Java 測試案例
@@ -38,7 +38,7 @@ tests/
 [PASS] Node.js npm 原始碼分析
 [PASS] Python pip 原始碼分析
 [PASS] Go modules 原始碼分析
-[PASS] Docker 映像檔分析（nginx:alpine）
+[PASS] Docker 映像檔分析 (nginx:alpine)
 ─────────────────────────────────
 6 個測試中有 6 個通過（0 個未通過）
 ```

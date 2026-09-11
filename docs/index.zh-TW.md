@@ -6,9 +6,9 @@ hide:
 
 # 在本機完成 SBOM 產生與開放原始碼風險評估
 
-針對單一專案、以本機優先為原則的 SBOM 產生器與開放原始碼風險評估工具——不需要 SaaS，也不需要帳號。輸入可以是原始碼、容器映像檔、二進位檔案、韌體、你收到的 SBOM，或是 HuggingFace 上的 AI 模型，一次執行就能產出 [SBOM](concepts/what-is-sbom.md)（CycloneDX 1.6）、開放原始碼授權聲明與安全風險報告。遇到 AI 模型時會建立 CycloneDX ML-BOM，並依 [AI 的 G7 最低要素](guides/ai-model.md)檢查，這些要素的叢集與 EU AI Act 的 Annex IV 有相當程度的重疊。
+針對單一專案、以本機優先為原則的 SBOM 產生器與開放原始碼風險評估工具——不需要 SaaS，也不需要帳號。輸入可以是原始碼、容器映像檔、二進位檔案、韌體、你收到的 SBOM，或是 HuggingFace 上的 AI 模型，一次執行就能產出 [SBOM](concepts/what-is-sbom.md)(CycloneDX 1.6)、開放原始碼授權聲明與安全風險報告。遇到 AI 模型時會建立 CycloneDX ML-BOM，並依 [AI 的 G7 最低要素](guides/ai-model.md)檢查，這些要素的叢集與 EU AI Act 的 Annex IV 有相當程度的重疊。
 
-[開始使用](start/first-scan.md){ .md-button .md-button--primary } [試用示範](https://bomlens.ospo.tw/demo/){ .md-button } [下載 Windows 版（.exe）](https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe){ .md-button }
+[開始使用](start/first-scan.md){ .md-button .md-button--primary } [試用示範](https://bomlens.ospo.tw/demo/){ .md-button } [下載 Windows 版 (.exe)](https://github.com/sktelecom/bomlens/releases/latest/download/BomLens-Setup.exe){ .md-button }
 
 [![最新版本](https://img.shields.io/github/v/release/sktelecom/bomlens)](https://github.com/sktelecom/bomlens/releases/latest)  Windows 安裝程式需要 Docker 引擎已經在執行；請參考下方的[免指令列快速開始](start/no-cli.md)。
 

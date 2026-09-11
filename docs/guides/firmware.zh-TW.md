@@ -59,11 +59,11 @@ SBOM_FIRMWARE_IMAGE=<內部鏡像>:<標籤> ./scripts/scan-sbom.sh --ui
 ```
 
 - 可辨識的副檔名（`.bin`、`.img`、`.squashfs`、`.ubi`、`.ubifs`、`.trx`、`.chk`、`.fw`、`.rom`）即使沒有 `--firmware` 也會自動偵測，但還是建議明確指定。
-- 產出物與一般掃描相同，共三種：開放原始碼授權聲明（`_NOTICE`）、SBOM（`_bom.json`）與風險報告（`_risk-report`）。
+- 產出物與一般掃描相同，共三種：開放原始碼授權聲明 (`_NOTICE`)、SBOM (`_bom.json`) 與風險報告 (`_risk-report`)。
 
 ## CVE 比對：線上與離線
 
-靜態二進位檔案的 CVE 比對是用 cve-bin-tool 搭配它自己的弱點資料庫。韌體映像檔採用混合式安排出貨，因此同一個映像檔在實體隔離（air-gapped）與連網環境都能運作。
+靜態二進位檔案的 CVE 比對是用 cve-bin-tool 搭配它自己的弱點資料庫。韌體映像檔採用混合式安排出貨，因此同一個映像檔在實體隔離 (air-gapped) 與連網環境都能運作。
 
 - 映像檔在建置時就內建資料庫的話，韌體掃描會在掃描當下以離線方式比對 CVE。這條路徑快，也適合實體隔離環境。
 - 沒有內建資料庫但網路可連線時，cve-bin-tool 會在執行期間從 NVD 下載資料庫。第一次執行會很慢；下載期間網頁介面會顯示下載進度列。
@@ -73,7 +73,7 @@ SBOM_FIRMWARE_IMAGE=<內部鏡像>:<標籤> ./scripts/scan-sbom.sh --ui
 
 這份資料庫彙整自多個來源（NVD、PURL2CPE 等），不只有 NVD。cve-bin-tool 會印出這則告示：「This product uses the NVD API but is not endorsed or certified by the NVD.」
 
-OSV（Open Source Vulnerabilities）的安全公告沒有內建，這是為了讓再散布的映像檔不含 share-alike 資料。網頁介面提供一個 opt-in 開關「Include OSV advisories」，開啟後只會為那一次掃描從 osv.dev 取得 OSV，也就是資料直接下載到你自己的機器上，而不是隨映像檔一起出貨。
+OSV (Open Source Vulnerabilities) 的安全公告沒有內建，這是為了讓再散布的映像檔不含 share-alike 資料。網頁介面提供一個 opt-in 開關「Include OSV advisories」，開啟後只會為那一次掃描從 osv.dev 取得 OSV，也就是資料直接下載到你自己的機器上，而不是隨映像檔一起出貨。
 
 ## 授權條款注意事項
 
@@ -84,7 +84,7 @@ OSV（Open Source Vulnerabilities）的安全公告沒有內建，這是為了�
 - 這套開放原始碼工具堆疊大約能偵測到 60–85% 的元件，結果非常取決於韌體的種類、strip 的程度，以及封裝是否成功解開。
 - 少了函式層級的二進位指紋比對，經過 strip 或內聯的元件，以及版本字串被移除的二進位檔案都會漏掉。
 - 靜態連結的函式庫、廠商改過的 squashfs、加密或簽章過的韌體，以及被改名的函式庫，會偵測不到或判斷錯誤。
-- 產出的 SBOM 是盡力而為（best-effort）的估計值，因此請不要把它當成法律上授權條款合規的唯一依據。
+- 產出的 SBOM 是盡力而為 (best-effort) 的估計值，因此請不要把它當成法律上授權條款合規的唯一依據。
 
 ---
 

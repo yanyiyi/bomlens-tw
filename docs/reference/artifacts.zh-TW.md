@@ -12,7 +12,7 @@ description: 'BomLens 產生的輸出檔案——檔案清單、各檔案的產�
 
 | 檔案 | 產生條件 | 說明 |
 |------|----------------|-------------|
-| `{Project}_{Version}_bom.json` | 一律產生 | SBOM（CycloneDX 1.6） |
+| `{Project}_{Version}_bom.json` | 一律產生 | SBOM (CycloneDX 1.6) |
 | `{Project}_{Version}_bom.spdx.json` | `--spdx` / `--all`，或在介面中使用「匯出為 SPDX 2.3」 | SBOM（SPDX 2.3，由 CycloneDX 輸出轉換而來） |
 | `{Project}_{Version}_NOTICE.txt` / `.html` | `--notice` / `--all` / 風險報告預設產生 | 開放原始碼授權聲明 |
 | `{Project}_{Version}_security.json` / `.md` / `.html` | `--security` / `--all` / 風險報告預設產生 | Trivy 安全報告 |
@@ -32,14 +32,14 @@ description: 'BomLens 產生的輸出檔案——檔案清單、各檔案的產�
 bomFormat          "CycloneDX"
 specVersion        "1.6"
 metadata
-  ├── timestamp    產生時間（ISO 8601）
+  ├── timestamp    產生時間 (ISO 8601)
   └── component    專案資訊（name、version、type）
 components[]
   ├── type         "library" | "framework" | "application"
   ├── name         元件名稱
   ├── version      版本
   ├── purl         Package URL（唯一識別碼）
-  └── licenses[]   授權條款資訊（SPDX ID）
+  └── licenses[]   授權條款資訊 (SPDX ID)
 ```
 
 各語言的 PURL 格式請參考[支援的生態系](ecosystems.md)。

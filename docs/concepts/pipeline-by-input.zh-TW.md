@@ -14,7 +14,7 @@ BomLens 接受多種輸入：原始碼、韌體、你收到的 SBOM，以及 AI 
 
 ## 原始碼
 
-原始碼資料夾、GitHub URL，或 ZIP 壓縮檔。語言偵測會挑出對應的官方 [cdxgen](https://github.com/CycloneDX/cdxgen) 語言映像檔，由它準備相依項目（`build-prep.sh`）並產生 SBOM。BomLens 無法執行 sibling 容器時（例如網頁介面的原始碼掃描），會後備改用 [syft](https://github.com/anchore/syft) 掃描該目錄，此時是從鎖定檔案取得直接相依。
+原始碼資料夾、GitHub URL，或 ZIP 壓縮檔。語言偵測會挑出對應的官方 [cdxgen](https://github.com/CycloneDX/cdxgen) 語言映像檔，由它準備相依項目 (`build-prep.sh`) 並產生 SBOM。BomLens 無法執行 sibling 容器時（例如網頁介面的原始碼掃描），會後備改用 [syft](https://github.com/anchore/syft) 掃描該目錄，此時是從鎖定檔案取得直接相依。
 
 有兩個選項只適用於原始碼掃描，而且預設都是關閉。
 
@@ -53,7 +53,7 @@ Yocto 建置目錄也從這裡進來。把 `--target` 指向建置目錄會被�
 
 ## AI 模型 {#ai-model}
 
-HuggingFace 的模型 id（`org/model`），由 opt-in 的 `bomlens-aibom` 映像檔負責。[OWASP AIBOM Generator](https://github.com/GenAI-Security-Project/aibom-generator) 會透過網路取得模型卡的後設資料，建立以模型與其資料集為核心的 CycloneDX 1.7 ML-BOM。後處理接著加上 G7 最低要素的符合性檢查。AI 模型沒有套件 CVE，因此會略過安全報告。
+HuggingFace 的模型 id (`org/model`)，由 opt-in 的 `bomlens-aibom` 映像檔負責。[OWASP AIBOM Generator](https://github.com/GenAI-Security-Project/aibom-generator) 會透過網路取得模型卡的後設資料，建立以模型與其資料集為核心的 CycloneDX 1.7 ML-BOM。後處理接著加上 G7 最低要素的符合性檢查。AI 模型沒有套件 CVE，因此會略過安全報告。
 
 ![AI 模型流程：OWASP AIBOM Generator 建立 CycloneDX 1.7 ML-BOM，再經過共用後處理](../images/diagrams/pipeline-ai-model.png)
 
@@ -65,7 +65,7 @@ AI 輸入還有第二條路徑，完全在基礎映像檔裡執行：模型**檔
 
 ## 共用的後處理
 
-不論輸入是什麼，SBOM 都會走過同一組固定順序的步驟。正規化跑在最前面，讓後續每個步驟拿到的輸入都是穩定的；簽章跑在最後，這樣它涵蓋的才是最終的 SBOM。虛線的步驟是選用或只適用於特定輸入。每個步驟都是盡力而為（best-effort）——失敗時只會發出警告並略過，不會中止整次掃描（簽章與上傳例外）。
+不論輸入是什麼，SBOM 都會走過同一組固定順序的步驟。正規化跑在最前面，讓後續每個步驟拿到的輸入都是穩定的；簽章跑在最後，這樣它涵蓋的才是最終的 SBOM。虛線的步驟是選用或只適用於特定輸入。每個步驟都是盡力而為 (best-effort)——失敗時只會發出警告並略過，不會中止整次掃描（簽章與上傳例外）。
 
 ![共用後處理步驟依序從正規化到產出物，選用步驟以虛線標示](../images/diagrams/pipeline-postprocess.png)
 
@@ -81,15 +81,15 @@ AI 輸入還有第二條路徑，完全在基礎映像檔裡執行：模型**檔
 |------|------|-------|---------|-------|---------|
 | cdxgen | 從原始碼產生 SBOM | 原始碼 | Apache-2.0 | 語言映像檔 | [CycloneDX/cdxgen](https://github.com/CycloneDX/cdxgen) |
 | syft | 映像檔、二進位檔案、目錄與韌體 rootfs 的 SBOM | 原始碼（後備）、映像檔、二進位檔案、rootfs、韌體 | Apache-2.0 | base / firmware | [anchore/syft](https://github.com/anchore/syft) |
-| SCANOSS (scanoss.py) | 以檔案指紋偵測複製進來的開放原始碼 | 原始碼（`--identify-vendored`） | MIT | base | [scanoss/scanoss.py](https://github.com/scanoss/scanoss.py) |
-| ScanCode Toolkit | 自家原始碼的精確授權條款偵測 | 原始碼（`--deep-license`） | Apache-2.0 | base（opt-in） | [aboutcode-org/scancode-toolkit](https://github.com/aboutcode-org/scancode-toolkit) |
+| SCANOSS (scanoss.py) | 以檔案指紋偵測複製進來的開放原始碼 | 原始碼 (`--identify-vendored`) | MIT | base | [scanoss/scanoss.py](https://github.com/scanoss/scanoss.py) |
+| ScanCode Toolkit | 自家原始碼的精確授權條款偵測 | 原始碼 (`--deep-license`) | Apache-2.0 | base (opt-in) | [aboutcode-org/scancode-toolkit](https://github.com/aboutcode-org/scancode-toolkit) |
 | unblob | 韌體解開封裝（主要） | 韌體 | MIT | firmware | [onekey-sec/unblob](https://github.com/onekey-sec/unblob) |
 | sasquatch | 標準 unsquashfs 拒絕處理的廠商變體 squashfs | 韌體 | GPL-2.0 | firmware（選用） | [onekey-sec/sasquatch](https://github.com/onekey-sec/sasquatch) |
 | cve-bin-tool | 識別經過 strip 的二進位檔案 + 比對 CVE | 韌體 | GPL-3.0 | firmware | [intel/cve-bin-tool](https://github.com/intel/cve-bin-tool) |
 | OWASP AIBOM Generator | 從 HuggingFace 模型卡產生 ML-BOM | AI 模型 | Apache-2.0 | aibom | [GenAI-Security-Project/aibom-generator](https://github.com/GenAI-Security-Project/aibom-generator) |
-| Trivy | 弱點（CVE）安全報告 | 全部 | Apache-2.0 | base | [aquasecurity/trivy](https://github.com/aquasecurity/trivy) |
-| cosign | SBOM 的 detached 簽章 | 全部（`--sign`） | Apache-2.0 | base | [sigstore/cosign](https://github.com/sigstore/cosign) |
-| WeasyPrint | 授權聲明的 PDF 輸出（選用） | 全部（`SBOM_PDF` 建置） | BSD-3-Clause | base（opt-in） | [Kozea/WeasyPrint](https://github.com/Kozea/WeasyPrint) |
+| Trivy | 弱點 (CVE) 安全報告 | 全部 | Apache-2.0 | base | [aquasecurity/trivy](https://github.com/aquasecurity/trivy) |
+| cosign | SBOM 的 detached 簽章 | 全部 (`--sign`) | Apache-2.0 | base | [sigstore/cosign](https://github.com/sigstore/cosign) |
+| WeasyPrint | 授權聲明的 PDF 輸出（選用） | 全部（`SBOM_PDF` 建置） | BSD-3-Clause | base (opt-in) | [Kozea/WeasyPrint](https://github.com/Kozea/WeasyPrint) |
 | jq | SBOM 正規化、授權聲明與報告組裝 | 全部 | MIT | base | [jqlang/jq](https://github.com/jqlang/jq) |
 
 > 完整的授權條款清單，以及韌體映像檔的 GPL 源碼提供方式，請看 [THIRD_PARTY_LICENSES.md](https://github.com/sktelecom/bomlens/blob/main/THIRD_PARTY_LICENSES.md)。

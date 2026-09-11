@@ -1,19 +1,27 @@
-# SOME DESCRIPTIVE TITLE
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Traditional Chinese (zh-TW) translation of the BomLens governance documents
+# (README, CONTRIBUTING, CODE_OF_CONDUCT, SECURITY, THIRD_PARTY_LICENSES).
+# Copyright (C) 2026 SK Telecom and the BomLens contributors.
+# This file is distributed under the same license as the BomLens package.
+#
+# The ./*.zh-TW.md files are GENERATED from this catalogue by po4a. Do not
+# hand-edit one -- run scripts/update-po.sh instead.
+#
+# Wording follows the Traditional Chinese L10N guidelines:
+#   https://hackmd.io/@l10n-tw/translation_guidelines
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: BomLens governance docs\n"
+"Report-Msgid-Bugs-To: https://github.com/sktelecom/bomlens/issues\n"
 "POT-Creation-Date: 2026-09-08 15:59+0800\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2026-09-11 00:00+0800\n"
+"Last-Translator: BomLens zh-TW translators <noreply@invalid>\n"
+"Language-Team: zh-TW\n"
+"Language: zh-TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. type: Title #
 #: CONTRIBUTING.md:1
@@ -161,7 +169,7 @@ msgstr "Git"
 #. type: Bullet: '- '
 #: CONTRIBUTING.md:42
 msgid "bash (Linux/macOS) or Git Bash (Windows)"
-msgstr "bash（Linux/macOS）或 Git Bash（Windows）"
+msgstr "bash (Linux/macOS) 或 Git Bash (Windows)"
 
 #. type: Title ###
 #: CONTRIBUTING.md:43
@@ -503,7 +511,7 @@ msgstr "聯絡方式：[opensource@sktelecom.com](mailto:opensource@sktelecom.co
 #: SECURITY.md:1
 #, no-wrap
 msgid "Security Policy"
-msgstr "安全政策（Security Policy）"
+msgstr "安全政策 (Security Policy)"
 
 #. type: Plain text
 #: SECURITY.md:4
@@ -525,7 +533,7 @@ msgstr ""
 #: SECURITY.md:7
 #, no-wrap
 msgid "Supported versions"
-msgstr "支援的版本（Supported versions）"
+msgstr "支援的版本 (Supported versions)"
 
 #. type: Plain text
 #: SECURITY.md:10
@@ -548,7 +556,7 @@ msgid ""
 msgstr ""
 "| 版本 | 是否支援 |\n"
 "|---------|-----------|\n"
-"| 最新發佈版本（`:latest`） | ✅ |\n"
+"| 最新發佈版本 (`:latest`) | ✅ |\n"
 "| 更舊的版本 | ❌ |\n"
 
 #. type: Plain text
@@ -563,7 +571,7 @@ msgstr ""
 #: SECURITY.md:18
 #, no-wrap
 msgid "Reporting a vulnerability"
-msgstr "通報弱點（Reporting a vulnerability）"
+msgstr "通報弱點 (Reporting a vulnerability)"
 
 #. type: Plain text
 #: SECURITY.md:21
@@ -586,7 +594,7 @@ msgid ""
 "fix and disclosure schedule can be coordinated in the same place."
 msgstr ""
 "在本儲存庫的 **Security** 分頁點選 **Report a vulnerability**，即可提交非公開"
-"的安全公告（advisory）草稿。內容只有維護者看得到，修正與公開揭露的時程也能在"
+"的安全公告 (advisory) 草稿。內容只有維護者看得到，修正與公開揭露的時程也能在"
 "同一處協調。"
 
 #. type: Title ###
@@ -622,7 +630,7 @@ msgstr "有問題的檔案路徑或程式碼位置"
 #. type: Bullet: '- '
 #: SECURITY.md:36
 msgid "Reproduction steps or a proof of concept (PoC)"
-msgstr "重現步驟或概念驗證（PoC）"
+msgstr "重現步驟或概念驗證 (PoC)"
 
 #. type: Bullet: '- '
 #: SECURITY.md:36
@@ -633,7 +641,7 @@ msgstr "可能的話，附上受影響的版本與環境（OS、Docker 版本）
 #: SECURITY.md:37
 #, no-wrap
 msgid "Process"
-msgstr "處理流程（Process）"
+msgstr "處理流程 (Process)"
 
 #. type: Plain text
 #: SECURITY.md:40
@@ -791,7 +799,7 @@ msgid ""
 "document is the license inventory for the bundled tools and the distribution "
 "obligations that come with them."
 msgstr ""
-"BomLens（Apache-2.0）自身的程式碼寫成 shell 指令碼，並把數個開放原始碼工具打"
+"BomLens (Apache-2.0) 自身的程式碼寫成 shell 指令碼，並把數個開放原始碼工具打"
 "包進 Docker 映像檔，用來產生與分析 SBOM。本文件是這些內附工具的授權清單，以及"
 "隨之而來的散布義務。"
 
@@ -810,7 +818,7 @@ msgid ""
 "reading: pipes, CLI calls, and exec make separate programs; bundling in a "
 "container is mere aggregation)."
 msgstr ""
-"BomLens 的 shell 指令碼是以獨立行程（exec）呼叫內附工具，並未修改工具的原始"
+"BomLens 的 shell 指令碼是以獨立行程 (exec) 呼叫內附工具，並未修改工具的原始"
 "碼。因此 GPL 與 AGPL 工具的 copyleft 不會傳播到 BomLens 的 Apache-2.0 程式碼"
 "（依 FSF 的見解：管線、CLI 呼叫與 exec 構成各自獨立的程式，打包進容器屬於 "
 "mere aggregation）。"
@@ -850,7 +858,7 @@ msgid ""
 "No AGPL-licensed tool is included. Running the web UI (`--ui`) therefore "
 "does not trigger the AGPL §13 network clause."
 msgstr ""
-"未收錄任何以 AGPL 授權的工具。因此即使執行網頁介面（`--ui`），也不會觸發 "
+"未收錄任何以 AGPL 授權的工具。因此即使執行網頁介面 (`--ui`)，也不會觸發 "
 "AGPL §13 的網路條款。"
 
 #. type: Bullet: '- '
@@ -861,8 +869,8 @@ msgid ""
 "and into the other opt-in images (`bomlens-aibom`, `bomlens-deep-cve`) are "
 "permissive."
 msgstr ""
-"以 GPL 授權的分析工具只存在於另一個獨立的選用映像檔（`bomlens-firmware`）。安"
-"裝進基礎映像檔（`bomlens`）以及其他選用映像檔（`bomlens-aibom`、`bomlens-"
+"以 GPL 授權的分析工具只存在於另一個獨立的選用映像檔 (`bomlens-firmware`)。安"
+"裝進基礎映像檔 (`bomlens`) 以及其他選用映像檔（`bomlens-aibom`、`bomlens-"
 "deep-cve`）的工具都是 permissive 授權。"
 
 #. type: Bullet: '- '
@@ -909,7 +917,7 @@ msgstr ""
 "| Trivy | 安全弱點掃描 | Apache-2.0 | https://github.com/aquasecurity/trivy |\n"
 "| trivy-db | 弱點資料庫 | Apache-2.0 | https://github.com/aquasecurity/trivy-db |\n"
 "| cosign | SBOM 簽章 | Apache-2.0 | https://github.com/sigstore/cosign |\n"
-"| scancode-toolkit | 精細的授權條款檢出。建置時選用（`SBOM_DEEP_LICENSE=true`）；**發行的映像檔並未收錄**，發行版是以預設值 `false` 建置 | Apache-2.0（資料集部分為 CC-BY-4.0 等） | https://github.com/aboutcode-org/scancode-toolkit |\n"
+"| scancode-toolkit | 精細的授權條款檢出。建置時選用 (`SBOM_DEEP_LICENSE=true`)；**發行的映像檔並未收錄**，發行版是以預設值 `false` 建置 | Apache-2.0（資料集部分為 CC-BY-4.0 等） | https://github.com/aboutcode-org/scancode-toolkit |\n"
 "| scanoss (scanoss.py) | 已複製納入的開放原始碼識別（預設內附；要停用請設 `SBOM_SCANOSS=false`） | MIT（內附的 `osadl-copyleft.json` 資料集為 CC-BY-4.0） | https://github.com/scanoss/scanoss.py |\n"
 "| owasp-aibom-generator | 產生 AI 模型 SBOM（選用 `SBOM_AIBOM`，獨立映像檔 `bomlens-aibom`；會呼叫 HuggingFace API） | Apache-2.0 | https://github.com/GenAI-Security-Project/aibom-generator |\n"
 "| picklescan | 對掃描到的 AI 模型檔案做 pickle 分析——判斷載入權重時是否會執行程式碼（一律安裝；純 Python，不連網） | MIT | https://github.com/mmaitre314/picklescan |\n"
@@ -953,7 +961,7 @@ msgstr ""
 "| 資料 | 映像檔內路徑 | 出處 | 授權條款 |\n"
 "|------|-----------|--------|---------|\n"
 "| 已終止支援日期 | `/usr/local/lib/sbom/eol-data.json`, `eol-purl-map.json` | [endoflife.date](https://endoflife.date)，從它的公開 API 讀取 | MIT |\n"
-"| 惡意套件安全公告 | `/usr/local/lib/sbom/malicious-index.json` | OSV 批次封存檔（`osv-vulnerabilities.storage.googleapis.com`）。其中所帶的 `MAL-` 紀錄由 OpenSSF Package Analysis 專案發佈於 [ossf/malicious-packages](https://github.com/ossf/malicious-packages) | Apache-2.0（上游公告儲存庫） |\n"
+"| 惡意套件安全公告 | `/usr/local/lib/sbom/malicious-index.json` | OSV 批次封存檔 (`osv-vulnerabilities.storage.googleapis.com`)。其中所帶的 `MAL-` 紀錄由 OpenSSF Package Analysis 專案發佈於 [ossf/malicious-packages](https://github.com/ossf/malicious-packages) | Apache-2.0（上游公告儲存庫） |\n"
 
 #. type: Plain text
 #: THIRD_PARTY_LICENSES.md:43
@@ -995,7 +1003,7 @@ msgid ""
 "base image and the desktop installer, so the copyright and permission "
 "notices MIT and ISC ask for have to travel with it."
 msgstr ""
-"網頁介面（`--ui`）是一個 React 單頁應用程式。npm 套件的程式碼會編譯進建置產"
+"網頁介面 (`--ui`) 是一個 React 單頁應用程式。npm 套件的程式碼會編譯進建置產"
 "出，而該產出會隨基礎映像檔與桌面版安裝檔一起再次散布，因此 MIT 與 ISC 所要求"
 "的著作權與許可聲明必須隨之提供。"
 
@@ -1137,8 +1145,8 @@ msgid ""
 "compiled into the web SPA at build time and ship with the base image; no "
 "external font CDN is called."
 msgstr ""
-"網頁介面（`--ui`）內附四種字型，用來維持排版一致，以及支援離線與桌面版"
-"（Electron）運作。字型檔（woff2）在建置時編譯進網頁 SPA，並隨基礎映像檔一起散"
+"網頁介面 (`--ui`) 內附四種字型，用來維持排版一致，以及支援離線與桌面版"
+" (Electron) 運作。字型檔 (woff2) 在建置時編譯進網頁 SPA，並隨基礎映像檔一起散"
 "布；不會呼叫任何外部字型 CDN。"
 
 #. type: Plain text
@@ -1238,11 +1246,11 @@ msgid ""
 "this can sit in the base image (MIT). The bundled `osadl-copyleft.json` "
 "dataset is CC-BY-4.0 data rather than code and requires attribution only."
 msgstr ""
-"`--identify-vendored` 只內附 `scanoss.py` 用戶端（MIT）。該用戶端是預設建置的"
+"`--identify-vendored` 只內附 `scanoss.py` 用戶端 (MIT)。該用戶端是預設建置的"
 "一部分；要排除它，請以 `docker build --build-arg SBOM_SCANOSS=false` 建置。實"
-"際執行比對的 SCANOSS Engine（GPL-2.0）**並未**收錄——改為呼叫託管的 OSSKB API"
-"（`api.osskb.org`）。這也是它與韌體映像檔中的 GPL 工具不同、可以放在基礎映像"
-"檔裡的原因（MIT）。內附的 `osadl-copyleft.json` 資料集是 CC-BY-4.0 資料而不是"
+"際執行比對的 SCANOSS Engine (GPL-2.0) **並未**收錄——改為呼叫託管的 OSSKB API"
+" (`api.osskb.org`)。這也是它與韌體映像檔中的 GPL 工具不同、可以放在基礎映像"
+"檔裡的原因 (MIT)。內附的 `osadl-copyleft.json` 資料集是 CC-BY-4.0 資料而不是"
 "程式碼，只要求標示出處。"
 
 #. type: Plain text
@@ -1506,7 +1514,7 @@ msgid ""
 "`GRYPE_DB_AUTO_UPDATE=false`, so no network access happens during a scan."
 msgstr ""
 "資料：建置時烘進映像檔的 grype 弱點資料庫，由 Anchore 匯整公開的弱點來源而成"
-"——NVD（public domain）、GitHub Security Advisories（CC-BY-4.0），以及各發行版"
+"——NVD (public domain)、GitHub Security Advisories (CC-BY-4.0)，以及各發行版"
 "的安全資料庫（各自適用自己的條款）。這個資料庫以 "
 "`GRYPE_DB_AUTO_UPDATE=false` 釘住，因此掃描期間不會用到網路。"
 
@@ -1577,7 +1585,7 @@ msgid ""
 "cannot be handed on: we have nothing to sublicense."
 msgstr ""
 "SDK 條款所給的，也只是一份不得再授權的許可，用來開發 Android 應用程式"
-"（§3.1），這是這個映像檔不能轉交他人的另一個理由：我們沒有任何可以再授權的東"
+" (§3.1)，這是這個映像檔不能轉交他人的另一個理由：我們沒有任何可以再授權的東"
 "西。"
 
 #. type: Plain text
@@ -1644,7 +1652,7 @@ msgid ""
 "electron-builder.yml`)."
 msgstr ""
 "BomLens 自身的使用條款同樣隨安裝檔一起提供：`LICENSE`、`NOTICE` 與本文件會放"
-"進應用程式的資源資料夾（`electron/electron-builder.yml`）。"
+"進應用程式的資源資料夾 (`electron/electron-builder.yml`)。"
 
 #. type: Title ##
 #: THIRD_PARTY_LICENSES.md:205

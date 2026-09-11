@@ -32,7 +32,7 @@ newlang) echo "ghcr.io/cyclonedx/cdxgen-debian-newlang:$CDXGEN_TAG" ;;
 
 ### 2. 需要準備相依項目時，修改 build-prep.sh
 
-如果該生態系在沒有鎖定檔案的情況下，cdxgen 無法解析間接相依，就把準備邏輯加到 `docker/lib/build-prep.sh`——它會在 cdxgen 執行前建立鎖定檔案。Rust（`cargo generate-lockfile`）與 Go（`go mod download`）是既有的先例。這段準備要寫成盡力而為（best-effort）的形式，絕對不能讓掃描因此失敗。
+如果該生態系在沒有鎖定檔案的情況下，cdxgen 無法解析間接相依，就把準備邏輯加到 `docker/lib/build-prep.sh`——它會在 cdxgen 執行前建立鎖定檔案。Rust (`cargo generate-lockfile`) 與 Go (`go mod download`) 是既有的先例。這段準備要寫成盡力而為 (best-effort) 的形式，絕對不能讓掃描因此失敗。
 
 ### 3. 新增範例專案
 

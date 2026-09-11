@@ -38,7 +38,7 @@
 
 - Docker 20.10 以上
 - Git
-- bash（Linux/macOS）或 Git Bash（Windows）
+- bash (Linux/macOS) 或 Git Bash (Windows)
 
 ### 複製儲存庫並準備環境
 

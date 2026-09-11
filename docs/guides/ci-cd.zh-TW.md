@@ -6,9 +6,9 @@ description: '將掃描器整合進 CI，讓 SBOM 隨每次建置更新，並以
 
 SBOM 是相依性在某個時間點的快照，因此相依性一有變動就必須重新產生，才能持續與程式碼一致。整合進 CI 後，SBOM 會隨每次建置與發佈自動更新、附在發佈產出物上，並成為弱點政策閘門的判斷依據。
 
-> **重要**：掃描器只回報、不中斷建置（report-only）——它會回報弱點，但一律以成功狀態結束。若要在出現 Critical（嚴重）弱點時讓建置失敗，請自行加上一個檢查所產生 `*_security.json` 的步驟（閘門範例見下文）。
+> **重要**：掃描器只回報、不中斷建置 (report-only)——它會回報弱點，但一律以成功狀態結束。若要在出現 Critical（嚴重）弱點時讓建置失敗，請自行加上一個檢查所產生 `*_security.json` 的步驟（閘門範例見下文）。
 
-想降低負擔，可依觸發條件切分分析深度：在 PR 只快速產生 SBOM（`--generate-only --no-report`）；在 `main` 與發佈則全部產生（`--all --generate-only`）並套用閘門。
+想降低負擔，可依觸發條件切分分析深度：在 PR 只快速產生 SBOM (`--generate-only --no-report`)；在 `main` 與發佈則全部產生 (`--all --generate-only`) 並套用閘門。
 
 ### GitHub Actions
 
