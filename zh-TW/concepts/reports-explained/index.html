@@ -1,0 +1,1892 @@
+
+<!doctype html>
+<html lang="zh-TW" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="如何閱讀與解讀 BomLens 產生的開放原始碼授權聲明、安全報告與開放原始碼風險分析報告。">
+      
+      
+        <meta name="author" content="SK Telecom">
+      
+      
+        <link rel="canonical" href="https://bomlens.ospo.tw/zh-TW/concepts/reports-explained/">
+      
+      
+        <link rel="prev" href="../../reference/artifacts/">
+      
+      
+        <link rel="next" href="../../reference/cli/">
+      
+      
+        
+          <link rel="alternate" href="../../../concepts/reports-explained/" hreflang="en">
+        
+          <link rel="alternate" href="../../../ko/concepts/reports-explained/" hreflang="ko">
+        
+          <link rel="alternate" href="./" hreflang="zh-TW">
+        
+      
+      
+      <link rel="icon" href="../../../images/logo-mark.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>如何讀報告 - BomLens</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+  
+    
+  
+  
+  
+  
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="BomLens">
+  <meta property="og:title" content="如何讀報告 - BomLens">
+  <meta property="og:description" content="如何閱讀與解讀 BomLens 產生的開放原始碼授權聲明、安全報告與開放原始碼風險分析報告。">
+  <meta property="og:image" content="https://bomlens.ospo.tw/images/og-card.png">
+  <meta property="og:url" content="https://bomlens.ospo.tw/zh-TW/concepts/reports-explained/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="如何讀報告 - BomLens">
+  <meta name="twitter:description" content="如何閱讀與解讀 BomLens 產生的開放原始碼授權聲明、安全報告與開放原始碼風險分析報告。">
+  <meta name="twitter:image" content="https://bomlens.ospo.tw/images/og-card.png">
+
+  <!--
+    방문 분석(GoatCounter): 쿠키도 개인정보도 수집하지 않는다. config.extra.goatcounter에
+    사이트 코드가 있을 때만 켜진다(없으면 출력하지 않으므로 등록 전에는 비활성).
+  -->
+  
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#如何解讀報告" class="md-skip">
+          跳轉到
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="頁首">
+    <a href="../../" title="BomLens" class="md-header__button md-logo" aria-label="BomLens" data-md-component="logo">
+      
+  <img src="../../../images/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BomLens
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              如何讀報告
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="選擇語言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../concepts/reports-explained/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../ko/concepts/reports-explained/" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="zh-TW" class="md-select__link">
+              正體中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜尋" placeholder="搜尋" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="搜尋">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清除" aria-label="清除" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜尋引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/sktelecom/bomlens" title="前往倉庫" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sktelecom/bomlens
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="導覽列" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="BomLens" class="md-nav__button md-logo" aria-label="BomLens" data-md-component="logo">
+      
+  <img src="../../../images/logo.svg" alt="logo">
+
+    </a>
+    BomLens
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/sktelecom/bomlens" title="前往倉庫" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    sktelecom/bomlens
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    首頁
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://bomlens.ospo.tw/demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Live demo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速開始
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    快速開始
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../what-is-sbom/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    什麼是 SBOM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../start/first-scan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    第一次掃描
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../start/no-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    免指令列快速開始
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ui/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    網頁介面與桌面版
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    指南
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    指南
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/by-input/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    依輸入類型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/reports/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    產生報告
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/supplier-sbom/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    供應者 SBOM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/firmware/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    韌體分析
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/ai-model/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI 模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/identify-vendored/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    識別內含的開放原始碼 (C/C++)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/server-delivery/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    伺服器 SBOM
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/upload/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    上傳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/ci-cd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD 整合
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    產出物
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    產出物
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/artifacts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    產出物種類
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    如何讀報告
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    如何讀報告
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目錄">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目錄
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#授權聲明的處理內容" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        授權聲明的處理內容
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#優先順序訊號cvssepsscisa-kev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        優先順序訊號（CVSS、EPSS、CISA KEV）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outbound-license-conflicts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對外授權條款衝突
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#已知惡意套件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        已知惡意套件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#component-end-of-life-eol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        元件已終止支援 (EOL)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-currency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本新舊
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#結果解讀與後續處理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果解讀與後續處理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#開放原始碼風險分析報告" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        開放原始碼風險分析報告
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#相關文件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關文件
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    進階
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    進階
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI 參考
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/docker-image/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker 映像檔
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/ecosystems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    支援的生態系
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    專案資訊
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    專案資訊
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    架構
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipeline-by-input/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    各輸入類型的流程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local-first/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    本機優先設計
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribute/package-managers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    套件管理器
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contribute/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    測試
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../talks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    演講
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/sktelecom/bomlens/releases" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    版本發行說明
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目錄">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目錄
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#授權聲明的處理內容" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        授權聲明的處理內容
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#優先順序訊號cvssepsscisa-kev" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        優先順序訊號（CVSS、EPSS、CISA KEV）
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outbound-license-conflicts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        對外授權條款衝突
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#已知惡意套件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        已知惡意套件
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#component-end-of-life-eol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        元件已終止支援 (EOL)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#version-currency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        版本新舊
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#結果解讀與後續處理" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        結果解讀與後續處理
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#開放原始碼風險分析報告" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        開放原始碼風險分析報告
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#相關文件" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        相關文件
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="導覽列" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    首頁
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../../reference/artifacts/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    產出物
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="如何解讀報告">如何解讀報告<a class="headerlink" href="#如何解讀報告" title="Permanent link">&para;</a></h1>
+<p>這一頁說明掃描結束後如何閱讀與解讀 BomLens 的報告。其產生方式請看<a href="../../guides/reports/">產生報告</a>。</p>
+<h2 id="授權聲明的處理內容">授權聲明的處理內容<a class="headerlink" href="#授權聲明的處理內容" title="Permanent link">&para;</a></h2>
+<p>開放原始碼授權聲明 (NOTICE) 會依授權條款把元件分組。除了分組之外，它還一併處理下列事項。</p>
+<ul>
+<li>把授權條款名稱正規化為 SPDX 識別碼。例如「Apache License, version 2.0」會正規化為 <code>Apache-2.0</code>。同一份授權條款因為寫法不同而重複的項目，會合併成一項。</li>
+<li>掃描工具無法判定授權條款名稱，僅留下 <code>CUSTOM</code> 並附上授權條款檔全文時（常見於 LICENSE 檔改寫著作權標示行的 Go 模組），會將全文與主要授權條款（<code>MIT</code>、<code>BSD-2-Clause</code>、<code>BSD-3-Clause</code>、<code>Apache-2.0</code>、<code>ISC</code>）的條文用語進行比對，以還原 SPDX 識別碼。若比對後仍無法明確判定授權條款，則會保留為 <code>CUSTOM</code>，而不會逕行推測。</li>
+<li>SBOM 裡有著作權 (copyright) 值時，會逐一元件顯示。</li>
+<li>21 種主要開放原始碼授權條款（<code>Apache-2.0</code>、<code>MIT</code>、<code>BSD-3-Clause</code>、<code>GPL</code>／<code>LGPL</code> 家族等）的 SPDX 標準全文，也會附在授權聲明的最後。如此即可履行須隨附授權條款全文的義務，無須另外蒐集。這些內建的授權條款全文位於 <code>docker/lib/licenses/*.txt</code>。</li>
+</ul>
+<h2 id="優先順序訊號cvssepsscisa-kev">優先順序訊號（CVSS、EPSS、CISA KEV）<a class="headerlink" href="#優先順序訊號cvssepsscisa-kev" title="Permanent link">&para;</a></h2>
+<p>只看嚴重程度很難決定該先修哪一個。為此，安全報告在嚴重程度之外還提供三個訊號。Markdown 與 HTML 表格的欄位組成是 <code>Severity | KEV | CVSS | EPSS | CVE | Package | Installed | Fixed</code>。</p>
+<ul>
+<li><strong>CVSS</strong>——弱點的技術性嚴重程度分數 (0–10)。優先採用 V3 分數，沒有時才後備採用 V2。</li>
+<li><strong>EPSS</strong>——未來 30 天內在真實環境遭到利用的機率 (0–1)。查詢自 FIRST.org；分數越高，被用於攻擊的機會越大。</li>
+<li><strong>CISA KEV</strong>——是否列在美國 CISA 維護的「已知遭利用弱點」清單中。列在其中時，HTML 報告會以 ⚠️ 標記標示。</li>
+</ul>
+<p>表格會把列在 KEV 中的項目排在最前面，接著依嚴重程度排序，最後再依 EPSS 遞減排序。由上往下處理，自然就會先處理風險最高的項目。這套排序只適用於靜態的報告檔案；<a href="../../reference/ui/#result-sections">網頁介面的弱點表格</a>開啟時是先依嚴重程度、再依 CVSS 排序，而且可以依任一欄位重新排序，包括 EPSS。</p>
+<p>EPSS 與 KEV 需要向外部 API 查詢。在封閉網路中，可以設定 <code>SECURITY_ENRICH=false</code>，略過這兩欄，報告其餘部分照樣產生。</p>
+<h2 id="outbound-license-conflicts">對外授權條款衝突<a class="headerlink" href="#outbound-license-conflicts" title="Permanent link">&para;</a></h2>
+<p>上面的授權分類只就各元件本身標示它的 Copyleft 強度。那個強度是否真的構成問題，取決於<em>你</em>對外散布時採用的授權條款，而原始碼掃描無法推斷這個值——所以要用 <code>--license &lt;spdx-id&gt;</code>（或網頁介面的「對外授權條款」欄位）宣告它，之後每個相依項目都會以它為基準判定。</p>
+<ul>
+<li><code>無法滿足</code>——以所宣告的授權條款散布時，無法同時滿足該相依項目的條件。</li>
+<li><code>視散布方式而定</code>——允許，但義務取決於你如何連結或散布。需要有人親自確認。</li>
+<li><code>無法判定</code>——授權條款未被辨識，或是你沒有宣告任何對外授權條款。</li>
+</ul>
+<p>帶有例外條款的授權條款（最常見的是 classpath 例外）絕不會落到第一類：那條條款存在的目的，正是為了允許這樣的組合。</p>
+<p>什麼都不宣告，這項檢查就不會執行——報告會直接省略該區段，而不是印出一份沒人檢查過的無問題結論。它是協助準備文件的資料，不是法律判定：旗標請看<a href="../../reference/cli/">CLI 參考</a>，判定顯示的位置請看<a href="../../reference/ui/">網頁介面</a>。</p>
+<h2 id="已知惡意套件">已知惡意套件<a class="headerlink" href="#已知惡意套件" title="Permanent link">&para;</a></h2>
+<p>弱點指的是一個正常的套件有缺陷。惡意套件性質不同：它是為了攻擊安裝它的人而發佈的——針對你想輸入的名稱所做的錯字仿冒 (typosquat)、從被挾持的維護者帳號推上去的發行版本，或是在安裝過程中執行的惡意程式碼。BomLens 把這類項目與弱點表格分開標示，因為應對方式不一樣。你必須移除該套件，並輪替建置過程可能接觸到的所有認證資訊；沒有可以升級過去的版本。</p>
+<ul>
+<li>比對一律以 PURL 進行，絕不用名稱。這類套件刻意取得與真品相似的名稱，用名稱比對正好是最不該用的方式。</li>
+<li>資料是 OSV 所發佈的惡意套件公告（帶有 <code>MAL-</code> 識別碼的那些）的內建快照，因此這項檢查和已終止支援標記一樣可以離線執行。設定 <code>ENRICH_MALICIOUS=false</code> 可以略過它。</li>
+<li>大多數公告沒有指明版本，意思是該套件所有已發佈的版本都是惡意的。公告確實指明版本時，只會標記那些版本。</li>
+<li>每個被標記的元件都會帶著公告識別碼與快照日期（<code>bomlens:malicious:id</code>、<code>bomlens:malicious:source</code>）。日期很重要：這個領域變化很快，所以什麼都沒查到只代表「不在這份快照裡」，不代表「今天是安全的」。</li>
+</ul>
+<h2 id="component-end-of-life-eol">元件已終止支援 (EOL)<a class="headerlink" href="#component-end-of-life-eol" title="Permanent link">&para;</a></h2>
+<p>BomLens 也會標示各元件的發行週期是否已達上游的支援終止期限（End-of-Life，EOL）。這是與 CVE 各自獨立的供應鏈風險：超過支援期限的執行環境或框架不會再獲得上游提供的安全性修正，因此之後即使通報 Critical（嚴重）或 High（高）等級的弱點，也沒有修補程式可供套用。</p>
+<ul>
+<li>日期來自內建於掃描器映像檔的 endoflife.date 快照，因此這項檢查不需任何網路呼叫就能離線執行，封閉網路也能用。來源與快照日期會記錄在每個被標記的元件上 (<code>bomlens:eol:source</code>)。</li>
+<li>涵蓋範圍以 endoflife.date 為準，它追蹤的是執行環境、主要框架、作業系統與資料庫（spring-boot、express、django、nodejs、python、php、nginx、openssl、ubuntu、debian 等）。多數規模較小的函式庫不在追蹤範圍內；沒有對應資料的元件會保留為未知，不會用猜測值填補。</li>
+<li>在網頁介面中，「總覽」會出現一個「已終止支援」計數方塊，其中同時有弱點的元件會以風險色標示——已終止支援的元件不會再有上游修補來處理它的 CVE，所以那正是該動手的一批。「元件」表格則會多出「已終止支援」標記（知道終止日期時一併顯示）與「已終止支援」篩選條件。</li>
+<li>它預設開啟，而且因為是離線執行所以不會拖慢速度。想關掉就設定 <code>ENRICH_EOL=false</code>。AI／ML 模型掃描會略過這個步驟，因為它們沒有執行環境或框架元件。</li>
+</ul>
+<h2 id="version-currency">版本新舊<a class="headerlink" href="#version-currency" title="Permanent link">&para;</a></h2>
+<p>待在受支援的發行週期裡，並不等於用的是該週期的最新版本，所以 BomLens 也會標示元件是否已經落後。這項判定分成兩層。</p>
+<ul>
+<li>離線層與已終止支援檢查一起預設開啟。同一份 endoflife.date 快照記錄了各發行週期的最新修補版本，所以 BomLens 能離線判斷已安裝的版本是否落後於它自己週期內的最新修補版本。這是一次不需網路呼叫就能找出的、安全的週期內升級，和已終止支援檢查完全一樣。落後的元件會帶上 <code>bomlens:currency:outdated=true</code>，目標修補版本則放在 <code>bomlens:currency:latestPatch</code>。它是在已終止支援的步驟裡執行的，因此 <code>ENRICH_EOL=false</code> 會一併把它關掉，AI／ML 模型掃描也會略過。</li>
+<li>deps.dev 層是 opt-in。設定 <code>STALENESS_ENRICH=true</code> 之後，會把每個元件拿到 deps.dev（Google 的公開套件後設資料）查詢，記錄絕對最新的版本 (<code>bomlens:staleness:latest</code>)、已安裝的版本落後幾個發行版本 (<code>bomlens:staleness:releasesBehind</code>)，以及最新版本是什麼時候發行的 (<code>bomlens:staleness:lastReleased</code>)。它每個元件都會發出一次網路呼叫，因此是拿掃描的離線決定性去換資料的新鮮度。它不適合封閉網路的執行環境，所以預設關閉。它是盡力而為且有時間上限的，因此查詢失敗絕不會中斷掃描。支援的生態系有 npm、PyPI、Maven、Go、Cargo、NuGet 與 RubyGems。專案是否仍在積極維護不在這個版本的範圍內，會留到後續版本。</li>
+<li>在網頁介面中，「總覽」會多出一個方塊，統計落後於最新版本的元件數；「元件」表格則會把不是最新版本的元件標示為「非最新」，並多出一個「非最新」篩選條件。開啟 deps.dev 層之後，這類元件還會顯示落後幾個版本以及最後一次發行的日期。</li>
+</ul>
+<h2 id="結果解讀與後續處理">結果解讀與後續處理<a class="headerlink" href="#結果解讀與後續處理" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Severity</th>
+<th>意義</th>
+<th>建議做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Critical（嚴重）</strong></td>
+<td>可立即被利用，影響嚴重</td>
+<td>最優先處理——升級到 <code>Fixed</code> 欄位所列的版本</td>
+</tr>
+<tr>
+<td><strong>High（高）</strong></td>
+<td>風險高</td>
+<td>在短期內排定修補計畫</td>
+</tr>
+<tr>
+<td><strong>Medium（中）／ Low（低）</strong></td>
+<td>影響有限</td>
+<td>於例行維護時處理</td>
+</tr>
+<tr>
+<td><strong>Unknown（未知）</strong></td>
+<td>尚未評估嚴重程度</td>
+<td>直接查看該 CVE 後自行分類</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>報告的 <code>Fixed</code>（修正版本）欄位有版本時，把相依項目提升到該版本或更高就能解決。這是最快的第一線應對。</li>
+<li>CI 關卡範例。只要有一件 Critical（嚴重）就讓建置失敗：
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">crit</span><span class="o">=</span><span class="k">$(</span>jq<span class="w"> </span><span class="s1">'[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length'</span><span class="w"> </span>*_security.json<span class="k">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">[</span><span class="w"> </span><span class="s2">"</span><span class="nv">$crit</span><span class="s2">"</span><span class="w"> </span>-gt<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">crit</span><span class="si">}</span><span class="s2"> 個 Critical 弱點"</span><span class="p">;</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+</code></pre></div></li>
+<li>分級處理 (triage)——判斷誤判（實際上沒有影響）與核准例外——以及歷程管理，都超出 BomLens 的範圍。請把 SBOM 上傳到弱點管理系統（Dependency-Track、TRUSCA 等）來處理。</li>
+</ul>
+<h2 id="開放原始碼風險分析報告">開放原始碼風險分析報告<a class="headerlink" href="#開放原始碼風險分析報告" title="Permanent link">&para;</a></h2>
+<p>開放原始碼風險分析報告會依嚴重程度彙整弱點，並附上建議的應對期限（Critical（嚴重）7 天、High（高）30 天）。它內含授權條款摘要；分析供應者 SBOM 時，還會加上格式符合性結果。</p>
+<p>授權條款摘要也會依 Copyleft 強度把元件分類，規則與網頁介面所用的相同。SBOM 中每個元件都帶有 <code>bomlens:licenseClass</code> 屬性，值為 <code>network-copyleft</code>、<code>strong-copyleft</code>、<code>weak-copyleft</code>、<code>permissive</code> 或 <code>uncategorized</code> 之一；報告會顯示各分類的數量，以及造成 Copyleft 曝險的那些元件。工具無法辨識的授權條款絕不會逕自視為 permissive，而是保留為 <code>uncategorized</code>，交由人工檢視。</p>
+<h2 id="相關文件">相關文件<a class="headerlink" href="#相關文件" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="../../guides/reports/">產生報告</a></li>
+<li><a href="../../reference/artifacts/">產出物參考</a></li>
+<li><a href="../architecture/">BomLens 的運作原理</a></li>
+</ul>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  回到頂端
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2026 SK Telecom Co., Ltd. · <a href="https://github.com/sktelecom/bomlens/blob/main/LICENSE">Apache-2.0</a> · <a href="https://github.com/sktelecom/bomlens/blob/main/THIRD_PARTY_LICENSES.md">Third-party licenses</a>
+
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.path", "navigation.top", "navigation.tracking", "toc.follow", "search.suggest", "search.highlight", "content.code.copy", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u8907\u88fd", "clipboard.copy": "\u8907\u88fd", "search.result.more.one": "\u6b64\u9801\u5c1a\u6709 1 \u500b\u7b26\u5408\u7684\u9805\u76ee", "search.result.more.other": "\u6b64\u9801\u5c1a\u6709 # \u500b\u7b26\u5408\u7684\u9805\u76ee", "search.result.none": "\u6c92\u6709\u7b26\u5408\u7684\u9805\u76ee", "search.result.one": "\u627e\u5230 1 \u500b\u7b26\u5408\u7684\u9805\u76ee", "search.result.other": "\u627e\u5230 # \u500b\u7b26\u5408\u7684\u9805\u76ee", "search.result.placeholder": "\u6253\u5b57\u9032\u884c\u641c\u5c0b", "search.result.term.missing": "\u7f3a\u5c11\u5b57\u8a5e", "select.version": "\u9078\u64c7\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../../javascripts/extra.js"></script>
+      
+    
+  </body>
+</html>

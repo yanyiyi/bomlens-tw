@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://bomlens.ospo.tw/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/concepts/architecture/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/architecture/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/concepts/local-first/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/local-first/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/local-first/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/local-first/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/concepts/pipeline-by-input/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/pipeline-by-input/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/pipeline-by-input/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/pipeline-by-input/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/concepts/reports-explained/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/reports-explained/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/reports-explained/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/reports-explained/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/concepts/what-is-sbom/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/what-is-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/what-is-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/what-is-sbom/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/contribute/package-managers/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/contribute/package-managers/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/contribute/package-managers/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/contribute/package-managers/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/contribute/testing/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/contribute/testing/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/contribute/testing/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/contribute/testing/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/ai-model/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/ai-model/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/ai-model/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/ai-model/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/by-input/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/by-input/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/by-input/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/by-input/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/ci-cd/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/ci-cd/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/ci-cd/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/ci-cd/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/firmware/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/firmware/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/firmware/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/firmware/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/identify-vendored/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/identify-vendored/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/identify-vendored/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/identify-vendored/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/reports/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/reports/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/reports/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/reports/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/server-delivery/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/server-delivery/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/server-delivery/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/server-delivery/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/supplier-sbom/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/supplier-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/supplier-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/supplier-sbom/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/guides/upload/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/upload/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/upload/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/upload/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/reference/artifacts/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/artifacts/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/artifacts/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/artifacts/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/reference/cli/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/cli/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/cli/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/cli/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/reference/docker-image/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/docker-image/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/docker-image/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/docker-image/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/reference/ecosystems/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/ecosystems/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/ecosystems/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/ecosystems/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/reference/ui/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/ui/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/ui/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/ui/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/start/first-scan/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/start/first-scan/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/start/first-scan/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/start/first-scan/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/start/no-cli/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/start/no-cli/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/start/no-cli/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/start/no-cli/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/talks/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/talks/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/talks/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/talks/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/concepts/architecture/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/architecture/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/concepts/local-first/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/local-first/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/local-first/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/local-first/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/concepts/pipeline-by-input/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/pipeline-by-input/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/pipeline-by-input/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/pipeline-by-input/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/concepts/reports-explained/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/reports-explained/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/reports-explained/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/reports-explained/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/concepts/what-is-sbom/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/what-is-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/what-is-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/what-is-sbom/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/contribute/package-managers/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/contribute/package-managers/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/contribute/package-managers/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/contribute/package-managers/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/contribute/testing/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/contribute/testing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/contribute/testing/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/contribute/testing/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/ai-model/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/ai-model/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/ai-model/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/ai-model/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/by-input/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/by-input/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/by-input/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/by-input/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/ci-cd/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/ci-cd/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/ci-cd/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/ci-cd/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/firmware/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/firmware/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/firmware/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/firmware/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/identify-vendored/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/identify-vendored/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/identify-vendored/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/identify-vendored/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/reports/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/reports/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/reports/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/reports/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/server-delivery/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/server-delivery/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/server-delivery/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/server-delivery/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/supplier-sbom/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/supplier-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/supplier-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/supplier-sbom/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/guides/upload/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/upload/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/upload/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/upload/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/reference/artifacts/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/artifacts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/artifacts/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/artifacts/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/reference/cli/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/cli/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/cli/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/cli/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/reference/docker-image/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/docker-image/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/docker-image/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/docker-image/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/reference/ecosystems/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/ecosystems/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/ecosystems/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/ecosystems/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/reference/ui/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/ui/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/ui/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/ui/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/start/first-scan/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/start/first-scan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/start/first-scan/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/start/first-scan/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/start/no-cli/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/start/no-cli/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/start/no-cli/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/start/no-cli/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/ko/talks/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/talks/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/talks/"/>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/talks/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/concepts/architecture/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/architecture/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/architecture/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/concepts/local-first/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/local-first/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/local-first/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/local-first/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/concepts/pipeline-by-input/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/pipeline-by-input/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/pipeline-by-input/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/pipeline-by-input/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/concepts/reports-explained/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/reports-explained/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/reports-explained/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/reports-explained/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/concepts/what-is-sbom/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/concepts/what-is-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/concepts/what-is-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/concepts/what-is-sbom/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/contribute/package-managers/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/contribute/package-managers/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/contribute/package-managers/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/contribute/package-managers/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/contribute/testing/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/contribute/testing/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/contribute/testing/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/contribute/testing/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/ai-model/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/ai-model/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/ai-model/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/ai-model/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/by-input/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/by-input/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/by-input/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/by-input/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/ci-cd/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/ci-cd/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/ci-cd/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/ci-cd/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/firmware/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/firmware/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/firmware/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/firmware/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/identify-vendored/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/identify-vendored/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/identify-vendored/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/identify-vendored/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/reports/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/reports/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/reports/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/reports/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/server-delivery/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/server-delivery/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/server-delivery/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/server-delivery/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/supplier-sbom/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/supplier-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/supplier-sbom/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/supplier-sbom/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/guides/upload/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/guides/upload/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/guides/upload/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/guides/upload/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/reference/artifacts/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/artifacts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/artifacts/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/artifacts/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/reference/cli/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/cli/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/cli/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/cli/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/reference/docker-image/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/docker-image/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/docker-image/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/docker-image/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/reference/ecosystems/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/ecosystems/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/ecosystems/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/ecosystems/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/reference/ui/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/reference/ui/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/reference/ui/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/reference/ui/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/start/first-scan/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/start/first-scan/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/start/first-scan/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/start/first-scan/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/start/no-cli/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/start/no-cli/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/start/no-cli/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/start/no-cli/"/>
+    </url>
+    <url>
+        <loc>https://bomlens.ospo.tw/zh-TW/talks/</loc>
+        <lastmod>2026-09-11</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh-TW" href="https://bomlens.ospo.tw/zh-TW/talks/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://bomlens.ospo.tw/talks/"/>
+        <xhtml:link rel="alternate" hreflang="ko" href="https://bomlens.ospo.tw/ko/talks/"/>
+    </url>
+</urlset>
