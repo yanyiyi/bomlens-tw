@@ -1,0 +1,1030 @@
+{
+  "appTitle": "BomLens",
+  "subtitle": "單一專案的 SBOM、開放原始碼授權聲明與安全報告——一次執行完成",
+  "retry": "重試",
+  "form": {
+    "title": "掃描設定",
+    "description": "輸入專案資訊，並選擇要產生的項目。",
+    "project": "專案名稱",
+    "projectPlaceholder": "my-app",
+    "version": "版本",
+    "versionPlaceholder": "1.0.0",
+    "options": "產生選項",
+    "advanced": "進階",
+    "run": "執行掃描",
+    "running": "掃描中…",
+    "demoRunDisabled": "此示範無法執行掃描——這是一個靜態頁面，背後沒有實際運作的機器。",
+    "demoRunDisabledCta": "在您自己的程式碼上執行"
+  },
+  "source": {
+    "label": "掃描目標",
+    "currentDir": "目前資料夾",
+    "currentDirPath": "目前資料夾",
+    "currentDirHint": "掃描此資料夾（掛載為 /src）中的原始碼。要掃描其他資料夾，請在該資料夾執行 --ui。",
+    "rootfsDir": "目錄 / rootfs",
+    "yoctoBuildDir": "Yocto 建置目錄",
+    "rootfsPlaceholder": "centos-rootfs/（相對於目前資料夾）",
+    "rootfsHint": "將目前資料夾 (/src) 底下的 OS rootfs 或任一子資料夾當作目錄掃描。Yocto 建置目錄會被自動辨識，並改為分析建置所發佈的映像檔 SBOM，而非建置樹。資料夾以外的路徑會被拒絕——請將 rootfs 放在啟動資料夾底下、以 --mount 掛載，或改用 Docker 映像檔。",
+    "scanRoot": "掃描位置",
+    "scanRootCurrent": "目前資料夾 ({{path}})",
+    "scanRootCurrentNoPath": "目前資料夾",
+    "rootfsSubpath": "子資料夾（選填）",
+    "rootfsSubpathHint": "留空則掃描整個掛載的資料夾，也可填入子資料夾以縮小掃描範圍。",
+    "addScanFolder": "新增資料夾…",
+    "removeScanFolder": "從清單移除此資料夾",
+    "scanFolderDesktopHint": "新增的資料夾會成為唯讀掃描目標。新增或移除資料夾時，掃描器會短暫重新啟動。",
+    "gitUrl": "GitHub URL",
+    "gitHint": "公開儲存庫可直接 clone；私有儲存庫請在下方輸入權杖。",
+    "gitPlaceholder": "https://github.com/org/repo",
+    "gitToken": "權杖（私有儲存庫，選填）",
+    "gitTokenPlaceholder": "ghp_… (Personal Access Token)",
+    "gitTokenHint": "僅私有儲存庫需要。權杖只在 clone 時使用一次，絕不儲存也不記錄。",
+    "zipUpload": "ZIP 上傳",
+    "sbomUpload": "SBOM 上傳",
+    "sbomAnalyzeHint": "為進行風險分析，會自動啟用開放原始碼授權聲明與安全報告。",
+    "firmwareUpload": "韌體上傳",
+    "firmwareHint": "先解開封裝，再以 syft 與 cve-bin-tool 識別元件 (.bin/.img/.squashfs…)。",
+    "firmwareUnavailable": "韌體分析需要 Docker 正在執行（韌體映像檔會以 sibling 容器方式執行）。",
+    "siblingPullNotice": "首次執行會下載專用映像檔（檔案較大，僅需下載一次）；之後的執行會沿用。",
+    "dockerImage": "Docker 映像檔",
+    "dockerHint": "掃描本機或遠端的 Docker 映像檔（需要 Docker socket）。",
+    "dockerPlaceholder": "nginx:latest",
+    "aiModel": "AI 模型",
+    "aiModelPlaceholder": "google-bert/bert-base-uncased",
+    "aiModelHint": "請以「org/model」格式輸入 HuggingFace 模型 ID（例如 Qwen/Qwen2.5-0.5B），而不是集合名稱或完整 URL。會透過網路取得模型卡後設資料，產生 CycloneDX ML-BOM。",
+    "aiModelUnavailable": "AI 模型 SBOM 需要 Docker 正在執行（AIBOM 映像檔會以 sibling 容器方式執行）。",
+    "modelUpload": "模型檔案",
+    "modelUploadHint": "直接讀取模型檔案本身的標頭——不需要 HuggingFace 帳號與網路，因此從未發佈的模型也能掃描。可填入的資訊依格式而異：GGUF 帶有名稱、授權條款與架構，safetensors 通常只有張量形狀。超過 8 GB 的檔案請改用 CLI (--model-file)，它會就地讀取檔案。",
+    "hfAuthOn": "已向 HuggingFace 完成身分驗證：私有與受管制 (gated) 的模型儲存庫皆可解析。",
+    "hfAuthOff": "目前以匿名方式執行，只能解析公開模型。若要掃描私有或受管制 (gated) 的儲存庫——例如在發佈前檢視模型——請設定 HF_TOKEN 後重新啟動 UI。",
+    "usageContext": "使用情境",
+    "usageUnspecified": "未指定",
+    "usageContextHint": "您打算如何使用這個模型。指定後，授權條款評估會以此用途為基準評定。",
+    "uploading": "上傳進度",
+    "uploadErrorTooLarge": "檔案太大，伺服器無法接受。請改用較小的壓縮檔，或直接掃描解壓後的資料夾。",
+    "uploadErrorNetwork": "無法連線到掃描伺服器。請確認伺服器仍在執行，然後再試一次。",
+    "uploadErrorServer": "伺服器無法處理這個請求。請再試一次；若持續失敗，請重新啟動掃描器。",
+    "uploadErrorRejected": "伺服器未接受這次上傳。請檢查檔案後再試一次。",
+    "packageUpload": "建置產出物",
+    "packageUploadHint": "可為 jar、war、deb、rpm 或 wheel 檔，或 Windows、macOS 安裝程式。可執行的 jar 內含捆綁的相依項目，掃描結果接近掃描原始碼；純函式庫 jar 不含相依項目，掃描不會有結果。安裝程式會先解開封裝，因為其內容位在檔案內部，而非外層檔案本身。",
+    "dropHere": "將檔案拖放到這裡",
+    "browse": "選擇檔案",
+    "replaceFile": "更換",
+    "removeFile": "移除所選檔案",
+    "uploadingPercent": "上傳中… {{percent}}%"
+  },
+  "options": {
+    "notice": "授權聲明",
+    "noticeHint": "產生開放原始碼授權聲明 (NOTICE)",
+    "aiNoticeHint": "對 AI 模型而言，聲明會列出模型與資料集的授權條款，並將有使用限制的條款（RAIL、非商業）標記為待檢視——建議保持開啟。",
+    "security": "安全報告",
+    "securityHint": "產生 Trivy 弱點報告",
+    "deepSource": "解析間接相依",
+    "deepSourceHint": "在容器中建置該資料夾，解析出含精確間接相依版本的完整相依樹，與掃描目前資料夾時相同。關閉時退回快速掃描，只涵蓋已宣告的套件。",
+    "deepLicense": "逐檔授權條款掃描",
+    "deepLicenseHint": "除了各套件宣告的授權條款外，還以 ScanCode 掃描您自己的原始碼檔案，找出逐檔的授權條款文字與檔頭（較慢）。",
+    "scanMethodHint": "針對沒有套件管理器的原始碼所做的進階分析。若專案使用套件管理器建置（Maven、npm、pip、Go modules…），SBOM 已經完整，這些選項可以保持關閉。",
+    "identifyVendored": "偵測複製進來的開放原始碼",
+    "identifyVendoredHint": "以 SCANOSS 找出複製進原始碼樹的第三方開放原始碼（主要是 C/C++）。只會將檔案指紋——而非原始碼——傳送到 OSSKB 服務。",
+    "scanossTokenPlaceholder": "SCANOSS 權杖（選填）",
+    "scanossTokenHint": "免費的 OSSKB 端點有速率限制——偶爾掃描沒問題，但頻繁執行可能得不到結果。若需經常使用，請至 scanoss.com 取得權杖。權杖只在本次掃描使用一次，絕不儲存也不記錄。",
+    "includeOsv": "更多弱點公告",
+    "includeOsvHint": "在韌體弱點比對中加入 OSV.dev 公告。OSV 資料庫並未內建於映像檔中，因此會在本次執行時從 osv.dev 下載（進度顯示於下方）。",
+    "deepCve": "深度 CVE 比對 (NVD CPE)",
+    "deepCveHint": "另外比對僅存在於 NVD、其他比對方式可能漏掉的公告。所需時間較長，並會一併開啟安全報告。",
+    "byteStable": "可重現的輸出",
+    "byteStableHint": "以相同輸入重新掃描時，會產生逐位元組完全相同的 SBOM，因此輸出可以比對差異並以雜湊值核對。會略過每次執行結果可能不同的網路授權條款查詢。",
+    "upload": "上傳到伺服器",
+    "uploadHint": "掃描完成後，將產生的 SBOM 傳送到 Dependency-Track 或 TRUSCA 伺服器。伺服器 URL 與權杖僅用於本次執行，絕不儲存。",
+    "outboundLicense": "對外授權條款（選填）",
+    "outboundLicenseHint": "您的專案對外發行所採用的 SPDX 識別碼，例如 Apache-2.0。指定後會標記條款與其衝突的相依項目。原始碼掃描無法自行推斷這項資訊，未指定時此檢查保持關閉。"
+  },
+  "upload": {
+    "target": "目的地",
+    "targetDT": "Dependency-Track",
+    "targetTrusca": "TRUSCA",
+    "url": "伺服器 URL",
+    "urlPlaceholder": "https://dtrack.example.com",
+    "token": "API 權杖",
+    "tokenPlaceholder": "貼上上傳權杖",
+    "tokenHint": "Dependency-Track 使用 X-Api-Key；TRUSCA 使用 Bearer 權杖。權杖僅用於本次執行，絕不儲存。",
+    "projectId": "TRUSCA 專案 ID",
+    "projectIdPlaceholder": "專案 UUID"
+  },
+  "progress": {
+    "title": "執行記錄",
+    "waiting": "掃描開始後，即時記錄會顯示在這裡。",
+    "cvedbDownloading": "正在下載 CVE 資料庫"
+  },
+  "result": {
+    "title": "結果",
+    "kindAi": "AI 模型",
+    "kindSource": "原始碼",
+    "kindImage": "容器映像檔",
+    "kindFirmware": "韌體",
+    "kindRootfs": "根檔案系統",
+    "kindAnalyze": "SBOM 分析",
+    "kindSbom": "SBOM",
+    "succeeded": "掃描完成",
+    "failed": "掃描失敗",
+    "rescan": "重新掃描",
+    "rescanHint": "以預先填入的這些設定重新掃描同一目標",
+    "components": "元件",
+    "vulnerabilities": "弱點",
+    "noSecurity": "未產生安全報告",
+    "noSecurityHint": "此次掃描沒有弱點報告，因此這裡的內容未與安全公告資料比對。區段空白不代表沒有弱點。",
+    "aiScanTitle": "AI 模型 SBOM (ML-BOM)",
+    "aiScanBody": "由 HuggingFace 模型後設資料產生。內容以模型與其資料集為中心，因此元件數量比一般軟體掃描少。",
+    "vendoredHintTitle": "找到的元件很少——這是 C/C++ 嵌入式原始碼嗎？",
+    "vendoredHintBody": "沒有套件管理器的 C/C++ 原始碼常會直接納入複製進來的開放原始碼 (vendored)，一般掃描看不到。請在進階掃描選項開啟「偵測複製進來的開放原始碼」後再執行一次。只會傳送檔案指紋——原始碼不會離開本機。",
+    "sbomDegradedTitle": "僅含直接相依項目——未執行深度解析",
+    "sbomDegradedBody": "間接相依性分析器 (cdxgen) 無法執行，因此這份 SBOM 只列出直接相依項目。請確認 Docker 可用後重新掃描，以取得完整的相依關係圖。",
+    "sbomDegradedDisk": "間接相依性分析器 (cdxgen) 因 Docker 磁碟空間不足而未能執行，因此這份 SBOM 只列出直接相依項目。請釋出空間（例如「docker system prune」）後重新掃描，以取得完整的相依關係圖。",
+    "scanossUnavailableTitle": "SCANOSS 搜尋未完成",
+    "scanossUnavailableBody": "OSSKB 查詢被擋下（達到速率限制、沒有網路或沒有權杖）。免費的 OSSKB 端點對匿名使用有速率限制——請在進階掃描選項加入 SCANOSS 權杖後再執行一次，以取得結果。",
+    "scanossNoMatchTitle": "未發現複製進來的開放原始碼",
+    "scanossNoMatchBody": "SCANOSS 搜尋順利完成，但沒有找到直接複製進原始碼的第三方開放原始碼——可能確實沒有，或該程式碼不在 OSSKB 中。",
+    "vendoredBadge": "已複製納入",
+    "vendoredBadgeHint": "SCANOSS 判定為複製進原始碼的開放原始碼",
+    "presenceOnlyVersion": "無版本",
+    "presenceOnlyHint": "已由 ELF 結構（程式庫檔案或 NEEDED 項目）證明存在，但沒有留下版本字串。沒有版本就無法在弱點資料庫中查詢，因此弱點結果並未涵蓋此元件。授權義務仍然適用。",
+    "vendoredMatch": "相符度 {{pct}}",
+    "severityTitle": "嚴重程度分布",
+    "severityFilterHint": "點選嚴重程度即可篩選",
+    "noVulns": "未發現弱點",
+    "noVulnsHint": "掃描已執行，並將識別出的每個元件與安全公告資料比對過。無法識別的元件不在這項檢查範圍內。",
+    "noVulnsAction": "查看已檢查的元件",
+    "securityScanFailed": "安全掃描失敗——未產生任何結果。這裡的數字不代表目標的實際曝險。",
+    "securityScanPartial": "安全掃描器回報錯誤；這些結果可能不完整。",
+    "artifacts": "產出物",
+    "artifactsEmpty": "未產生任何產出物。",
+    "artifactCount": "{{count}} 個產出物 · {{size}}",
+    "downloadAll": "全部下載 (ZIP)",
+    "copyLink": "複製連結",
+    "copied": "已複製連結",
+    "downloadStarted": "已開始下載",
+    "signed": "已簽章",
+    "spdxExport": "匯出為 SPDX 2.3",
+    "spdxExporting": "轉換中…",
+    "spdxExportFailed": "無法匯出 SPDX。CycloneDX SBOM 不受影響。",
+    "kind": {
+      "riskReport": {
+        "title": "開放原始碼風險報告",
+        "desc": "彙整授權條款與弱點的供應鏈風險分析。"
+      },
+      "sbom": {
+        "title": "SBOM (CycloneDX)",
+        "desc": "正規化後的軟體物料清單，格式為 CycloneDX JSON。需要時可隨時匯出 SPDX 2.3 副本。"
+      },
+      "notice": {
+        "title": "開放原始碼授權聲明",
+        "desc": "隨附元件的授權聲明與著作權標示。"
+      },
+      "conformance": {
+        "title": "符合性報告",
+        "desc": "所提交 SBOM 的格式驗證結果。"
+      },
+      "security": {
+        "title": "安全報告",
+        "desc": "在元件中發現的已知弱點 (CVE)。"
+      },
+      "license": {
+        "title": "深度授權分析",
+        "desc": "ScanCode 深度授權條款偵測結果。"
+      },
+      "signature": {
+        "title": "SBOM 簽章",
+        "desc": "用於驗證 SBOM 的 cosign 簽章。"
+      }
+    },
+    "download": "下載",
+    "view": "檢視",
+    "conformance": "符合性",
+    "verdictPass": "通過",
+    "verdictFail": "未通過",
+    "riskReport": "開放原始碼風險報告",
+    "tabSummary": "摘要",
+    "tabComponents": "元件",
+    "tabVulns": "弱點",
+    "tabDependencies": "相依性",
+    "tabSourceTree": "原始碼樹",
+    "componentsEmpty": "未偵測到任何元件。",
+    "componentsEmptyHint": "掃描已結束，但未能識別出任何元件。目標若沒有可辨識的資訊清單 (manifest)、鎖定檔或套件資料庫，通常就會是這種結果。",
+    "componentsSearch": "搜尋名稱、授權、類型…",
+    "allTypes": "所有類型",
+    "allLicenses": "所有授權條款",
+    "allSeverities": "所有嚴重程度",
+    "licenseSummaryTitle": "授權條款",
+    "licenseClassTitle": "授權分類",
+    "licenseClassFilterHint": "點選分類即可篩選",
+    "licenseMore": "還有 {{count}} 個",
+    "licenseRowHint": "點選授權條款即可查看其元件",
+    "componentsCount": "共 {{total}} 個元件，顯示 {{shown}} 個",
+    "truncated": "僅顯示前 {{count}} 列",
+    "noMatch": "沒有符合的資料列。",
+    "licenseNone": "不明",
+    "filterHasVulns": "有弱點",
+    "filterDirectOnly": "僅直接相依",
+    "filterNeedsReview": "需人工檢視",
+    "scopeDirect": "直接",
+    "scopeTransitive": "間接",
+    "colName": "名稱",
+    "colVersion": "版本",
+    "colType": "類型",
+    "colScope": "範圍",
+    "colRisk": "風險",
+    "colLicense": "授權",
+    "colSource": "來源 / 下載",
+    "colCopyright": "著作權",
+    "colSeverity": "嚴重程度",
+    "colCve": "CVE",
+    "colPackage": "元件",
+    "colInstalled": "已安裝版本",
+    "vulnSearchPlaceholder": "搜尋 CVE、元件、標題",
+    "vulnShown": "共 {{total}} 筆，顯示 {{shown}} 筆",
+    "colFixed": "修正版本",
+    "vulnCvss": "CVSS",
+    "colEpss": "EPSS",
+    "kevBadge": "KEV",
+    "kevHint": "已知遭利用 (CISA Known Exploited Vulnerabilities)",
+    "colNvdSeverity": "NVD 嚴重程度",
+    "statusFixed": "已有修正可用",
+    "statusAffected": "受影響",
+    "statusWillNotFix": "不予修正",
+    "statusEndOfLife": "已終止支援",
+    "statusFixDeferred": "修正延後",
+    "statusUnderInvestigation": "調查中",
+    "statusFixedHint": "廠商或安全公告指出此 CVE 已有修正可用。",
+    "statusAffectedHint": "廠商或安全公告確認已安裝的版本受影響。",
+    "statusWillNotFixHint": "廠商已決定不修補此 CVE。",
+    "statusEndOfLifeHint": "此元件已終止支援，沒有修正計畫。",
+    "statusFixDeferredHint": "已規劃修正，但尚未提供。",
+    "statusUnderInvestigationHint": "廠商仍在調查此 CVE。",
+    "vulnPublished": "發佈日期",
+    "vulnDescription": "說明",
+    "vulnReferences": "參考資料",
+    "vulnNoDetail": "沒有其他詳細資訊。",
+    "vulnRowToggle": "顯示弱點詳細資訊",
+    "componentRowToggle": "顯示元件詳細資訊",
+    "eolTile": "已終止支援",
+    "eolAtRisk": "其中 {{count}} 個另有弱點",
+    "eolBadge": "已終止支援",
+    "eolBadgeHint": "上游已終止支援——不會再有安全修補",
+    "eolSince": "自 {{date}} 起",
+    "filterEol": "已終止支援",
+    "colEol": "支援狀態",
+    "outdatedTile": "非最新",
+    "outdatedBadge": "非最新",
+    "outdatedBadgeHint": "同一發行週期已有較新的修補版本",
+    "outdatedLatest": "最新：{{version}}",
+    "outdatedReleasesBehind": "落後 {{count}} 個版本",
+    "outdatedLastReleased": "{{date}} 發行",
+    "filterOutdated": "非最新",
+    "columns": "欄位",
+    "filters": "篩選",
+    "clearFilters": "清除篩選",
+    "colCurrency": "版本新舊",
+    "maliciousBadge": "惡意套件",
+    "maliciousBadgeHint": "此套件是為了攻擊安裝者而發佈的。請移除它，並輪替建置過程可能接觸到的所有認證資訊——沒有可升級的版本。",
+    "kernelAdvisories": "另有 {{count}} 筆核心 (kernel) 安全公告列於安全報告中，未計入上方統計。針對核心的公告大多屬於裝置從未編譯進去的子系統，而 SBOM 無法分辨是哪些。",
+    "viewInComponents": "在「元件」中檢視 {{name}}",
+    "viewInVulns": "檢視 {{name}} 的弱點",
+    "exportCsv": "匯出 CSV",
+    "csvName": "名稱",
+    "csvVersion": "版本",
+    "csvType": "類型",
+    "csvLicenses": "授權條款",
+    "csvScope": "範圍",
+    "csvVulnCount": "弱點數",
+    "csvMaxSeverity": "最高嚴重程度",
+    "csvPurl": "套件 URL",
+    "csvCve": "CVE",
+    "csvSeverity": "嚴重程度",
+    "csvPackage": "套件",
+    "csvInstalled": "已安裝版本",
+    "csvFixed": "修正版本",
+    "csvCvss": "CVSS",
+    "csvEpss": "EPSS",
+    "csvKev": "已知遭利用",
+    "csvTitle": "標題"
+  },
+  "deps": {
+    "loading": "正在載入相依性…",
+    "loadError": "無法載入相依性檢視所需的 SBOM。",
+    "viewGraph": "關係圖",
+    "viewTree": "樹狀",
+    "direct": "直接",
+    "cycle": "循環",
+    "empty": "未記錄任何相依關係。",
+    "emptyHint": "這份 SBOM 列出了元件，但未記錄元件之間的關係。讀取 manifest 或 lock 檔的掃描會擷取這些關聯；掃描已建置的映像檔、韌體映像檔或二進位檔通常無法取得。",
+    "flatFallback": "這份 SBOM 沒有相依關係圖，改以扁平元件清單顯示。",
+    "expand": "展開",
+    "collapse": "收合",
+    "tooLarge": "圖中有 {{count}} 個節點（超過 {{cap}} 個上限），請改用樹狀檢視。",
+    "graphError": "無法繪製相依關係圖。",
+    "search": "搜尋套件…",
+    "legendTransitive": "間接",
+    "legendVuln": "有弱點",
+    "arrowHint": "箭頭由套件指向它所相依的對象。",
+    "interactHint": "將游標移到節點上可追蹤套件的關聯；點一下可查看詳細資訊。",
+    "keyboardHint": "鍵盤使用者：請切換到樹狀檢視進行瀏覽。",
+    "graphAria": "相依關係圖（視覺化）。要以鍵盤瀏覽，請切換到樹狀檢視。",
+    "hasVuln": "有已知弱點",
+    "zoomIn": "放大",
+    "zoomOut": "縮小",
+    "fit": "調整至視窗大小",
+    "savePng": "儲存為 PNG"
+  },
+  "sourceTree": {
+    "loading": "正在載入原始碼樹…",
+    "loadError": "無法載入原始碼檔案樹。",
+    "empty": "沒有掃描到原始碼檔案。",
+    "noLicenseHint": "執行 ScanCode（深度授權條款）掃描後，才會顯示授權詳細資訊。"
+  },
+  "sourceViewer": {
+    "selectPrompt": "挑選一個檔案，即可閱讀掃描到的內容。",
+    "summary": "已從掃描的原始碼樹中擷取 {{count}} 個檔案。",
+    "summaryOmitted": "{{count}} 個未收錄（二進位檔，或超出擷取上限）。",
+    "lines": "{{count}} 行",
+    "truncated": "僅顯示部分",
+    "truncatedFoot": "此檔案的其餘部分超出擷取上限，未予儲存。",
+    "showAll": "顯示其餘 {{count}} 行",
+    "missingBinary": "無法預覽——這是二進位檔，因此只記錄了路徑。",
+    "missingBudget": "無法預覽——擷取在處理到此檔案之前已達大小上限。",
+    "missingUnknown": "此檔案未擷取任何內容。",
+    "symlink": "符號連結",
+    "symlinkTo": "這是一個符號連結，指向",
+    "linksSummary": "{{count}} 個符號連結。"
+  },
+  "inputSbom": {
+    "loading": "正在載入提交的 SBOM…",
+    "loadError": "無法載入所提交 SBOM 的詳細資訊。",
+    "intro": "此次掃描讀取的是他人產生的 SBOM。以下是該文件送達時的原貌，尚未轉換為供其他畫面分析使用的 CycloneDX。",
+    "unnamed": "提交的 SBOM",
+    "entries": "{{count}} 個項目",
+    "componentsHint": "項目本身連同篩選與風險資訊，列在",
+    "field": {
+      "format": "格式",
+      "documentName": "文件名稱",
+      "created": "建立時間",
+      "tools": "產生工具",
+      "supplier": "供應者",
+      "authors": "作者",
+      "documentId": "文件識別碼",
+      "rootComponent": "描述對象",
+      "rootLicense": "宣告的授權條款",
+      "purl": "套件 URL"
+    }
+  },
+  "severity": {
+    "CRITICAL": "Critical（嚴重）",
+    "HIGH": "High（高）",
+    "MEDIUM": "Medium（中）",
+    "LOW": "Low（低）",
+    "UNKNOWN": "Unknown（不明）"
+  },
+  "viewer": {
+    "open": "檢視產出物",
+    "close": "關閉"
+  },
+  "dialog": {
+    "cancel": "取消"
+  },
+  "theme": {
+    "toLight": "切換為淺色",
+    "toDark": "切換為深色"
+  },
+  "lang": {
+    "label": "語言"
+  },
+  "nav": {
+    "label": "區段",
+    "collapse": "收合側邊欄",
+    "expand": "展開側邊欄",
+    "recent": "最近掃描",
+    "depSplitTitle": "直接 / 間接",
+    "recentScans": "掃描管理",
+    "recentEmpty": "尚無最近掃描",
+    "recentDelete": "刪除此掃描",
+    "sectionsHint": "執行掃描後，結果區段會顯示在這裡。",
+    "group": {
+      "inventory": "清冊",
+      "ai": "AI",
+      "outputs": "產出物",
+      "security": "安全",
+      "compliance": "合規"
+    },
+    "overview": "總覽",
+    "components": "元件",
+    "dependencies": "相依性",
+    "sourceTree": "原始碼樹",
+    "vulnerabilities": "弱點",
+    "licenses": "授權條款",
+    "conformance": "SBOM 符合性",
+    "models": "模型與資料集",
+    "artifacts": "產出物",
+    "inputSbom": "提交的 SBOM",
+    "help": "說明",
+    "helpDocs": "文件",
+    "helpDemo": "線上展示",
+    "helpVersion": "版本 {{version}}",
+    "helpVersionUnknown": "此建置未標記版本"
+  },
+  "shell": {
+    "newScan": "新增掃描",
+    "demoGetTool": "取得 BomLens",
+    "demoBannerTitle": "唯讀展示",
+    "demoBannerBody": "這些是實際掃描產生的真實結果，已凍結供您四處瀏覽。這裡的掃描、上傳與刪除功能都已停用——在您自己的程式碼上執行 BomLens，就能產生自己的結果。",
+    "demoBannerCta": "如何執行"
+  },
+  "search": {
+    "placeholder": "搜尋元件、CVE…",
+    "none": "沒有相符項目",
+    "components": "元件",
+    "vulnerabilities": "弱點"
+  },
+  "newscan": {
+    "title": "您想掃描什麼？",
+    "subtitle": "挑選一個目標，BomLens 就會在本機一次產生 SBOM、開放原始碼授權聲明與安全報告。",
+    "source": "來源",
+    "settings": "掃描設定",
+    "outputs": "產出物",
+    "scanOptions": "進階掃描選項",
+    "upload": "上傳（選填）",
+    "enabledCount": "已啟用 {{n}} 項",
+    "on": "開啟",
+    "catCode": "程式碼",
+    "catArtifact": "產出物",
+    "catSbom": "SBOM",
+    "catAiModel": "AI 模型"
+  },
+  "run": {
+    "stageGenerate": "產生 SBOM",
+    "stageNormalize": "正規化",
+    "stageNotice": "授權聲明",
+    "stageSecurity": "安全",
+    "stageDeepCve": "深度 CVE 比對",
+    "stageReport": "報告",
+    "failedTitle": "掃描未能完成",
+    "failedBody": "掃描完成前發生問題。請查看下方的執行記錄了解詳情，然後再試一次。",
+    "retry": "重試",
+    "cancel": "取消"
+  },
+  "overview": {
+    "needsAttention": "需要注意",
+    "allClear": "沒有需要注意的項目",
+    "attnConformance": "{{count}} 項必要符合性檢查未通過",
+    "attnVulns": "{{count}} 個 Critical（嚴重）或 High（高）等級弱點",
+    "attnReview": "{{count}} 個元件被標記為需要檢視",
+    "explore": "探索",
+    "jumpHint": "檢視{{section}}",
+    "depBreakdown": "直接 {{direct}} · 間接 {{transitive}}",
+    "yoctoVex": {
+      "title": "建置期間已處理",
+      "allHandled": "此映像檔的所有已知 CVE 都已在建置時處理完畢：{{fixed}} 個已修補，{{notAffected}} 個不適用。沒有遺留未處理的項目。",
+      "withOpen": "{{open}} 個仍需注意。其餘已在建置時處理：{{fixed}} 個已修補，{{notAffected}} 個不適用。"
+    },
+    "vsPrevious": "相較於 {{label}}",
+    "compDelta": "{{delta}} 個元件",
+    "compSame": "元件數量無變化",
+    "sevUp": "比先前更嚴重",
+    "sevDown": "嚴重程度低於先前",
+    "sevSame": "嚴重程度無變化",
+    "sevTrendLabel": "最高嚴重程度",
+    "topRisk": "風險最高的元件",
+    "topRiskOf": "共 {{total}} 個有弱點的元件，顯示其中 {{shown}} 個",
+    "topRiskAll": "全部元件",
+    "attnMalicious": "{{count}} 個已知惡意套件——請移除並輪替認證資訊"
+  },
+  "models": {
+    "loading": "正在載入模型詳細資訊…",
+    "loadError": "無法載入模型 SBOM。",
+    "empty": "找不到模型元件。",
+    "emptyHint": "本區段列出機器學習模型及其宣告的資料集。只有掃描 AI 模型才會產生這些內容。",
+    "architecture": "架構",
+    "task": "任務",
+    "supplier": "供應者",
+    "identifier": "識別碼",
+    "integrity": "完整性",
+    "integrityYes": "有雜湊值",
+    "integrityNo": "無雜湊值",
+    "disclosure": "揭露",
+    "disclosureHint": "表示各面向是否記載於模型卡中——並非對模型本身的評斷。",
+    "axisWeights": "權重",
+    "axisArchitecture": "架構",
+    "axisTrainingData": "訓練資料",
+    "axisTrainingProcess": "訓練過程",
+    "documented": "已記載",
+    "notDocumented": "未記載",
+    "references": "參考資料",
+    "limitations": "限制",
+    "datasets": "資料集",
+    "dsName": "資料集",
+    "dsLicense": "授權條款",
+    "dsIntegrity": "完整性",
+    "dsSource": "衍生自",
+    "dsUnresolved": "無法讀取",
+    "dsNoLicense": "未宣告",
+    "dsHashed": "已記錄內容雜湊值",
+    "dsNotHashed": "無內容雜湊值",
+    "dsAssessment": "評估",
+    "assessment": "評估",
+    "assessLicense": "授權條款",
+    "assessSecurity": "檔案安全",
+    "assessDatasets": "資料集",
+    "assessNotEvaluated": "未評估",
+    "gradeOk": "未發現限制訊號",
+    "gradeConditional": "有條件使用",
+    "gradeCaution": "注意",
+    "gradeReview": "需人工檢視",
+    "reasons": "原因",
+    "usageContext": "評估依據的用途",
+    "usageInternal": "內部檢視與研究",
+    "usageProduct": "產品整合",
+    "usageRedistribute": "微調並再散布",
+    "usageOutputsOnly": "僅使用輸出",
+    "localScan": "載入時的程式碼執行",
+    "localScan_clean": "pickle 內容中未發現會執行程式碼的全域項目",
+    "localScan_suspicious": "發現需檢視的全域項目",
+    "localScan_unsafe": "發現會執行程式碼的全域項目",
+    "localScan_not_applicable": "此權重格式在載入時不會執行程式碼",
+    "localScan_error": "無法讀取檔案以進行此檢查",
+    "customLicenseQuote": "自訂授權條款摘錄",
+    "lineageConflict": "宣告的授權條款與上游模型 {{name}} 相衝突。",
+    "disclaimer": "本評估僅供參考，並非法律意見。"
+  },
+  "g7": {
+    "empty": "未記錄任何符合性檢查。",
+    "panelIntro": "檢查此 SBOM 符合格式與提交要求的程度。法規對照僅供參考，不構成合規判定。",
+    "subtitle": "G7 AI 最低要素",
+    "present": "{{present}}/{{total}} 已具備",
+    "advisory": "{{count}} 項建議",
+    "review": "{{count}} 項需人工檢視",
+    "allAdvisory": "G7 各要素均為建議性質（非強制性指引）。",
+    "formatTitle": "格式符合性",
+    "basePassed": "{{passed}}/{{total}} 通過",
+    "required": "必要",
+    "sPass": "已具備",
+    "sFail": "未通過",
+    "sWarn": "建議",
+    "howToFix": "滿足方式：",
+    "evidence": "符合佐證：",
+    "missing": "缺漏於：",
+    "example": "範例：",
+    "learnMore": "了解更多",
+    "cluster": {
+      "metadata": "後設資料",
+      "slp": "系統層級屬性",
+      "models": "模型",
+      "dp": "資料集屬性",
+      "infrastructure": "基礎設施",
+      "sp": "安全性屬性",
+      "kpi": "關鍵績效指標"
+    },
+    "source": {
+      "auto": "自動",
+      "inferred": "推斷",
+      "declared": "已宣告",
+      "na": "需人工檢視",
+      "notApplicable": "不適用"
+    },
+    "help": {
+      "g7-meta-author": {
+        "what": "SBOM 的建立者（作者、供應者或製造商）。",
+        "fix": "設定 metadata.authors、metadata.supplier 或 metadata.manufacturer。"
+      },
+      "g7-meta-version": {
+        "what": "此 SBOM 文件的版本。",
+        "fix": "設定頂層的 version 欄位。"
+      },
+      "g7-meta-format-name": {
+        "what": "SBOM 資料格式名稱（例如 CycloneDX）。",
+        "fix": "設定 bomFormat 欄位。"
+      },
+      "g7-meta-format-version": {
+        "what": "SBOM 格式規格版本（例如 1.7）。",
+        "fix": "設定 specVersion 欄位。"
+      },
+      "g7-meta-signature": {
+        "what": "SBOM 作者的密碼學簽章。",
+        "fix": "為 SBOM 簽章並加入 signature 區塊。"
+      },
+      "g7-meta-tool-name": {
+        "what": "產生此 SBOM 的工具。",
+        "fix": "在 metadata.tools 中記錄產生工具。"
+      },
+      "g7-meta-tool-version": {
+        "what": "產生工具的版本。",
+        "fix": "在 metadata.tools 中記錄工具版本。"
+      },
+      "g7-meta-gen-context": {
+        "what": "SBOM 產生時的情境（建置或分析）。",
+        "fix": "加入 bomlens:generationContext 屬性。"
+      },
+      "g7-meta-timestamp": {
+        "what": "SBOM 的建立時間。",
+        "fix": "設定 metadata.timestamp。"
+      },
+      "g7-meta-dependency": {
+        "what": "元件之間的相依關係。",
+        "fix": "填寫 dependencies 關係圖。"
+      },
+      "g7-slp-name": {
+        "what": "整體系統的名稱。",
+        "fix": "在（非模型的）根元件上設定 metadata.component.name。"
+      },
+      "g7-slp-components": {
+        "what": "組成系統的元件。",
+        "fix": "在 SBOM 中列出系統的元件。"
+      },
+      "g7-slp-producer": {
+        "what": "系統的產製者。",
+        "fix": "設定 metadata.component.publisher 或 metadata.supplier。"
+      },
+      "g7-slp-version": {
+        "what": "系統版本。",
+        "fix": "設定 metadata.component.version。"
+      },
+      "g7-slp-timestamp": {
+        "what": "系統的建置時間。",
+        "fix": "設定 metadata.timestamp。"
+      },
+      "g7-slp-data-flow": {
+        "what": "資料在系統中的流動方式。",
+        "fix": "記錄系統的資料流——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-slp-data-usage": {
+        "what": "系統使用資料的方式。",
+        "fix": "記錄系統的資料使用方式——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-slp-io": {
+        "what": "系統的輸入與輸出屬性。",
+        "fix": "記錄系統的輸入與輸出——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-slp-app-area": {
+        "what": "系統的預期應用領域。",
+        "fix": "記錄預期應用領域——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-model-name": {
+        "what": "模型的名稱。",
+        "fix": "在 machine-learning-model 元件上設定 name。"
+      },
+      "g7-model-id": {
+        "what": "以 PURL/CPE 等標準識別碼識別模型。",
+        "fix": "在 SBOM 的模型元件上加入 purl 或 cpe。"
+      },
+      "g7-model-version": {
+        "what": "模型版本。",
+        "fix": "在模型元件上設定 version。"
+      },
+      "g7-model-timestamp": {
+        "what": "模型的建立時間。",
+        "fix": "在模型元件上加入 created/timestamp 屬性。"
+      },
+      "g7-model-producer": {
+        "what": "模型的產製者。",
+        "fix": "在模型元件上設定 publisher、supplier 或 manufacturer。"
+      },
+      "g7-model-description": {
+        "what": "模型的描述。",
+        "fix": "在模型元件上設定 description。"
+      },
+      "g7-model-hash-value": {
+        "what": "模型權重檔的完整性雜湊值。",
+        "fix": "將模型檔案的雜湊值（例如 SHA-256）加入元件的 hashes。"
+      },
+      "g7-model-hash-alg": {
+        "what": "模型檔案使用的雜湊演算法。",
+        "fix": "在元件 hashes 的每個項目上設定 alg（例如 SHA-256）。"
+      },
+      "g7-model-card": {
+        "what": "模型卡資訊，例如架構與訓練參數。",
+        "fix": "填寫 modelCard.modelParameters（架構、超參數）。"
+      },
+      "g7-model-io": {
+        "what": "模型的輸入與輸出屬性。",
+        "fix": "設定 modelCard.modelParameters.inputs 與 outputs。"
+      },
+      "g7-model-training": {
+        "what": "訓練相關屬性，例如資料集與架構。",
+        "fix": "在 modelCard.modelParameters 下設定 datasets/modelArchitecture。"
+      },
+      "g7-model-license": {
+        "what": "適用於模型的授權條款。",
+        "fix": "在模型卡上聲明授權條款，或填寫 SBOM 元件的 licenses 欄位。"
+      },
+      "g7-model-openness": {
+        "what": "權重、架構、資料與訓練的開放程度。",
+        "fix": "透過 openness:* 屬性宣告模型的開放程度（公開的權重／資料／訓練程式碼）。"
+      },
+      "g7-model-extref": {
+        "what": "模型的外部參考（發佈通路、文件）。",
+        "fix": "在模型元件上加入 externalReferences。"
+      },
+      "g7-ds-name": {
+        "what": "每個訓練資料集的名稱。",
+        "fix": "加入具有 name 的 data 元件（或模型卡的 datasets）。"
+      },
+      "g7-ds-description": {
+        "what": "資料集的描述。",
+        "fix": "在 data 元件上設定 description。"
+      },
+      "g7-ds-content": {
+        "what": "資料集的內容。",
+        "fix": "記錄資料集內容——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-ds-identifier": {
+        "what": "資料集的穩定識別碼。",
+        "fix": "在 data 元件上設定 bom-ref 或 purl。"
+      },
+      "g7-ds-hash": {
+        "what": "資料集的完整性雜湊值。",
+        "fix": "加入資料集檔案的雜湊值——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-ds-provenance": {
+        "what": "資料集的來源。",
+        "fix": "設定 componentData.governance 或 provenance/source 屬性。"
+      },
+      "g7-ds-statistics": {
+        "what": "資料集的統計屬性。",
+        "fix": "記錄資料集統計資訊——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-ds-sensitivity": {
+        "what": "資料集中的敏感內容（個人資料或著作權）。",
+        "fix": "記錄資料集的敏感性——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-ds-dependency": {
+        "what": "資料集的相依關係。",
+        "fix": "記錄資料集的相依關係——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-ds-license": {
+        "what": "資料集的授權條款。",
+        "fix": "在 data 元件上加入 licenses。"
+      },
+      "g7-infra-software": {
+        "what": "基礎設施的軟體相依性。",
+        "fix": "在 SBOM 中納入 library/application/framework 元件。"
+      },
+      "g7-infra-hardware": {
+        "what": "系統執行所在的硬體（HBOM 連結）。",
+        "fix": "加入 device/hardware 元件或硬體 BOM 參考。"
+      },
+      "g7-sec-controls": {
+        "what": "套用於系統的安全控制措施。",
+        "fix": "記錄安全控制措施——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-sec-compliance": {
+        "what": "系統符合的安全合規要求。",
+        "fix": "記錄安全合規情形——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-sec-policy": {
+        "what": "網路安全政策資訊。",
+        "fix": "記錄網路安全政策——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-sec-vulns": {
+        "what": "系統所引用的已知弱點。",
+        "fix": "在 SBOM 中加入 vulnerabilities 區段（VEX 或安全公告）。"
+      },
+      "g7-kpi-security": {
+        "what": "系統的安全指標。",
+        "fix": "記錄安全指標——沒有自動化來源，需要人工檢視。"
+      },
+      "g7-kpi-operational": {
+        "what": "模型的運作效能 KPI。",
+        "fix": "設定 modelCard.quantitativeAnalysis.performanceMetrics。"
+      },
+      "cisa-sbom-author": {
+        "what": "產生此 SBOM 的主體——執行掃描的組織或人員，而非工具。",
+        "fix": "傳入 --sbom-author（或 SBOM_AUTHOR），讓 metadata.authors 以全名記載該主體。"
+      },
+      "cisa-sbom-author-signature": {
+        "what": "文件內所載、可歸屬於 SBOM 作者的數位簽章。",
+        "fix": "為文件本身簽章，或驗證隨附交付的簽章並記錄已完成驗證。"
+      },
+      "cisa-sbom-format-name": {
+        "what": "此 SBOM 所使用的資料格式名稱。",
+        "fix": "輸出公認的格式；在 CycloneDX 中由 bomFormat 承載名稱。"
+      },
+      "cisa-sbom-format-version": {
+        "what": "該資料格式的版本。",
+        "fix": "將 specVersion 設為該格式仍在維護的版本。"
+      },
+      "cisa-sbom-generation-context": {
+        "what": "此 SBOM 所描述的生命週期階段——決定其元件資料代表的意義。",
+        "fix": "設定 metadata.lifecycles：掃描原始碼 manifest 屬 pre-build，掃描建置完成的產出物屬 post-build。"
+      },
+      "cisa-sbom-timestamp": {
+        "what": "SBOM 資料最後變更的時間。",
+        "fix": "依 RFC 9557 設定 metadata.timestamp。"
+      },
+      "cisa-sbom-tool-name": {
+        "what": "作者用來產生或修訂 SBOM 的工具。",
+        "fix": "以全名將工具列入 metadata.tools。"
+      },
+      "cisa-sbom-tool-version": {
+        "what": "實際執行的是該工具的哪個建置版本——缺少它，工具名稱的意義有限。",
+        "fix": "為每個工具項目提供版本，或註明版本不明。"
+      },
+      "cisa-sbom-version": {
+        "what": "在同一元件與版本下，這是此 SBOM 的第幾次迭代。",
+        "fix": "設定文件的 version；依這些要素首次發佈的 SBOM 為 1。"
+      },
+      "cisa-component-name": {
+        "what": "產製者為每個元件指定的名稱。",
+        "fix": "為每個元件提供名稱。"
+      },
+      "cisa-component-version": {
+        "what": "每個元件的版本，弱點比對即以此為鍵。",
+        "fix": "為每個元件提供版本，或標註元件存在但版本尚未確定。"
+      },
+      "cisa-component-producer": {
+        "what": "每個元件的建立者——元件出問題時的聯絡窗口。",
+        "fix": "設定 publisher、supplier、authors 或 manufacturer，或註明來源不明。"
+      },
+      "cisa-component-identifiers": {
+        "what": "至少一個可將元件對應到其他資料庫的識別碼。",
+        "fix": "為每個元件提供 PURL 或 CPE；兩者皆無的檔案以其雜湊值識別。"
+      },
+      "cisa-component-license": {
+        "what": "每個元件所適用的授權條款。",
+        "fix": "以 SPDX 識別碼設定 licenses，或註明授權條款不明。"
+      },
+      "cisa-component-hash-value": {
+        "what": "每個可執行元件產出物的雜湊值，讓接收者能驗證自己的副本。",
+        "fix": "在可取得產出物時加入雜湊值；無法取得時，註明其值不明。"
+      },
+      "cisa-component-hash-algorithm": {
+        "what": "每個雜湊值由哪個演算法產生——缺少演算法的摘要無法重新計算。",
+        "fix": "在每個雜湊值上註明演算法，使用其 IANA 雜湊函式文字名稱。"
+      },
+      "cisa-component-dependency-relationship": {
+        "what": "哪個元件需要哪個元件——讓影響範圍問題得以回答的關係圖。",
+        "fix": "記錄相依關係邊，包含間接相依。"
+      },
+      "cisa-machine-processable-data": {
+        "what": "SBOM 採用工具可讀取、廣泛使用的開放格式。",
+        "fix": "交付 CycloneDX 或 SPDX，而非只有單一工具能理解的格式。"
+      },
+      "cisa-coverage": {
+        "what": "SBOM 是否列出軟體的所有元件，包含間接相依。"
+      },
+      "cisa-accommodation-of-updates": {
+        "what": "已發佈的 SBOM 資料是否可更正，且更正能及時發佈。"
+      },
+      "cisa-distribution-and-delivery": {
+        "what": "需要 SBOM 的人是否都能取得，且存取控制不會阻擋獲授權的讀者。"
+      },
+      "cisa-explicit-unknowns": {
+        "what": "空欄位是否說明其為何為空：作者不知道，或刻意保留。",
+        "fix": "在文件層級聲明一次政策——掃描只會產生前一種情況，因此由本管線寫入。"
+      },
+      "cisa-frequency": {
+        "what": "每個軟體版本是否各有自己的 SBOM，且資料變更時會重新發佈更正版。"
+      }
+    },
+    "verdictFailed": "{{count}} 項必要檢查未通過",
+    "verdictFailed_one": "1 項必要檢查未通過",
+    "verdictFailed_zero": "沒有未通過的必要檢查",
+    "verdictGap": "尚缺 {{count}} 項建議",
+    "verdictReview": "{{count}} 項需人工確認",
+    "baseMandatory": "必要項 {{passed}}/{{total}} 通過",
+    "missingMore": "以及另外 {{count}} 項",
+    "needsPerson": "應確認事項：",
+    "sNa": "不適用",
+    "notApplicable": "{{count}} 項不適用"
+  },
+  "crosswalk": {
+    "title": "法規對照",
+    "disclaimer": "這是協助準備文件的輔助資料，並非合規判定。本法規對照僅涵蓋 SBOM 能承載的文件化項目；SBOM 無法表達的義務（偏差與公平性評估、風險管理）須以其他文件另行滿足。",
+    "totals": "已對應 {{total}} 項中：{{present}} 項具備、{{gap}} 項缺漏、{{failed}} 項未通過、{{review}} 項需檢視",
+    "thFramework": "框架",
+    "thTotal": "總計",
+    "refs": "參考資料：",
+    "present": "具備",
+    "gap": "缺漏",
+    "advisory": "建議",
+    "review": "需人工檢視",
+    "failed": "未通過"
+  },
+  "aiProfile": {
+    "title": "AI 合規概況",
+    "note": "將 AI SBOM 的分析結果彙整成一覽摘要，供文件檢視使用；不做任何合規判定。",
+    "verdict": {
+      "pass": "通過",
+      "warn": "建議",
+      "fail": "未通過",
+      "unknown": "不明"
+    },
+    "g7Label": "G7 最低要素",
+    "g7Value": "{{auto}} 項中 {{present}} 項具備",
+    "g7Detail": "{{gap}} 項缺漏、{{review}} 項待檢視",
+    "licenseLabel": "授權檢視標記",
+    "licenseValue": "已標記 {{count}} 項",
+    "licenseDetail": "行為限制 {{behavioral}} 項、非商業 {{nonCommercial}} 項",
+    "crosswalkLabel": "法規涵蓋範圍",
+    "crosswalkValue": "{{count}} 個框架",
+    "crosswalkDetail": "已對應要素 {{present}}/{{total}} 項具備"
+  },
+  "licenses": {
+    "empty": "未偵測到任何授權條款。",
+    "emptyHint": "掃描未識別出任何元件，因此沒有可分類的內容；授權檢視畫面讀取的正是同一份元件清單。",
+    "reviewTitle": "授權條款需人工檢視",
+    "reviewHint": "含 AI 限制條款，需要人工檢視。",
+    "flagBehavioral": "行為限制",
+    "flagNonCommercial": "非商業",
+    "tier": {
+      "networkCopyleft": "網路型 Copyleft",
+      "strongCopyleft": "強 Copyleft",
+      "weakCopyleft": "弱 Copyleft",
+      "reviewNeeded": "需人工檢視",
+      "uncategorized": "未分類",
+      "permissive": "寬鬆式"
+    },
+    "conflictTitle": "與對外授權條款 ({{license}}) 的衝突",
+    "conflictHint": "呈現各相依項目的條款與您散布時採用的授權條款如何相容。這是文件輔助資料，用意在標出需要人工檢視的組合，不做任何法律判定。",
+    "conflictIncompatible": "無法滿足",
+    "conflictConditional": "視散布方式而定",
+    "conflictUnknown": "無法判定",
+    "conflictCompatible": "無衝突",
+    "conflictOffTitle": "未檢查對外授權衝突",
+    "conflictOffHint": "這次掃描未宣告專案散布時採用的授權條款，因此無法據以比對相依項目。以 --license <spdx-id> 重新執行（或設定 PROJECT_LICENSE）即可開啟這項檢查。"
+  },
+  "recent": {
+    "title": "掃描管理",
+    "subtitle": "儲存在本機輸出資料夾中的掃描紀錄。",
+    "total": "掃描總數",
+    "atRisk": "有風險",
+    "projects": "專案",
+    "searchPlaceholder": "搜尋掃描紀錄…",
+    "noMatch": "沒有符合篩選條件的掃描。",
+    "shown": "共 {{total}} 筆，顯示 {{shown}} 筆",
+    "colScan": "掃描",
+    "colType": "類型",
+    "colGenerated": "產生時間",
+    "colComponents": "元件",
+    "colSeverity": "最高嚴重程度",
+    "vsPrevious": "與此專案上次掃描相比的變化",
+    "sevUp": "比上次掃描更差",
+    "sevDown": "比上次掃描更好",
+    "delete": "刪除",
+    "deleted": "已刪除掃描",
+    "confirmDeleteTitle": "要刪除這筆掃描嗎？",
+    "confirmDeleteBody": "{{scan}} 的輸出檔案將從本機移除。其他地方沒有保留副本，因此無法復原。",
+    "typeAi": "AI 模型",
+    "typeSbom": "SBOM",
+    "typeSource": "原始碼",
+    "typeFirmware": "韌體",
+    "typeContainer": "容器",
+    "typeRootfs": "RootFS",
+    "emptyTitle": "產生您的第一份 SBOM",
+    "emptyBody": "掃描資料夾、Git 儲存庫、Docker 映像檔、SBOM 或 AI 模型。BomLens 會在本機一次產生軟體物料清單、授權聲明與安全報告。",
+    "emptyOutSbom": "SBOM (CycloneDX)",
+    "emptyOutNotice": "開放原始碼授權聲明",
+    "emptyOutSecurity": "安全報告",
+    "source": "刪除檔案後，該筆掃描也會從此清單消失。",
+    "demoSubtitle": "五筆完成的掃描：分別是專案原始碼、容器映像檔、裝置韌體映像檔、AI 模型，以及自供應者收到的 SBOM"
+  },
+  "validation": {
+    "required": "請填寫上方標示的必填欄位。",
+    "file": "請選擇要分析的檔案。",
+    "project": "請輸入專案名稱。",
+    "version": "請輸入版本。",
+    "target": "請輸入掃描目標。",
+    "uploadUrl": "請輸入上傳伺服器 URL。",
+    "uploadToken": "請輸入上傳 API 權杖。",
+    "truscaProjectId": "請輸入 TRUSCA 專案 ID。"
+  },
+  "provenance": {
+    "folder": "掃描的資料夾",
+    "yocto": "Yocto 建置目錄",
+    "git": "複製自",
+    "image": "容器映像檔",
+    "file": "上傳的檔案",
+    "sbom": "收到的 SBOM",
+    "model": "AI 模型"
+  },
+  "image": {
+    "ready": "此輸入所需的映像檔已下載完成。",
+    "download": "立即下載",
+    "downloadSize": "約需下載 {{size}} GB",
+    "pullingStart": "準備開始下載…",
+    "pullingLayers": "下載中：共 {{total}} 層，已完成 {{complete}} 層",
+    "failed": {
+      "timeout": "下載長時間沒有進度，已取消。請檢查網路後再試一次。",
+      "disk": "磁碟空間不足，下載失敗。請釋出空間後再試一次。",
+      "dns": "無法解析 registry 位址。請檢查網路或 DNS 設定。",
+      "proxy": "連線被拒絕或遭攔截，通常是代理伺服器或企業憑證所致。請洽詢網路管理人員。",
+      "auth": "權限不足，registry 拒絕了這次下載。",
+      "unknown": "下載失敗。Docker 回報的內容請見上方記錄。"
+    }
+  },
+  "cisa": {
+    "subtitle": "2026 SBOM 最低要素",
+    "allAdvisory": "此處項目為建議性質：不影響通過或未通過的判定，判定由上方的提交要求決定。",
+    "cluster": {
+      "cisa-metadata": "SBOM 後設資料",
+      "cisa-component": "元件資料",
+      "cisa-practices": "實務與流程"
+    }
+  }
+}

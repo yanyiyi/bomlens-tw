@@ -1,0 +1,721 @@
+# Knowledge-base registry labels for BomLens (G7 / CISA / AI risk /
+# regulatory crosswalk). Stored in the JSON as siblings of the English
+# field, so the JSON stays an English machine contract.
+#
+# Regenerate the JSON after a Weblate push:
+#   node scripts/kb-po.mjs --from-po zh-TW
+#
+# Identifiers are NOT translatable and carry no entry here: element ids,
+# PURLs, SPDX ids, CycloneDX field paths, regulation citations.
+msgid ""
+msgstr ""
+"Project-Id-Version: BomLens knowledge base\n"
+"Report-Msgid-Bugs-To: https://github.com/sktelecom/bomlens/issues\n"
+"PO-Revision-Date: 2026-09-08 00:00+0800\n"
+"Last-Translator: Automatically extracted <noreply@invalid>\n"
+"Language-Team: zh-TW\n"
+"Language: zh-TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-sbom-author-signature.how"
+msgid "A signature delivered beside the SBOM rather than inside it does not appear here, because this report reads one file. If the SBOM arrived with a detached signature, verify it against the sender's key before treating the contents as theirs, and record that you did. A signature carried inside the document is read automatically and this row will say so."
+msgstr "隨 SBOM 送達、但不在檔案之內的簽章不會出現在此處，因為本報告只讀取單一檔案。若 SBOM 附有分離簽章，請先以寄送方的金鑰驗證，再將內容視為出自對方，並記錄已完成驗證。內嵌於文件中的簽章會自動讀取，本列也會如實顯示。"
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-coverage.how"
+msgid "Establish that the SBOM lists every component making up the software, transitive dependencies included. No tool can confirm this from the document alone — the document cannot show what was left out of it. Compare it against the build's own dependency resolution, or against the manifests the software is built from."
+msgstr "確認 SBOM 已列出組成軟體的所有元件，包含間接相依。僅憑文件本身，任何工具都無法確認這一點——文件呈現不出自己遺漏了什麼。請與建置本身的相依性解析結果，或與軟體建置所依據的 manifest 比對。"
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-accommodation-of-updates.how"
+msgid "Establish that there is a way to correct SBOM data after it has been published, and that corrections go out promptly. This is a practice of the organisation issuing the SBOM, not a field in it."
+msgstr "確認 SBOM 發佈後仍可更正其資料，且更正版能及時發佈。這是發行 SBOM 的組織作業實務，而非文件中的欄位。"
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-distribution-and-delivery.how"
+msgid "Establish that whoever needs the SBOM can get it promptly, and that any access control keeps unauthorized parties out without blocking authorized ones or preventing the data from being loaded into their security tools."
+msgstr "確認需要 SBOM 的一方能即時取得，且任何存取控制在阻擋未經授權者之餘，不會擋住已授權的一方，也不會妨礙資料匯入其安全工具。"
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-frequency.how"
+msgid "Establish that each software version or update has an SBOM of its own, and that a revised SBOM is issued when the component data changes or an error in it is found."
+msgstr "確認每個軟體版本或更新都有自己的 SBOM，且在元件資料變動或發現其中有誤時，會發出修訂版 SBOM。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.0.summary"
+msgid "Commercial use is not permitted. Whether in-company use counts as commercial depends on the purpose, so even internal use needs a check."
+msgstr "不允許商業使用。公司內部使用是否屬於商業使用視目的而定，因此即使是內部使用也需要確認。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.1.summary"
+msgid "Licensed for research or evaluation use only; product use is not permitted."
+msgstr "僅授權用於研究或評估用途，不得用於產品用途。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.2.summary"
+msgid "Commercial use is allowed below the monthly-active-user threshold in the agreement (700M MAU). Derived model names must include the required prefix, and the Acceptable Use Policy applies."
+msgstr "月活躍使用者數低於協議門檻（7 億 MAU）時允許商業使用。衍生模型名稱必須包含指定字首，並適用可接受使用政策。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.2.outputsNote"
+msgid "The agreement also reaches model derivatives and, for some versions, the use of outputs to improve other models — check the version-specific terms."
+msgstr "本協議也及於衍生模型；部分版本並涵蓋以輸出改進其他模型的情形——請確認各版本的具體條款。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.3.summary"
+msgid "Commercial use is allowed, subject to the Gemma Prohibited Use Policy; the use restrictions must be passed on with any derivative."
+msgstr "允許商業使用，但須遵守 Gemma 禁止使用政策；散布任何衍生物時必須一併傳遞使用限制條款。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.4.summary"
+msgid "A community license with use restrictions and commercial conditions; read the agreement before product use."
+msgstr "附有使用限制與商業使用條件的社群授權條款；用於產品前需先確認協議原文。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.5.summary"
+msgid "Commercial use is allowed, but the license lists prohibited uses (behavioral-use restrictions) that also bind derivatives and downstream users."
+msgstr "允許商業使用，但授權條款列有禁止用途清單（行為限制），並同樣約束衍生物與下游使用者。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.5.outputsNote"
+msgid "RAIL use restrictions must be carried into any redistribution or derivative."
+msgstr "再散布或製作衍生物時，仍須一併套用 RAIL 的使用限制。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.6.summary"
+msgid "A community license with an acceptable-use policy and conditions on hosted commercial offerings; read the agreement before product use."
+msgstr "附有可接受使用政策以及託管商業服務條件的社群授權條款；用於產品前需先確認協議原文。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.7.summary"
+msgid "A vendor community license: usually commercial-friendly with use restrictions, but the terms vary — read the agreement."
+msgstr "供應者的社群授權條款：通常允許商業使用但附有使用限制，且各家條款不盡相同，請閱讀協議原文。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.8.summary"
+msgid "Network copyleft: offering the work as a network service already triggers the duty to provide the corresponding source under the same license."
+msgstr "屬於網路 copyleft：只要以網路服務形式提供本著作，就會產生以相同授權條款提供對應原始碼的義務。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.9.summary"
+msgid "Commercial use is allowed; modifications to the licensed files or library itself must be released under the same license, with notices kept."
+msgstr "允許商業使用；對授權標的檔案或函式庫本身的修改，必須以相同授權條款釋出並保留聲明。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.10.summary"
+msgid "Commercial use is allowed; distributing the work or a derivative requires providing the corresponding source under the same license."
+msgstr "允許商業使用；散布本著作或其衍生物時，必須以相同授權條款提供對應原始碼。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.11.summary"
+msgid "A documentation license: redistribution and derivatives must stay under the same license with the required notices."
+msgstr "文件用授權條款：再散布與衍生物必須維持相同授權條款，並保留必要聲明。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.12.summary"
+msgid "Commercial use is allowed with attribution; adapted material must be shared under the same license."
+msgstr "在姓名標示條件下允許商業使用；改作素材必須以相同授權條款分享。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.13.summary"
+msgid "Commercial use of the unmodified work is allowed, but distributing modified versions (a fine-tuned model included) is not."
+msgstr "允許將未修改的著作用於商業用途，但不允許散布修改版本（包含微調後的模型）。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.14.summary"
+msgid "Commercial use, redistribution and derivatives are allowed with attribution."
+msgstr "在姓名標示條件下，允許商業使用、再散布與製作衍生物。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.15.summary"
+msgid "The tag names the Creative Commons family without saying which license; identify the exact CC license before use."
+msgstr "此標籤僅指出屬於 Creative Commons 系列，未說明是哪一個授權條款；使用前必須先確認確切的 CC 授權條款。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.16.summary"
+msgid "Data may be used for computation (training included); redistributing the data itself requires passing the agreement through. Results of computation are not restricted."
+msgstr "資料可用於運算用途（包含訓練）；再散布資料本身時必須一併傳遞本協議，運算結果則不受限制。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.17.summary"
+msgid "Permissive data license: commercial use, redistribution and derived works are allowed; keep the attribution."
+msgstr "寬鬆式資料授權條款：允許商業使用、再散布與衍生著作；須保留姓名標示。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.18.summary"
+msgid "A permissive license written for model artifacts (weights, data, code): commercial use, redistribution and derivatives are allowed with notices kept."
+msgstr "專為模型產出物（權重、資料、程式碼）而寫的寬鬆式授權條款：保留聲明即可商業使用、再散布與衍生。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.19.summary"
+msgid "Public-domain style: no license conditions on use, redistribution or derivatives."
+msgstr "屬公眾領域性質：使用、再散布與衍生皆無授權條件。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.20.summary"
+msgid "Permissive license: commercial use, modification and redistribution are allowed; keep the copyright and license notices."
+msgstr "寬鬆式授權條款：允許商業使用、修改與再散布；須保留著作權與授權條款聲明。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.21.summary"
+msgid "The repository declares its license as unknown; the terms cannot be assessed without identifying the actual license."
+msgstr "儲存庫將授權條款宣告為 unknown；在確認實際授權條款之前，無法評估其條件。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.22.summary"
+msgid "A custom license (license: other) — the terms live in the repository's LICENSE file and need human review."
+msgstr "自訂授權條款 (license: other)，其條款位於儲存庫的 LICENSE 檔案，需要人工檢視。"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.0.label"
+msgid "Non-commercial clause"
+msgstr "非商業條款"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.1.label"
+msgid "Research-only clause"
+msgstr "僅限研究用途條款"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.2.label"
+msgid "Evaluation-only clause"
+msgstr "僅限評估用途條款"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.3.label"
+msgid "Internal-use-only clause"
+msgstr "僅限內部使用條款"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.4.label"
+msgid "No-derivatives clause"
+msgstr "禁止衍生條款"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.5.label"
+msgid "Use/redistribution prohibition"
+msgstr "禁止使用／再散布條款"
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.6.label"
+msgid "Use-policy reference"
+msgstr "使用政策參照條款"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.name"
+msgid "Metadata"
+msgstr "後設資料"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.0.label"
+msgid "SBOM author"
+msgstr "SBOM 作者"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.1.label"
+msgid "SBOM version"
+msgstr "SBOM 版本"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.2.label"
+msgid "SBOM data format name"
+msgstr "SBOM 資料格式名稱"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.3.label"
+msgid "SBOM data format version"
+msgstr "SBOM 資料格式版本"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.4.label"
+msgid "SBOM author signature"
+msgstr "SBOM 作者簽章"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.5.label"
+msgid "SBOM tool name"
+msgstr "SBOM 產生工具名稱"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.6.label"
+msgid "SBOM tool version"
+msgstr "SBOM 產生工具版本"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.7.label"
+msgid "SBOM generation context"
+msgstr "SBOM 產生情境"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.8.label"
+msgid "SBOM timestamp"
+msgstr "SBOM 時間戳記"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.9.label"
+msgid "SBOM dependency relationship"
+msgstr "SBOM 相依關係"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.name"
+msgid "System Level Properties"
+msgstr "系統層級屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.0.label"
+msgid "System name"
+msgstr "系統名稱"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.1.label"
+msgid "System components"
+msgstr "系統元件"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.2.label"
+msgid "System producer"
+msgstr "系統產製者"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.3.label"
+msgid "System version"
+msgstr "系統版本"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.4.label"
+msgid "System timestamp"
+msgstr "系統時間戳記"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.5.label"
+msgid "System data flow"
+msgstr "系統資料流"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.6.label"
+msgid "System data usage"
+msgstr "系統資料使用"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.7.label"
+msgid "System input/output properties"
+msgstr "系統輸入／輸出屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.8.label"
+msgid "Intended application area"
+msgstr "預期應用領域"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.name"
+msgid "Models"
+msgstr "模型"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.0.label"
+msgid "Model name"
+msgstr "模型名稱"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.1.label"
+msgid "Model identifier"
+msgstr "模型識別碼"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.2.label"
+msgid "Model version"
+msgstr "模型版本"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.3.label"
+msgid "Model timestamp"
+msgstr "模型時間戳記"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.4.label"
+msgid "Model producer"
+msgstr "模型產製者"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.5.label"
+msgid "Model description"
+msgstr "模型描述"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.6.label"
+msgid "Model hash value"
+msgstr "模型雜湊值"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.7.label"
+msgid "Model hash algorithm"
+msgstr "模型雜湊演算法"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.8.label"
+msgid "Model properties (model card)"
+msgstr "模型屬性（模型卡）"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.9.label"
+msgid "Model input-output properties"
+msgstr "模型輸入／輸出屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.10.label"
+msgid "Model training properties"
+msgstr "模型訓練屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.11.label"
+msgid "Model license"
+msgstr "模型授權條款"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.12.label"
+msgid "Model license — openness (weight/architecture/data/training)"
+msgstr "模型授權條款 — 開放程度（權重／架構／資料／訓練）"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.13.label"
+msgid "Model external references"
+msgstr "模型外部參考"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.name"
+msgid "Datasets Properties"
+msgstr "資料集屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.0.label"
+msgid "Dataset name"
+msgstr "資料集名稱"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.1.label"
+msgid "Dataset description"
+msgstr "資料集描述"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.2.label"
+msgid "Dataset content"
+msgstr "資料集內容"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.3.label"
+msgid "Dataset identifier"
+msgstr "資料集識別碼"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.4.label"
+msgid "Dataset hash"
+msgstr "資料集雜湊值"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.5.label"
+msgid "Dataset provenance"
+msgstr "資料集來源"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.6.label"
+msgid "Dataset statistical properties"
+msgstr "資料集統計屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.7.label"
+msgid "Dataset sensitivity (PII/copyright)"
+msgstr "資料集敏感性（個人資料／著作權）"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.8.label"
+msgid "Dataset dependency relationship"
+msgstr "資料集相依關係"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.9.label"
+msgid "Dataset license"
+msgstr "資料集授權條款"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.4.name"
+msgid "Infrastructure"
+msgstr "基礎設施"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.4.elements.0.label"
+msgid "Infrastructure software (dependencies)"
+msgstr "基礎設施軟體（相依性）"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.4.elements.1.label"
+msgid "Infrastructure hardware (HBOM link)"
+msgstr "基礎設施硬體（HBOM 連結）"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.name"
+msgid "Security Properties"
+msgstr "安全性屬性"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.0.label"
+msgid "Security controls"
+msgstr "安全控制措施"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.1.label"
+msgid "Security compliance"
+msgstr "安全合規"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.2.label"
+msgid "Cybersecurity policy information"
+msgstr "網路安全政策資訊"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.3.label"
+msgid "Vulnerability referencing"
+msgstr "弱點參照資訊"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.6.name"
+msgid "Key Performance Indicators"
+msgstr "關鍵績效指標"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.6.elements.0.label"
+msgid "Security metrics"
+msgstr "安全指標"
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.6.elements.1.label"
+msgid "Operational performance KPIs"
+msgstr "運作效能 KPI"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:disclaimer"
+msgid "BomLens does not certify or determine compliance with the EU AI Act, the Korean AI Framework Act, the EU Cyber Resilience Act, or any other regulation. This crosswalk covers only the documentation elements an SBOM can carry; obligations that an SBOM cannot express — bias and fairness assessment, risk management, human oversight — are out of its scope and must be met through separate documents. It makes documentation gaps visible so a person can prepare; interpreting it against a specific product's legal obligations is a person's job."
+msgstr "BomLens 不認證、也不判定是否符合 EU 人工智慧法、韓國 AI 基本法、EU 網路韌性法或任何其他法規。本法規對照僅涵蓋 SBOM 能承載的文件化項目；SBOM 無法表達的義務——偏差與公平性評估、風險管理、人為監督——不在其範圍內，須以其他文件另行滿足。這份對照的用意是讓文件缺漏顯而易見、便於著手準備；至於如何對照特定產品的法律義務加以解讀，仍須由人來判斷。"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.eu-ai-act.title"
+msgid "EU AI Act — Annex IV technical documentation"
+msgstr "EU 人工智慧法 — 附件 IV 技術文件"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.eu-ai-act.short"
+msgid "EU AI Act"
+msgstr "EU 人工智慧法"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.kr-ai-framework-act.title"
+msgid "AI Framework Act (Korea)"
+msgstr "AI 基本法（韓國）"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.kr-ai-framework-act.short"
+msgid "AI Framework Act"
+msgstr "AI 基本法"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.bsi-tr-03183-2.title"
+msgid "BSI TR-03183-2 — SBOM data fields (EU CRA)"
+msgstr "BSI TR-03183-2 — SBOM 資料欄位 (EU CRA)"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.bsi-tr-03183-2.short"
+msgid "BSI TR-03183-2"
+msgstr "BSI TR-03183-2"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.us-sbom-minimum-elements.title"
+msgid "US SBOM minimum elements"
+msgstr "美國 SBOM 最低要素"
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.us-sbom-minimum-elements.short"
+msgid "CISA 2026"
+msgstr "CISA 2026"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.name"
+msgid "SBOM metadata"
+msgstr "SBOM 後設資料"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.0.label"
+msgid "SBOM author"
+msgstr "SBOM 作者"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.1.label"
+msgid "SBOM author signature"
+msgstr "SBOM 作者簽章"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.2.label"
+msgid "SBOM data format name"
+msgstr "SBOM 資料格式名稱"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.3.label"
+msgid "SBOM data format version"
+msgstr "SBOM 資料格式版本"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.4.label"
+msgid "SBOM generation context"
+msgstr "SBOM 產生情境"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.5.label"
+msgid "SBOM timestamp"
+msgstr "SBOM 時間戳記"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.6.label"
+msgid "SBOM tool name"
+msgstr "SBOM 工具名稱"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.7.label"
+msgid "SBOM tool version"
+msgstr "SBOM 工具版本"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.8.label"
+msgid "SBOM version"
+msgstr "SBOM 版本"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.name"
+msgid "Component data"
+msgstr "元件資料"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.0.label"
+msgid "Component name"
+msgstr "元件名稱"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.1.label"
+msgid "Component version"
+msgstr "元件版本"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.2.label"
+msgid "Component producer"
+msgstr "元件產製者"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.3.label"
+msgid "Component identifiers"
+msgstr "元件識別碼"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.4.label"
+msgid "Component license"
+msgstr "元件授權條款"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.5.label"
+msgid "Component hash value"
+msgstr "元件雜湊值"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.6.label"
+msgid "Component hash algorithm"
+msgstr "元件雜湊演算法"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.7.label"
+msgid "Component dependency relationship"
+msgstr "元件相依關係"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.name"
+msgid "Practices and processes"
+msgstr "實務與流程"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.0.label"
+msgid "Machine-processable data"
+msgstr "機器可處理資料"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.1.label"
+msgid "Coverage"
+msgstr "涵蓋範圍"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.2.label"
+msgid "Accommodation of updates to SBOM data"
+msgstr "SBOM 資料更新因應機制"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.3.label"
+msgid "Distribution and delivery"
+msgstr "散布與交付"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.4.label"
+msgid "Explicitly identifying unknown information"
+msgstr "明確標示不明資訊"
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.5.label"
+msgid "Frequency"
+msgstr "更新頻率"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-data-flow.how"
+msgid "Write down how data moves through the system: where an input comes from, what the model receives, and where its output goes. Confirm the description matches how the system is actually deployed."
+msgstr "寫下資料在系統中的流動方式：輸入從哪裡來、模型收到什麼、輸出流向哪裡。並確認這份描述與系統實際部署的方式相符。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-data-usage.how"
+msgid "State what the system does with the data it receives — whether it is stored, passed to another component, or used for further training. Check this against the privacy notice you publish."
+msgstr "說明系統如何處理收到的資料——是儲存、傳給另一個元件，還是用於進一步訓練。並對照你們公開的隱私權聲明加以檢查。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-io.how"
+msgid "Describe the input and output the system accepts and produces — formats, size limits, and anything it refuses. A person confirms this because a model card lists modalities, not the system's actual interface."
+msgstr "描述系統接受的輸入與產生的輸出——格式、大小限制，以及會拒絕的內容。模型卡列出的是模態，而非系統的實際介面，因此需要人工確認。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-app-area.how"
+msgid "State the field the system is intended for and the uses that are out of scope. This is a decision, not a fact a tool can read, and regulators ask for it directly."
+msgstr "說明系統的預期應用領域，以及不在範圍內的用途。這是一項判斷，不是工具能讀取的事實，而且監管機關會直接要求提供。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-ds-statistics.how"
+msgid "Give the size and shape of the training data — record counts, class balance, and any known skew. These numbers explain the model's limits, so state them even when they are unflattering."
+msgstr "提供訓練資料的規模與組成——筆數、類別比例，以及已知的偏斜。這些數字說明模型的限制，即使結果不理想也應如實陳述。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-ds-sensitivity.how"
+msgid "Judge whether the training data holds personal information or third-party copyrighted work, and record what you filtered out and how. Where the answer is unclear, take it to your privacy and legal contacts before release."
+msgstr "判斷訓練資料是否含有個人資料或第三方著作，並記錄過濾了哪些內容、如何過濾。若無法確定，請在發佈前洽詢隱私與法務窗口。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-sec-controls.how"
+msgid "List the controls that protect the model and its data — who can reach the weights, how the training environment is isolated, how artefacts are signed. These live in your operations, not in the SBOM."
+msgstr "列出保護模型與其資料的控制措施——誰能存取權重、訓練環境如何隔離、產出物如何簽章。這些資訊屬於營運環節，而非 SBOM 本身。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-sec-compliance.how"
+msgid "Name the security standard or internal policy this model was built under, and who signed off. Point at the assessment record rather than restating it here."
+msgstr "指明此模型依循哪項安全標準或內部政策建置，以及由誰核准。提供評估紀錄的參照即可，不必在此複述內容。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-sec-policy.how"
+msgid "Give the route for reporting a vulnerability in this model and who answers it. A published model needs a contact that outlives the person who trained it."
+msgstr "提供此模型弱點的通報管道，以及由誰回應。已發佈的模型需要一個不隨訓練者離開而失效的聯絡窗口。"
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-kpi-security.how"
+msgid "Record what you measured on the security side — adversarial or jailbreak testing, refusal rates, red-team results — with the method and the date. If nothing was measured, say so plainly."
+msgstr "記錄在安全面向量測了什麼——對抗式或越獄測試、拒絕率、紅隊演練結果——並附上方法與日期。若未進行任何量測，請直接說明。"

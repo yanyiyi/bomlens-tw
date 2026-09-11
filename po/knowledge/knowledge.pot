@@ -1,0 +1,720 @@
+# Knowledge-base registry labels for BomLens (G7 / CISA / AI risk /
+# regulatory crosswalk). Stored in the JSON as siblings of the English
+# field, so the JSON stays an English machine contract.
+#
+# Regenerate the JSON after a Weblate push:
+#   node scripts/kb-po.mjs --from-po ko
+#
+# Identifiers are NOT translatable and carry no entry here: element ids,
+# PURLs, SPDX ids, CycloneDX field paths, regulation citations.
+msgid ""
+msgstr ""
+"Project-Id-Version: BomLens knowledge base\n"
+"Report-Msgid-Bugs-To: https://github.com/sktelecom/bomlens/issues\n"
+"PO-Revision-Date: 2026-09-08 00:00+0800\n"
+"Last-Translator: Automatically extracted <noreply@invalid>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-sbom-author-signature.how"
+msgid "A signature delivered beside the SBOM rather than inside it does not appear here, because this report reads one file. If the SBOM arrived with a detached signature, verify it against the sender's key before treating the contents as theirs, and record that you did. A signature carried inside the document is read automatically and this row will say so."
+msgstr ""
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-coverage.how"
+msgid "Establish that the SBOM lists every component making up the software, transitive dependencies included. No tool can confirm this from the document alone — the document cannot show what was left out of it. Compare it against the build's own dependency resolution, or against the manifests the software is built from."
+msgstr ""
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-accommodation-of-updates.how"
+msgid "Establish that there is a way to correct SBOM data after it has been published, and that corrections go out promptly. This is a practice of the organisation issuing the SBOM, not a field in it."
+msgstr ""
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-distribution-and-delivery.how"
+msgid "Establish that whoever needs the SBOM can get it promptly, and that any access control keeps unauthorized parties out without blocking authorized ones or preventing the data from being loaded into their security tools."
+msgstr ""
+
+#: cisa-guidance.json
+msgctxt "cisa-guidance.json:review.cisa-frequency.how"
+msgid "Establish that each software version or update has an SBOM of its own, and that a revised SBOM is issued when the component data changes or an error in it is found."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.0.summary"
+msgid "Commercial use is not permitted. Whether in-company use counts as commercial depends on the purpose, so even internal use needs a check."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.1.summary"
+msgid "Licensed for research or evaluation use only; product use is not permitted."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.2.summary"
+msgid "Commercial use is allowed below the monthly-active-user threshold in the agreement (700M MAU). Derived model names must include the required prefix, and the Acceptable Use Policy applies."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.2.outputsNote"
+msgid "The agreement also reaches model derivatives and, for some versions, the use of outputs to improve other models — check the version-specific terms."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.3.summary"
+msgid "Commercial use is allowed, subject to the Gemma Prohibited Use Policy; the use restrictions must be passed on with any derivative."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.4.summary"
+msgid "A community license with use restrictions and commercial conditions; read the agreement before product use."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.5.summary"
+msgid "Commercial use is allowed, but the license lists prohibited uses (behavioral-use restrictions) that also bind derivatives and downstream users."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.5.outputsNote"
+msgid "RAIL use restrictions must be carried into any redistribution or derivative."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.6.summary"
+msgid "A community license with an acceptable-use policy and conditions on hosted commercial offerings; read the agreement before product use."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.7.summary"
+msgid "A vendor community license: usually commercial-friendly with use restrictions, but the terms vary — read the agreement."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.8.summary"
+msgid "Network copyleft: offering the work as a network service already triggers the duty to provide the corresponding source under the same license."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.9.summary"
+msgid "Commercial use is allowed; modifications to the licensed files or library itself must be released under the same license, with notices kept."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.10.summary"
+msgid "Commercial use is allowed; distributing the work or a derivative requires providing the corresponding source under the same license."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.11.summary"
+msgid "A documentation license: redistribution and derivatives must stay under the same license with the required notices."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.12.summary"
+msgid "Commercial use is allowed with attribution; adapted material must be shared under the same license."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.13.summary"
+msgid "Commercial use of the unmodified work is allowed, but distributing modified versions (a fine-tuned model included) is not."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.14.summary"
+msgid "Commercial use, redistribution and derivatives are allowed with attribution."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.15.summary"
+msgid "The tag names the Creative Commons family without saying which license; identify the exact CC license before use."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.16.summary"
+msgid "Data may be used for computation (training included); redistributing the data itself requires passing the agreement through. Results of computation are not restricted."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.17.summary"
+msgid "Permissive data license: commercial use, redistribution and derived works are allowed; keep the attribution."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.18.summary"
+msgid "A permissive license written for model artifacts (weights, data, code): commercial use, redistribution and derivatives are allowed with notices kept."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.19.summary"
+msgid "Public-domain style: no license conditions on use, redistribution or derivatives."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.20.summary"
+msgid "Permissive license: commercial use, modification and redistribution are allowed; keep the copyright and license notices."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.21.summary"
+msgid "The repository declares its license as unknown; the terms cannot be assessed without identifying the actual license."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:licenseTerms.22.summary"
+msgid "A custom license (license: other) — the terms live in the repository's LICENSE file and need human review."
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.0.label"
+msgid "Non-commercial clause"
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.1.label"
+msgid "Research-only clause"
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.2.label"
+msgid "Evaluation-only clause"
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.3.label"
+msgid "Internal-use-only clause"
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.4.label"
+msgid "No-derivatives clause"
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.5.label"
+msgid "Use/redistribution prohibition"
+msgstr ""
+
+#: ai-risk-knowledge.json
+msgctxt "ai-risk-knowledge.json:customLicensePatterns.6.label"
+msgid "Use-policy reference"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.name"
+msgid "Metadata"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.0.label"
+msgid "SBOM author"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.1.label"
+msgid "SBOM version"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.2.label"
+msgid "SBOM data format name"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.3.label"
+msgid "SBOM data format version"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.4.label"
+msgid "SBOM author signature"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.5.label"
+msgid "SBOM tool name"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.6.label"
+msgid "SBOM tool version"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.7.label"
+msgid "SBOM generation context"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.8.label"
+msgid "SBOM timestamp"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.0.elements.9.label"
+msgid "SBOM dependency relationship"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.name"
+msgid "System Level Properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.0.label"
+msgid "System name"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.1.label"
+msgid "System components"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.2.label"
+msgid "System producer"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.3.label"
+msgid "System version"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.4.label"
+msgid "System timestamp"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.5.label"
+msgid "System data flow"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.6.label"
+msgid "System data usage"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.7.label"
+msgid "System input/output properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.1.elements.8.label"
+msgid "Intended application area"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.name"
+msgid "Models"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.0.label"
+msgid "Model name"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.1.label"
+msgid "Model identifier"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.2.label"
+msgid "Model version"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.3.label"
+msgid "Model timestamp"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.4.label"
+msgid "Model producer"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.5.label"
+msgid "Model description"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.6.label"
+msgid "Model hash value"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.7.label"
+msgid "Model hash algorithm"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.8.label"
+msgid "Model properties (model card)"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.9.label"
+msgid "Model input-output properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.10.label"
+msgid "Model training properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.11.label"
+msgid "Model license"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.12.label"
+msgid "Model license — openness (weight/architecture/data/training)"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.2.elements.13.label"
+msgid "Model external references"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.name"
+msgid "Datasets Properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.0.label"
+msgid "Dataset name"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.1.label"
+msgid "Dataset description"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.2.label"
+msgid "Dataset content"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.3.label"
+msgid "Dataset identifier"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.4.label"
+msgid "Dataset hash"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.5.label"
+msgid "Dataset provenance"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.6.label"
+msgid "Dataset statistical properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.7.label"
+msgid "Dataset sensitivity (PII/copyright)"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.8.label"
+msgid "Dataset dependency relationship"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.3.elements.9.label"
+msgid "Dataset license"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.4.name"
+msgid "Infrastructure"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.4.elements.0.label"
+msgid "Infrastructure software (dependencies)"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.4.elements.1.label"
+msgid "Infrastructure hardware (HBOM link)"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.name"
+msgid "Security Properties"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.0.label"
+msgid "Security controls"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.1.label"
+msgid "Security compliance"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.2.label"
+msgid "Cybersecurity policy information"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.5.elements.3.label"
+msgid "Vulnerability referencing"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.6.name"
+msgid "Key Performance Indicators"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.6.elements.0.label"
+msgid "Security metrics"
+msgstr ""
+
+#: g7-registry.json
+msgctxt "g7-registry.json:clusters.6.elements.1.label"
+msgid "Operational performance KPIs"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:disclaimer"
+msgid "BomLens does not certify or determine compliance with the EU AI Act, the Korean AI Framework Act, the EU Cyber Resilience Act, or any other regulation. This crosswalk covers only the documentation elements an SBOM can carry; obligations that an SBOM cannot express — bias and fairness assessment, risk management, human oversight — are out of its scope and must be met through separate documents. It makes documentation gaps visible so a person can prepare; interpreting it against a specific product's legal obligations is a person's job."
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.eu-ai-act.title"
+msgid "EU AI Act — Annex IV technical documentation"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.eu-ai-act.short"
+msgid "EU AI Act"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.kr-ai-framework-act.title"
+msgid "AI Framework Act (Korea)"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.kr-ai-framework-act.short"
+msgid "AI Framework Act"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.bsi-tr-03183-2.title"
+msgid "BSI TR-03183-2 — SBOM data fields (EU CRA)"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.bsi-tr-03183-2.short"
+msgid "BSI TR-03183-2"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.us-sbom-minimum-elements.title"
+msgid "US SBOM minimum elements"
+msgstr ""
+
+#: regulation-crosswalk.json
+msgctxt "regulation-crosswalk.json:frameworks.us-sbom-minimum-elements.short"
+msgid "CISA 2026"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.name"
+msgid "SBOM metadata"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.0.label"
+msgid "SBOM author"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.1.label"
+msgid "SBOM author signature"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.2.label"
+msgid "SBOM data format name"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.3.label"
+msgid "SBOM data format version"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.4.label"
+msgid "SBOM generation context"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.5.label"
+msgid "SBOM timestamp"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.6.label"
+msgid "SBOM tool name"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.7.label"
+msgid "SBOM tool version"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.0.elements.8.label"
+msgid "SBOM version"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.name"
+msgid "Component data"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.0.label"
+msgid "Component name"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.1.label"
+msgid "Component version"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.2.label"
+msgid "Component producer"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.3.label"
+msgid "Component identifiers"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.4.label"
+msgid "Component license"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.5.label"
+msgid "Component hash value"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.6.label"
+msgid "Component hash algorithm"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.1.elements.7.label"
+msgid "Component dependency relationship"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.name"
+msgid "Practices and processes"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.0.label"
+msgid "Machine-processable data"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.1.label"
+msgid "Coverage"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.2.label"
+msgid "Accommodation of updates to SBOM data"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.3.label"
+msgid "Distribution and delivery"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.4.label"
+msgid "Explicitly identifying unknown information"
+msgstr ""
+
+#: cisa-registry.json
+msgctxt "cisa-registry.json:clusters.2.elements.5.label"
+msgid "Frequency"
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-data-flow.how"
+msgid "Write down how data moves through the system: where an input comes from, what the model receives, and where its output goes. Confirm the description matches how the system is actually deployed."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-data-usage.how"
+msgid "State what the system does with the data it receives — whether it is stored, passed to another component, or used for further training. Check this against the privacy notice you publish."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-io.how"
+msgid "Describe the input and output the system accepts and produces — formats, size limits, and anything it refuses. A person confirms this because a model card lists modalities, not the system's actual interface."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-slp-app-area.how"
+msgid "State the field the system is intended for and the uses that are out of scope. This is a decision, not a fact a tool can read, and regulators ask for it directly."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-ds-statistics.how"
+msgid "Give the size and shape of the training data — record counts, class balance, and any known skew. These numbers explain the model's limits, so state them even when they are unflattering."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-ds-sensitivity.how"
+msgid "Judge whether the training data holds personal information or third-party copyrighted work, and record what you filtered out and how. Where the answer is unclear, take it to your privacy and legal contacts before release."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-sec-controls.how"
+msgid "List the controls that protect the model and its data — who can reach the weights, how the training environment is isolated, how artefacts are signed. These live in your operations, not in the SBOM."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-sec-compliance.how"
+msgid "Name the security standard or internal policy this model was built under, and who signed off. Point at the assessment record rather than restating it here."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-sec-policy.how"
+msgid "Give the route for reporting a vulnerability in this model and who answers it. A published model needs a contact that outlives the person who trained it."
+msgstr ""
+
+#: g7-guidance.json
+msgctxt "g7-guidance.json:review.g7-kpi-security.how"
+msgid "Record what you measured on the security side — adversarial or jailbreak testing, refusal rates, red-team results — with the method and the date. If nothing was measured, say so plainly."
+msgstr ""

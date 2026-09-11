@@ -1,0 +1,1108 @@
+{
+  "appTitle": "BomLens",
+  "subtitle": "SBOM, open-source notices and security reports for a single project — in one run",
+  "retry": "Retry",
+  "form": {
+    "title": "Scan settings",
+    "description": "Enter your project details and pick what to generate.",
+    "project": "Project name",
+    "projectPlaceholder": "my-app",
+    "version": "Version",
+    "versionPlaceholder": "1.0.0",
+    "options": "Generation options",
+    "advanced": "Advanced",
+    "run": "Run scan",
+    "running": "Scanning…",
+    "demoRunDisabled": "This demo cannot run a scan — it is a static page with no machine behind it.",
+    "demoRunDisabledCta": "Run it on your own code"
+  },
+  "source": {
+    "label": "Scan target",
+    "currentDir": "Current folder",
+    "currentDirPath": "Current folder",
+    "currentDirHint": "Scans the source in this folder (mounted as /src). To scan a different folder, run --ui from there.",
+    "rootfsDir": "Directory / rootfs",
+    "yoctoBuildDir": "Yocto build directory",
+    "rootfsPlaceholder": "centos-rootfs/  (relative to the current folder)",
+    "rootfsHint": "Scans an OS rootfs or any subfolder under the current folder (/src) as a directory. A Yocto build directory is recognized as one, and the image SBOM the build published is analyzed instead of the build tree. Paths outside the folder are rejected — place the rootfs under the launch folder, mount it with --mount, or use a Docker image instead.",
+    "scanRoot": "Scan location",
+    "scanRootCurrent": "Current folder ({{path}})",
+    "scanRootCurrentNoPath": "Current folder",
+    "rootfsSubpath": "Subfolder (optional)",
+    "rootfsSubpathHint": "Leave empty to scan the whole mounted folder, or narrow the scan to a subfolder inside it.",
+    "addScanFolder": "Add folder…",
+    "removeScanFolder": "Remove this folder from the list",
+    "scanFolderDesktopHint": "Added folders are read-only scan targets. Adding or removing one restarts the scanner briefly.",
+    "gitUrl": "GitHub URL",
+    "gitHint": "Public repos clone directly; for private repos enter a token below.",
+    "gitPlaceholder": "https://github.com/org/repo",
+    "gitToken": "Token (private repo, optional)",
+    "gitTokenPlaceholder": "ghp_… (Personal Access Token)",
+    "gitTokenHint": "Only for private repos. Used once for the clone; never stored or logged.",
+    "zipUpload": "ZIP upload",
+    "sbomUpload": "SBOM upload",
+    "sbomAnalyzeHint": "Notice + security reports are enabled automatically for the risk analysis.",
+    "firmwareUpload": "Firmware upload",
+    "firmwareHint": "Unpacks, then identifies components with syft + cve-bin-tool (.bin/.img/.squashfs…).",
+    "firmwareUnavailable": "Firmware analysis needs Docker running (the firmware image runs as a sibling container).",
+    "siblingPullNotice": "First run pulls the dedicated image (a large, one-time download); later runs reuse it.",
+    "dockerImage": "Docker image",
+    "dockerHint": "Scans a local/remote Docker image (Docker socket required).",
+    "dockerPlaceholder": "nginx:latest",
+    "aiModel": "AI model or dataset",
+    "aiModelPlaceholder": "google-bert/bert-base-uncased or figshare.com/articles/.../33412285",
+    "aiModelHint": "A HuggingFace model ID as 'org/model' (e.g. Qwen/Qwen2.5-0.5B), or a Figshare item: its page URL, its DOI, or the item number. Fetched over the network to build a CycloneDX ML-BOM.",
+    "aiModelUnavailable": "AI-model SBOMs need Docker running (the AIBOM image runs as a sibling container).",
+    "modelUpload": "Model file",
+    "modelUploadHint": "Reads the model file's own header — no HuggingFace account and no network, so a model that was never published can be scanned. What can be filled depends on the format: GGUF carries a name, a license and an architecture, while safetensors usually carries only tensor shapes. Files over 8 GB: use the CLI (--model-file), which reads them in place.",
+    "hfAuthOn": "Authenticated to HuggingFace: private and gated model repositories resolve.",
+    "hfAuthOff": "Running anonymously, so only public models resolve. To scan a private or gated repository — for example to review a model before you publish it — restart the UI with HF_TOKEN set.",
+    "usageContext": "Usage context",
+    "usageUnspecified": "Not specified",
+    "usageContextHint": "How you intend to use the model. When set, the license assessment is graded against this use.",
+    "uploading": "Upload progress",
+    "uploadErrorTooLarge": "The file is too large for the server to accept. Try a smaller archive, or scan the unpacked folder instead.",
+    "uploadErrorNetwork": "Could not reach the scan server. Check that it is still running, then try again.",
+    "uploadErrorServer": "The server could not process the request. Try again; if it keeps failing, restart the scanner.",
+    "uploadErrorRejected": "The server did not accept the upload. Check the file and try again.",
+    "packageUpload": "Build artifact",
+    "packageUploadHint": "A jar, war, deb, rpm or wheel, or a Windows or macOS installer. An executable jar carries its bundled dependencies, so scanning one gives close to what scanning the source would; a plain library jar carries none and yields nothing. An installer is unpacked first, because what it carries is inside rather than in the outer file.",
+    "dropHere": "Drop a file here",
+    "browse": "Choose file",
+    "replaceFile": "Replace",
+    "removeFile": "Remove the chosen file",
+    "uploadingPercent": "Uploading… {{percent}}%"
+  },
+  "options": {
+    "notice": "Notice",
+    "noticeHint": "Generate the open-source license NOTICE",
+    "aiNoticeHint": "For an AI model the notice lists the model and dataset licenses and flags use-restricted ones (RAIL, non-commercial) for review — worth keeping on.",
+    "security": "Security report",
+    "securityHint": "Generate a Trivy vulnerability report",
+    "deepSource": "Resolve transitive dependencies",
+    "deepSourceHint": "Builds the folder in a container to resolve the full dependency tree with exact transitive versions, the same as scanning the current folder. Off falls back to a quick scan of declared packages only.",
+    "deepLicense": "Per-file license scan",
+    "deepLicenseHint": "Scans your own source files with ScanCode for per-file license text and headers, in addition to the licenses each package declares (slow).",
+    "scanMethodHint": "Advanced analysis for source scanned without a package manager. If your project builds with one (Maven, npm, pip, Go modules…), the SBOM is already complete and these can stay off.",
+    "identifyVendored": "Detect copied-in open source",
+    "identifyVendoredHint": "Finds third-party open source copied into the source tree (mainly C/C++) with SCANOSS. Only file fingerprints — never the source — go to the OSSKB service.",
+    "scanossTokenPlaceholder": "SCANOSS token (optional)",
+    "scanossTokenHint": "The free OSSKB endpoint is rate-limited — fine for an occasional scan, but frequent runs may return nothing. For regular use, add a token from scanoss.com. Used once for this scan; never stored or logged.",
+    "includeOsv": "More vulnerability advisories",
+    "includeOsvHint": "Adds OSV.dev advisories to the firmware vulnerability match. The OSV database is not bundled in the image, so it downloads from osv.dev on this run (progress is shown below).",
+    "deepCve": "Deep CVE matching (NVD CPE)",
+    "deepCveHint": "Also checks against NVD-only advisories that other matching paths miss. Takes longer, and turns the security report on with it.",
+    "byteStable": "Reproducible output",
+    "byteStableHint": "Produces a byte-for-byte identical SBOM when the same input is re-scanned, so outputs can be diffed and checksummed. Skips network license lookups, which can otherwise vary between runs.",
+    "upload": "Upload to a server",
+    "uploadHint": "Send the generated SBOM to a Dependency-Track or TRUSCA server after the scan. The server URL and token are used for this run only and never stored.",
+    "outboundLicense": "Outbound license (optional)",
+    "outboundLicenseHint": "The SPDX id your project ships under, e.g. Apache-2.0. Dependencies whose terms clash with it are then flagged. A source scan cannot infer this, so without it the check stays off."
+  },
+  "upload": {
+    "target": "Destination",
+    "targetDT": "Dependency-Track",
+    "targetTrusca": "TRUSCA",
+    "url": "Server URL",
+    "urlPlaceholder": "https://dtrack.example.com",
+    "token": "API token",
+    "tokenPlaceholder": "Paste the upload token",
+    "tokenHint": "Dependency-Track uses an X-Api-Key; TRUSCA uses a Bearer token. The token is used for this run only and never stored.",
+    "projectId": "TRUSCA project id",
+    "projectIdPlaceholder": "Project UUID"
+  },
+  "progress": {
+    "title": "Run log",
+    "waiting": "Live logs will appear here once a scan starts.",
+    "cvedbDownloading": "Downloading CVE database"
+  },
+  "result": {
+    "title": "Results",
+    "kindAi": "AI model",
+    "kindSource": "Source",
+    "kindImage": "Container image",
+    "kindFirmware": "Firmware",
+    "kindRootfs": "Root filesystem",
+    "kindAnalyze": "SBOM analysis",
+    "kindSbom": "SBOM",
+    "succeeded": "Scan complete",
+    "failed": "Scan failed",
+    "rescan": "Re-scan",
+    "rescanHint": "Scan the same target again with these settings prefilled",
+    "components": "Components",
+    "vulnerabilities": "Vulnerabilities",
+    "noSecurity": "Security report was not generated",
+    "noSecurityHint": "This scan carries no vulnerability report, so nothing here was checked against advisory data. An empty section is not the same as a clean result.",
+    "aiScanTitle": "AI model SBOM (ML-BOM)",
+    "aiScanBody": "Generated from HuggingFace model metadata. It centers on the model and its datasets, so it has fewer components than a typical software scan.",
+    "vendoredHintTitle": "Few components found — is this C/C++ embedded source?",
+    "vendoredHintBody": "Open source is often copied (vendored) into C/C++ sources that have no package manager, where a normal scan can't see it. Turn on \"Detect copied-in open source\" under Advanced scan options and run again. Only file fingerprints are sent — your source stays local.",
+    "zeroComponentsTitle": "No components were found",
+    "zeroComponentsBody": "This is a warning, not a clean result. A scan finds nothing when it has nothing to read: no dependency manifest at the top of the folder (requirements.txt, package.json, pom.xml and the like), or a scan path that points somewhere else. Check the manifest and the path, then scan again.",
+    "unpinnedTitle": "Versions were resolved at scan time",
+    "unpinnedBody": "This project states version ranges and ships no lock file, so the versions listed here are what a fresh install would fetch today — not necessarily what is installed on your machine. The vulnerability result was measured against these versions. To see the risk in your own environment, scan a manifest that pins exact versions.",
+    "scanWarningsTitle": "The scan reported these while it ran",
+    "sbomDegradedTitle": "Direct dependencies only — deep resolution didn't run",
+    "sbomDegradedBody": "The transitive-dependency analyzer (cdxgen) couldn't run, so this SBOM lists only direct dependencies. Make sure Docker is available and re-scan for the full dependency graph.",
+    "sbomDegradedDisk": "The transitive-dependency analyzer (cdxgen) ran out of Docker disk space, so this SBOM lists only direct dependencies. Free space (e.g. \"docker system prune\") and re-scan for the full dependency graph.",
+    "scanossUnavailableTitle": "SCANOSS search didn't complete",
+    "scanossUnavailableBody": "The OSSKB lookup was blocked (rate limit, no network, or no token). The free OSSKB endpoint is rate-limited for anonymous use — add a SCANOSS token under Advanced scan options and run again to get results.",
+    "scanossNoMatchTitle": "No copied open source found",
+    "scanossNoMatchBody": "SCANOSS searched successfully but found no third-party open source copied directly into the source — either there is none, or the code isn't in OSSKB.",
+    "vendoredBadge": "vendored",
+    "vendoredBadgeHint": "Identified by SCANOSS as open source copied into the sources",
+    "presenceOnlyVersion": "no version",
+    "presenceOnlyHint": "Proved present by the ELF structure (library file or NEEDED entry), but no version string survived. With no version there is nothing to look up in a vulnerability database, so the vulnerability results do not cover this component. The licence obligations still apply.",
+    "vendoredMatch": "match {{pct}}",
+    "severityTitle": "Severity distribution",
+    "severityFilterHint": "Click a severity to filter",
+    "noVulns": "No vulnerabilities found",
+    "noVulnsHint": "The scan ran and checked every component it identified against the advisory data. Components it could not identify are outside that check.",
+    "noVulnsAction": "See the components that were checked",
+    "securityScanFailed": "Security scan failed — no results were produced. The counts here do not reflect the target's actual exposure.",
+    "securityScanPartial": "The security scanner reported an error; these results may be incomplete.",
+    "artifacts": "Generated artifacts",
+    "artifactsEmpty": "No artifacts were generated.",
+    "artifactCount": "{{count}} artifacts · {{size}}",
+    "downloadAll": "Download all (ZIP)",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "downloadStarted": "Download started",
+    "signed": "Signed",
+    "spdxExport": "Export as SPDX 2.3",
+    "spdxExporting": "Converting…",
+    "spdxExportFailed": "Could not export SPDX. The CycloneDX SBOM is unaffected.",
+    "kind": {
+      "riskReport": {
+        "title": "Open-source risk report",
+        "desc": "Consolidated supply-chain risk analysis across licenses and vulnerabilities."
+      },
+      "sbom": {
+        "title": "SBOM (CycloneDX)",
+        "desc": "The normalized software bill of materials in CycloneDX JSON. Export an SPDX 2.3 copy whenever you need one."
+      },
+      "notice": {
+        "title": "Open-source notice",
+        "desc": "License notices and attributions for the bundled components."
+      },
+      "conformance": {
+        "title": "Conformance report",
+        "desc": "Format validation of the submitted SBOM."
+      },
+      "aiProfile": {
+        "title": "AI compliance profile",
+        "desc": "The G7 minimum elements, licenses needing review and regulatory crosswalk, gathered for this model."
+      },
+      "security": {
+        "title": "Security report",
+        "desc": "Known vulnerabilities (CVE) found in the components."
+      },
+      "license": {
+        "title": "Deep license analysis",
+        "desc": "ScanCode deep license detection results."
+      },
+      "signature": {
+        "title": "SBOM signature",
+        "desc": "Cosign signature for verifying the SBOM."
+      }
+    },
+    "download": "Download",
+    "view": "View",
+    "conformance": "Conformance",
+    "verdictPass": "Pass",
+    "verdictFail": "Fail",
+    "riskReport": "Open-source risk report",
+    "tabSummary": "Summary",
+    "tabComponents": "Components",
+    "tabVulns": "Vulnerabilities",
+    "tabDependencies": "Dependencies",
+    "tabSourceTree": "Source tree",
+    "componentsEmpty": "No components were detected.",
+    "componentsEmptyHint": "The scan finished without identifying a single component. A target with no recognised manifest, lock file or package database usually reads this way.",
+    "componentsSearch": "Search name, license, type…",
+    "allTypes": "All types",
+    "allLicenses": "All licenses",
+    "allSeverities": "All severities",
+    "licenseSummaryTitle": "Licenses",
+    "licenseClassTitle": "License classification",
+    "licenseClassFilterHint": "Click a class to filter",
+    "licenseMore": "+{{count}} more",
+    "licenseRowHint": "Click a license for its components",
+    "componentsCount": "{{shown}} of {{total}} components",
+    "truncated": "first {{count}} rows shown",
+    "noMatch": "No matching rows.",
+    "licenseNone": "No license declared",
+    "filterHasVulns": "Has vulnerabilities",
+    "filterDirectOnly": "Direct only",
+    "filterNeedsReview": "Needs review",
+    "scopeDirect": "Direct",
+    "scopeTransitive": "Transitive",
+    "colName": "Name",
+    "colVersion": "Version",
+    "colType": "Type",
+    "colScope": "Scope",
+    "colRisk": "Risk",
+    "colLicense": "License",
+    "colSource": "Source / download",
+    "colCopyright": "Copyright",
+    "colSeverity": "Severity",
+    "colCve": "CVE",
+    "colPackage": "Component",
+    "colInstalled": "Installed",
+    "vulnSearchPlaceholder": "Search CVE, component, title",
+    "vulnShown": "{{shown}} of {{total}} shown",
+    "colFixed": "Fixed",
+    "vulnCvss": "CVSS",
+    "colEpss": "EPSS",
+    "kevBadge": "KEV",
+    "kevHint": "Actively exploited (CISA Known Exploited Vulnerabilities)",
+    "colNvdSeverity": "NVD severity",
+    "statusFixed": "Fixed",
+    "statusAffected": "Affected",
+    "statusWillNotFix": "Will not fix",
+    "statusEndOfLife": "End of life",
+    "statusFixDeferred": "Fix deferred",
+    "statusUnderInvestigation": "Under investigation",
+    "statusFixedHint": "The vendor or advisory reports this CVE as fixed.",
+    "statusAffectedHint": "The vendor or advisory confirms the installed version is affected.",
+    "statusWillNotFixHint": "The vendor has decided not to patch this CVE.",
+    "statusEndOfLifeHint": "The component is past end of life; no fix is planned.",
+    "statusFixDeferredHint": "A fix is planned but not yet available.",
+    "statusUnderInvestigationHint": "The vendor is still investigating this CVE.",
+    "vulnPublished": "Published",
+    "vulnDescription": "Description",
+    "vulnReferences": "References",
+    "vulnNoDetail": "No additional details available.",
+    "vulnRowToggle": "Show vulnerability details",
+    "componentRowToggle": "Show component details",
+    "eolTile": "End of life",
+    "eolAtRisk": "{{count}} also vulnerable",
+    "eolBadge": "End of life",
+    "eolBadgeHint": "Past upstream end-of-life — no security patches expected",
+    "eolSince": "since {{date}}",
+    "filterEol": "End of life",
+    "colEol": "Support",
+    "outdatedTile": "Outdated",
+    "outdatedBadge": "Outdated",
+    "outdatedBadgeHint": "A newer patch is available in its release cycle",
+    "outdatedLatest": "latest: {{version}}",
+    "outdatedReleasesBehind": "{{count}} releases behind",
+    "outdatedLastReleased": "released {{date}}",
+    "filterOutdated": "Outdated",
+    "filterLicenseUnclear": "Licence to decide",
+    "columns": "Columns",
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
+    "colCurrency": "Version currency",
+    "maliciousBadge": "Malicious package",
+    "maliciousBadgeHint": "Published to attack whoever installs it. Remove it and rotate any credential the build could reach — there is no version to upgrade to.",
+    "kernelAdvisories": "{{count}} kernel advisories are reported in the security report and are not counted above. Most advisories against a kernel are for subsystems a device never compiled in, and the SBOM cannot tell which.",
+    "viewInComponents": "View {{name}} in Components",
+    "viewInVulns": "View vulnerabilities for {{name}}",
+    "exportCsv": "Export CSV",
+    "csvName": "Name",
+    "csvVersion": "Version",
+    "csvType": "Type",
+    "csvLicenses": "Licenses",
+    "csvScope": "Scope",
+    "csvVulnCount": "Vulnerabilities",
+    "csvMaxSeverity": "Max severity",
+    "csvPurl": "Package URL",
+    "csvCve": "CVE",
+    "csvSeverity": "Severity",
+    "csvPackage": "Package",
+    "csvInstalled": "Installed",
+    "csvFixed": "Fixed in",
+    "csvCvss": "CVSS",
+    "csvEpss": "EPSS",
+    "csvKev": "Known exploited",
+    "csvTitle": "Title",
+    "artifactFiles": "({{count}} files)"
+  },
+  "deps": {
+    "loading": "Loading dependencies…",
+    "loadError": "Could not load the SBOM for the dependency view.",
+    "viewGraph": "Graph",
+    "viewTree": "Tree",
+    "direct": "Direct",
+    "cycle": "cycle",
+    "empty": "No dependency relationships were recorded.",
+    "emptyHint": "This SBOM names components but records no relationship between them. Scans that read a manifest or lock file capture those links; a scan of a built image, a firmware image or a binary usually cannot.",
+    "flatFallback": "This SBOM has no dependency graph; showing a flat component list.",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "treeLabel": "Dependency tree",
+    "expandNamed": "Expand {{name}}",
+    "collapseNamed": "Collapse {{name}}",
+    "tooLarge": "The graph has {{count}} nodes (over {{cap}}); use the tree view instead.",
+    "graphError": "The dependency graph could not be rendered.",
+    "search": "Search packages…",
+    "legendTransitive": "Transitive",
+    "legendVuln": "Vulnerable",
+    "arrowHint": "Arrows point from a package to what it depends on.",
+    "interactHint": "Hover to trace a package's links; click for details.",
+    "keyboardHint": "Keyboard users: switch to Tree to navigate.",
+    "graphAria": "Dependency graph (visual). Switch to Tree view to navigate by keyboard.",
+    "hasVuln": "Has known vulnerabilities",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fit": "Fit to view",
+    "savePng": "Save as PNG",
+    "legendRoot": "Scanned component"
+  },
+  "sourceTree": {
+    "loading": "Loading source tree…",
+    "loadError": "Could not load the source file tree.",
+    "empty": "No source files were scanned.",
+    "noLicenseHint": "License details appear when you run a ScanCode (deep-license) scan."
+  },
+  "sourceViewer": {
+    "selectPrompt": "Pick a file to read what was scanned.",
+    "summary": "{{count}} file(s) captured from the scanned tree.",
+    "summaryOmitted": "{{count}} left out (binary, or past the capture limit).",
+    "lines": "{{count}} lines",
+    "truncated": "Shown in part",
+    "truncatedFoot": "The rest of this file went past the capture limit and was not stored.",
+    "showAll": "Show the remaining {{count}} lines",
+    "missingBinary": "No preview — this file is binary, so only its path was recorded.",
+    "missingBudget": "No preview — the capture reached its size limit before this file.",
+    "missingUnknown": "No content was captured for this file.",
+    "symlink": "Symlink",
+    "symlinkTo": "This is a symlink to",
+    "linksSummary": "{{count}} symlinks."
+  },
+  "inputSbom": {
+    "loading": "Loading the submitted SBOM…",
+    "loadError": "Could not load the details of the submitted SBOM.",
+    "intro": "This scan read an SBOM someone else produced. Below is that document as it arrived, before it was converted to CycloneDX for the analysis on the other screens.",
+    "unnamed": "Submitted SBOM",
+    "entries": "{{count}} entries",
+    "componentsHint": "The entries themselves are listed, with filters and risk, under",
+    "field": {
+      "format": "Format",
+      "documentName": "Document name",
+      "created": "Created",
+      "tools": "Produced by",
+      "supplier": "Supplier",
+      "authors": "Authors",
+      "documentId": "Document id",
+      "rootComponent": "Describes",
+      "rootLicense": "Declared license",
+      "purl": "Package URL"
+    }
+  },
+  "severity": {
+    "CRITICAL": "Critical",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "UNKNOWN": "Unknown",
+    "NONE": "None"
+  },
+  "viewer": {
+    "open": "View artifact",
+    "close": "Close"
+  },
+  "dialog": {
+    "cancel": "Cancel"
+  },
+  "theme": {
+    "toLight": "Switch to light",
+    "toDark": "Switch to dark"
+  },
+  "lang": {
+    "label": "Language"
+  },
+  "nav": {
+    "label": "Sections",
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "recent": "Recent scans",
+    "depSplitTitle": "Direct / transitive",
+    "recentScans": "Scan management",
+    "recentEmpty": "No recent scans yet",
+    "recentDelete": "Delete this scan",
+    "sectionsHint": "Run a scan to see result sections here.",
+    "group": {
+      "inventory": "Inventory",
+      "ai": "AI",
+      "outputs": "Outputs",
+      "security": "Security",
+      "compliance": "Compliance"
+    },
+    "overview": "Overview",
+    "components": "Components",
+    "dependencies": "Dependencies",
+    "sourceTree": "Source tree",
+    "vulnerabilities": "Vulnerabilities",
+    "licenses": "Licenses",
+    "conformance": "SBOM conformance",
+    "models": "Models & datasets",
+    "artifacts": "Artifacts",
+    "inputSbom": "Submitted SBOM",
+    "help": "Help",
+    "helpDocs": "Documentation",
+    "helpDemo": "Live demo",
+    "helpVersion": "Version {{version}}",
+    "helpVersionUnknown": "Version not stamped in this build",
+    "conformanceSplitTitle": "Mandatory checks passed, out of the mandatory checks measured",
+    "lookupTitle": "External vulnerability lookup"
+  },
+  "shell": {
+    "newScan": "New scan",
+    "demoGetTool": "Get BomLens",
+    "demoBannerTitle": "Read-only demo",
+    "demoBannerBody": "These are real results from a real scan, frozen so you can look around. Scanning, uploading and deleting are turned off here — run BomLens on your own code to produce your own.",
+    "demoBannerCta": "How to run it"
+  },
+  "search": {
+    "placeholder": "Search components, CVEs…",
+    "none": "No matches",
+    "components": "Components",
+    "vulnerabilities": "Vulnerabilities",
+    "lookupGroup": "External lookup",
+    "lookupExternal": "Look up \"{{term}}\" on OSV.dev"
+  },
+  "lookup": {
+    "title": "External vulnerability lookup",
+    "subtitle": "Check a CVE/GHSA id, a purl, or a package name and version against OSV.dev, live, with nothing cached locally.",
+    "inputLabel": "CVE, GHSA, purl, or package name",
+    "inputPlaceholder": "CVE-2021-44228, pkg:npm/lodash@4.17.21, or a package name",
+    "ecosystemLabel": "Ecosystem",
+    "ecosystemPlaceholder": "Select an ecosystem",
+    "versionLabel": "Version",
+    "versionPlaceholder": "e.g. 4.17.21",
+    "submit": "Look up",
+    "searching": "Looking up…",
+    "unsupportedPurl": "Unsupported package type: {{type}}",
+    "notFound": "Not in the OSV.dev catalog",
+    "notFoundHint": "Not being listed doesn't mean it's safe; no advisory database's coverage is exhaustive.",
+    "packageClean": "No known advisories against this version",
+    "errorInvalid": "That doesn't look like a valid id, purl, or package + version.",
+    "errorOffline": "This server can't reach OSV.dev, which is normal in a closed network. Lookups will fail until it can.",
+    "errorUpstream": "OSV.dev didn't answer usably. Try again in a moment.",
+    "errorBusy": "Lookups are busy right now. Try again in a moment.",
+    "errorUnreachable": "Couldn't reach the server for this lookup.",
+    "truncated": "OSV.dev reported more advisories than are shown here.",
+    "withdrawn": "Withdrawn",
+    "aliases": "Also known as",
+    "affected": "Affected",
+    "references": "References",
+    "cvss": "CVSS",
+    "published": "Published",
+    "modified": "Modified",
+    "ecosystem": {
+      "npm": "npm",
+      "pypi": "PyPI",
+      "maven": "Maven",
+      "go": "Go",
+      "cargo": "crates.io",
+      "rubygems": "RubyGems",
+      "packagist": "Packagist",
+      "nuget": "NuGet"
+    }
+  },
+  "newscan": {
+    "title": "What do you want to scan?",
+    "subtitle": "Pick a target and BomLens generates the SBOM, open-source notice, and security report locally in one run.",
+    "source": "Source",
+    "settings": "Scan settings",
+    "outputs": "Outputs",
+    "scanOptions": "Advanced scan options",
+    "upload": "Upload (optional)",
+    "enabledCount": "{{n}} on",
+    "on": "on",
+    "catCode": "Code",
+    "catArtifact": "Artifact",
+    "catSbom": "SBOM",
+    "catAiModel": "AI model"
+  },
+  "run": {
+    "stageGenerate": "Generate SBOM",
+    "stageNormalize": "Normalize",
+    "stageNotice": "Notices",
+    "stageSecurity": "Security",
+    "stageDeepCve": "Deep CVE matching",
+    "stageReport": "Report",
+    "failedTitle": "The scan didn't finish",
+    "failedBody": "Something went wrong before the scan could complete. Check the run log below for details, then try again.",
+    "retry": "Retry",
+    "cancel": "Cancel"
+  },
+  "overview": {
+    "needsAttention": "Needs attention",
+    "allClear": "Nothing needs attention",
+    "attnConformance": "{{count}} mandatory conformance check(s) failed",
+    "attnVulns": "{{count}} critical or high vulnerabilities",
+    "attnReview": "{{count}} components flagged for review",
+    "explore": "Explore",
+    "jumpHint": "View {{section}}",
+    "depBreakdown": "{{direct}} direct · {{transitive}} transitive",
+    "yoctoVex": {
+      "title": "Already handled during the build",
+      "allHandled": "Every known CVE on this image was closed while it was built: {{fixed}} patched, {{notAffected}} not applicable. Nothing is left open.",
+      "withOpen": "{{open}} still need attention. The build had already closed the rest: {{fixed}} patched, {{notAffected}} not applicable."
+    },
+    "vsPrevious": "vs {{label}}",
+    "compDelta": "{{delta}} components",
+    "compSame": "no component change",
+    "sevUp": "more severe than before",
+    "sevDown": "less severe than before",
+    "sevSame": "severity unchanged",
+    "sevTrendLabel": "Worst severity",
+    "topRisk": "Highest risk components",
+    "topRiskOf": "{{shown}} of {{total}} with vulnerabilities",
+    "topRiskAll": "All components",
+    "attnMalicious": "{{count}} known-malicious package(s) — remove and rotate credentials",
+    "attnModelRisk": "{{count}} model or dataset needs a licence or security review",
+    "attnConformanceGap": "{{count}} conformance element(s) can be filled in",
+    "depNone": "no relationships recorded"
+  },
+  "models": {
+    "loading": "Loading model details…",
+    "loadError": "Could not load the model SBOM.",
+    "empty": "No model components found.",
+    "emptyHint": "This section lists machine-learning models and the datasets they declare. Only a scan of an AI model produces them.",
+    "architecture": "Architecture",
+    "task": "Task",
+    "supplier": "Supplier",
+    "identifier": "Identifier",
+    "integrity": "Integrity",
+    "integrityYes": "Hash present",
+    "integrityNo": "No hash",
+    "disclosure": "Disclosure",
+    "disclosureHint": "Whether each axis is documented in the model card — not a claim about the model itself.",
+    "axisWeights": "Weights",
+    "axisArchitecture": "Architecture",
+    "axisTrainingData": "Training data",
+    "axisTrainingProcess": "Training process",
+    "documented": "Documented",
+    "notDocumented": "Not documented",
+    "references": "References",
+    "limitations": "Limitations",
+    "datasets": "Datasets",
+    "dsName": "Dataset",
+    "dsLicense": "License",
+    "dsIntegrity": "Integrity",
+    "dsSource": "Derived from",
+    "dsUnresolved": "Not readable",
+    "dsNoLicense": "None declared",
+    "dsHashed": "Content digest recorded",
+    "dsNotHashed": "No content digest",
+    "dsAssessment": "Assessment",
+    "assessment": "Assessment",
+    "assessLicense": "License",
+    "assessSecurity": "File security",
+    "assessDatasets": "Datasets",
+    "assessTrainingData": "Training-data terms",
+    "assessNotEvaluated": "Not evaluated",
+    "gradeOk": "No restriction signals",
+    "gradeConditional": "Conditional use",
+    "gradeCaution": "Caution",
+    "gradeReview": "Needs review",
+    "reasons": "Reasons",
+    "usageContext": "Assessed usage",
+    "usageInternal": "Internal review & research",
+    "usageProduct": "Product integration",
+    "usageRedistribute": "Fine-tune & redistribute",
+    "usageOutputsOnly": "Outputs only",
+    "localScan": "Load-time code execution",
+    "localScan_clean": "No code-execution globals found in the pickle payload",
+    "localScan_suspicious": "Globals that need a look",
+    "localScan_unsafe": "Code-execution globals found",
+    "localScan_not_applicable": "This weight format does not execute code on load",
+    "localScan_error": "The file could not be read for this check",
+    "customLicenseQuote": "Custom license excerpt",
+    "lineageConflict": "The declared license conflicts with the upstream model {{name}}.",
+    "disclaimer": "This assessment is guidance, not legal advice."
+  },
+  "g7": {
+    "empty": "No conformance checks were recorded.",
+    "panelIntro": "Checks how well this SBOM meets the format and submission requirements. The regulatory crosswalk is for reference and makes no compliance determination.",
+    "subtitle": "G7 minimum elements for AI",
+    "present": "{{present}}/{{total}} present",
+    "advisory": "{{count}} advisory",
+    "review": "{{count}} need review",
+    "allAdvisory": "All G7 elements are advisory (a non-binding guideline).",
+    "formatTitle": "Format conformance",
+    "basePassed": "{{passed}}/{{total}} passed",
+    "required": "Required",
+    "sPass": "Present",
+    "sFail": "Failed",
+    "sWarn": "Advisory",
+    "howToFix": "How to satisfy:",
+    "evidence": "Met with:",
+    "missing": "Missing from:",
+    "example": "Example:",
+    "learnMore": "Learn more",
+    "cluster": {
+      "metadata": "Metadata",
+      "slp": "System-level properties",
+      "models": "Models",
+      "dp": "Dataset properties",
+      "infrastructure": "Infrastructure",
+      "sp": "Security properties",
+      "kpi": "Key performance indicators"
+    },
+    "source": {
+      "auto": "Auto",
+      "inferred": "Inferred",
+      "declared": "Declared",
+      "na": "Review needed",
+      "notApplicable": "Not applicable"
+    },
+    "help": {
+      "g7-meta-author": {
+        "what": "Who created the SBOM (author, supplier or manufacturer).",
+        "fix": "Set metadata.authors, metadata.supplier or metadata.manufacturer."
+      },
+      "g7-meta-version": {
+        "what": "The version of this SBOM document.",
+        "fix": "Set the top-level version field."
+      },
+      "g7-meta-format-name": {
+        "what": "The SBOM data format name (e.g. CycloneDX).",
+        "fix": "Set the bomFormat field."
+      },
+      "g7-meta-format-version": {
+        "what": "The SBOM format spec version (e.g. 1.7).",
+        "fix": "Set the specVersion field."
+      },
+      "g7-meta-signature": {
+        "what": "A cryptographic signature from the SBOM author.",
+        "fix": "Sign the SBOM and add the signature block."
+      },
+      "g7-meta-tool-name": {
+        "what": "The tool that generated the SBOM.",
+        "fix": "Record the generating tool under metadata.tools."
+      },
+      "g7-meta-tool-version": {
+        "what": "The version of the generating tool.",
+        "fix": "Record the tool version under metadata.tools."
+      },
+      "g7-meta-gen-context": {
+        "what": "The context the SBOM was generated in (build or analysis).",
+        "fix": "Add a bomlens:generationContext property."
+      },
+      "g7-meta-timestamp": {
+        "what": "When the SBOM was created.",
+        "fix": "Set metadata.timestamp."
+      },
+      "g7-meta-dependency": {
+        "what": "Dependency relationships between components.",
+        "fix": "Populate the dependencies graph."
+      },
+      "g7-slp-name": {
+        "what": "The name of the overall system.",
+        "fix": "Set metadata.component.name on the (non-model) root component."
+      },
+      "g7-slp-components": {
+        "what": "The components that make up the system.",
+        "fix": "List the system's components in the SBOM."
+      },
+      "g7-slp-producer": {
+        "what": "Who produced the system.",
+        "fix": "Set metadata.component.publisher or metadata.supplier."
+      },
+      "g7-slp-version": {
+        "what": "The system version.",
+        "fix": "Set metadata.component.version."
+      },
+      "g7-slp-timestamp": {
+        "what": "When the system was built.",
+        "fix": "Set metadata.timestamp."
+      },
+      "g7-slp-data-flow": {
+        "what": "How data flows through the system.",
+        "fix": "Document the system data flow — no automated source, human review needed."
+      },
+      "g7-slp-data-usage": {
+        "what": "How the system uses data.",
+        "fix": "Document the system's data usage — no automated source, human review needed."
+      },
+      "g7-slp-io": {
+        "what": "The system's input and output properties.",
+        "fix": "Document the system inputs and outputs — no automated source, human review needed."
+      },
+      "g7-slp-app-area": {
+        "what": "The intended application area of the system.",
+        "fix": "Document the intended application area — no automated source, human review needed."
+      },
+      "g7-model-name": {
+        "what": "The model's name.",
+        "fix": "Set name on the machine-learning-model component."
+      },
+      "g7-model-id": {
+        "what": "Identifies the model with a standard identifier such as PURL/CPE.",
+        "fix": "Add a purl or cpe to the model component in the SBOM."
+      },
+      "g7-model-version": {
+        "what": "The model version.",
+        "fix": "Set version on the model component."
+      },
+      "g7-model-timestamp": {
+        "what": "When the model was created.",
+        "fix": "Add a created/timestamp property to the model component."
+      },
+      "g7-model-producer": {
+        "what": "Who produced the model.",
+        "fix": "Set publisher, supplier or manufacturer on the model component."
+      },
+      "g7-model-description": {
+        "what": "A description of the model.",
+        "fix": "Set description on the model component."
+      },
+      "g7-model-hash-value": {
+        "what": "Integrity hashes for the model weight files.",
+        "fix": "Add the model file hashes (e.g. SHA-256) to the component's hashes."
+      },
+      "g7-model-hash-alg": {
+        "what": "The hash algorithm used for the model files.",
+        "fix": "Set alg (e.g. SHA-256) on each entry in the component's hashes."
+      },
+      "g7-model-card": {
+        "what": "Model-card info such as architecture and training parameters.",
+        "fix": "Populate modelCard.modelParameters (architecture, hyperparameters)."
+      },
+      "g7-model-io": {
+        "what": "The model's input and output properties.",
+        "fix": "Set modelCard.modelParameters.inputs and outputs."
+      },
+      "g7-model-training": {
+        "what": "Training properties such as datasets and architecture.",
+        "fix": "Set datasets/modelArchitecture under modelCard.modelParameters."
+      },
+      "g7-model-license": {
+        "what": "The license that applies to the model.",
+        "fix": "State a license on the model card, or fill the licenses field on the SBOM component."
+      },
+      "g7-model-openness": {
+        "what": "How open the weights, architecture, data and training are.",
+        "fix": "Declare the model's openness (public weights/data/training code) via openness:* properties."
+      },
+      "g7-model-extref": {
+        "what": "External references for the model (distribution, docs).",
+        "fix": "Add externalReferences to the model component."
+      },
+      "g7-ds-name": {
+        "what": "The name of each training dataset.",
+        "fix": "Add data components (or model-card datasets) with a name."
+      },
+      "g7-ds-description": {
+        "what": "A description of the dataset.",
+        "fix": "Set description on the data component."
+      },
+      "g7-ds-content": {
+        "what": "The dataset's content.",
+        "fix": "Document the dataset content — no automated source, human review needed."
+      },
+      "g7-ds-identifier": {
+        "what": "A stable identifier for the dataset.",
+        "fix": "Set bom-ref or purl on the data component."
+      },
+      "g7-ds-hash": {
+        "what": "Integrity hashes for the dataset.",
+        "fix": "Add dataset file hashes — no automated source, human review needed."
+      },
+      "g7-ds-provenance": {
+        "what": "Where the dataset came from.",
+        "fix": "Set componentData.governance or a provenance/source property."
+      },
+      "g7-ds-statistics": {
+        "what": "Statistical properties of the dataset.",
+        "fix": "Document dataset statistics — no automated source, human review needed."
+      },
+      "g7-ds-sensitivity": {
+        "what": "Sensitive content in the dataset (PII or copyright).",
+        "fix": "Document dataset sensitivity — no automated source, human review needed."
+      },
+      "g7-ds-dependency": {
+        "what": "Dependency relationships for the dataset.",
+        "fix": "Document dataset dependencies — no automated source, human review needed."
+      },
+      "g7-ds-license": {
+        "what": "The license of the dataset.",
+        "fix": "Add licenses to the data component."
+      },
+      "g7-infra-software": {
+        "what": "The software dependencies of the infrastructure.",
+        "fix": "Include the library/application/framework components in the SBOM."
+      },
+      "g7-infra-hardware": {
+        "what": "The hardware the system runs on (HBOM link).",
+        "fix": "Add device/hardware components or a hardware BOM reference."
+      },
+      "g7-sec-controls": {
+        "what": "The security controls applied to the system.",
+        "fix": "Document the security controls — no automated source, human review needed."
+      },
+      "g7-sec-compliance": {
+        "what": "The security compliance the system meets.",
+        "fix": "Document security compliance — no automated source, human review needed."
+      },
+      "g7-sec-policy": {
+        "what": "The cybersecurity policy information.",
+        "fix": "Document the cybersecurity policy — no automated source, human review needed."
+      },
+      "g7-sec-vulns": {
+        "what": "Known vulnerabilities referenced for the system.",
+        "fix": "Add a vulnerabilities section (VEX or advisories) to the SBOM."
+      },
+      "g7-kpi-security": {
+        "what": "Security metrics for the system.",
+        "fix": "Document security metrics — no automated source, human review needed."
+      },
+      "g7-kpi-operational": {
+        "what": "Operational performance KPIs of the model.",
+        "fix": "Set modelCard.quantitativeAnalysis.performanceMetrics."
+      },
+      "cisa-sbom-author": {
+        "what": "The entity that generated this SBOM — the organisation or person running the scan, not the tool.",
+        "fix": "Pass --sbom-author (or SBOM_AUTHOR) so metadata.authors names the entity, using its full name."
+      },
+      "cisa-sbom-author-signature": {
+        "what": "A digital signature attributable to the SBOM author, carried inside the document.",
+        "fix": "Sign the document itself, or verify the signature delivered beside it and record that you did."
+      },
+      "cisa-sbom-format-name": {
+        "what": "The name of the data format this SBOM is written in.",
+        "fix": "Emit a recognized format; bomFormat carries the name in CycloneDX."
+      },
+      "cisa-sbom-format-version": {
+        "what": "The version of that data format.",
+        "fix": "Set specVersion to a version the format still maintains."
+      },
+      "cisa-sbom-generation-context": {
+        "what": "The lifecycle phase this SBOM describes — what its component data can mean.",
+        "fix": "Set metadata.lifecycles: a scan of source manifests is pre-build, a scan of a built artifact is post-build."
+      },
+      "cisa-sbom-timestamp": {
+        "what": "When the SBOM data was last changed.",
+        "fix": "Set metadata.timestamp, following RFC 9557."
+      },
+      "cisa-sbom-tool-name": {
+        "what": "The tool the author used to generate or amend the SBOM.",
+        "fix": "List the tool in metadata.tools, by its full name."
+      },
+      "cisa-sbom-tool-version": {
+        "what": "Which build of that tool ran — without it the tool name says little.",
+        "fix": "Give every tool entry a version, or state that the version is unknown."
+      },
+      "cisa-sbom-version": {
+        "what": "Which iteration of this SBOM this is, for the same component and version.",
+        "fix": "Set the document version; the first published SBOM under these elements is 1."
+      },
+      "cisa-component-name": {
+        "what": "The name the producer assigned to each component.",
+        "fix": "Give every component a name."
+      },
+      "cisa-component-version": {
+        "what": "Each component's version, which is what vulnerability matching keys on.",
+        "fix": "Give every component a version, or mark it as present with the version not established."
+      },
+      "cisa-component-producer": {
+        "what": "Who created each component — the point of contact when something is wrong with it.",
+        "fix": "Set publisher, supplier, authors or manufacturer, or state that the provenance is unknown."
+      },
+      "cisa-component-identifiers": {
+        "what": "At least one identifier that keys a component to other databases.",
+        "fix": "Give each component a PURL or a CPE; a file that can have neither is identified by its hash."
+      },
+      "cisa-component-license": {
+        "what": "The licenses each component is available under.",
+        "fix": "Set licenses with SPDX identifiers, or state that the license is unknown."
+      },
+      "cisa-component-hash-value": {
+        "what": "The hash of each executable component artifact, so a recipient can verify their copy.",
+        "fix": "Add hashes where the artifact is in reach; where it is not, state that the value is unknown."
+      },
+      "cisa-component-hash-algorithm": {
+        "what": "Which algorithm produced each hash — a digest with no algorithm cannot be recomputed.",
+        "fix": "Name the algorithm on every hash, using its IANA hash function textual name."
+      },
+      "cisa-component-dependency-relationship": {
+        "what": "Which component needs which — the graph that makes an impact question answerable.",
+        "fix": "Record the dependency edges, transitive ones included."
+      },
+      "cisa-machine-processable-data": {
+        "what": "The SBOM is in a widely used, open format a tool can read.",
+        "fix": "Deliver CycloneDX or SPDX rather than a format only one tool understands."
+      },
+      "cisa-coverage": {
+        "what": "Whether the SBOM lists every component of the software, transitive ones included."
+      },
+      "cisa-accommodation-of-updates": {
+        "what": "Whether published SBOM data can be corrected, and corrections issued promptly."
+      },
+      "cisa-distribution-and-delivery": {
+        "what": "Whether whoever needs the SBOM can get it, without access control blocking authorized readers."
+      },
+      "cisa-explicit-unknowns": {
+        "what": "Whether an empty field says why it is empty: unknown to the author, or withheld.",
+        "fix": "State the policy once for the document — this pipeline writes it, since a scan only ever produces the first case."
+      },
+      "cisa-frequency": {
+        "what": "Whether each software version has its own SBOM, and a corrected one is reissued when data changes."
+      }
+    },
+    "verdictFailed": "{{count}} mandatory checks failed",
+    "verdictFailed_one": "1 mandatory check failed",
+    "verdictFailed_zero": "No mandatory check failed",
+    "verdictGap": "{{count}} advisory short",
+    "verdictReview": "{{count}} need a person",
+    "baseMandatory": "{{passed}}/{{total}} mandatory passed",
+    "missingMore": "and {{count}} more",
+    "needsPerson": "What to establish:",
+    "sNa": "N/A",
+    "notApplicable": "{{count}} not applicable"
+  },
+  "crosswalk": {
+    "title": "Regulatory crosswalk",
+    "disclaimer": "A documentation-preparation aid, not a compliance verdict. This crosswalk covers only the documentation elements an SBOM can carry; obligations it cannot express — bias and fairness assessment, risk management — must be met through separate documents.",
+    "totals": "{{present}} present, {{gap}} gap, {{failed}} failed, {{review}} need review of {{total}} mapped",
+    "thFramework": "Framework",
+    "thTotal": "Total",
+    "refs": "References:",
+    "present": "Present",
+    "gap": "Gap",
+    "advisory": "Advisory",
+    "review": "Review needed",
+    "failed": "Failed"
+  },
+  "aiProfile": {
+    "title": "AI compliance profile",
+    "note": "A one-glance rollup of the AI SBOM findings for documentation review — it makes no compliance determination.",
+    "verdict": {
+      "pass": "Pass",
+      "warn": "Advisory",
+      "fail": "Fail",
+      "unknown": "Unknown"
+    },
+    "g7Label": "G7 minimum elements",
+    "g7Value": "{{present}} of {{auto}} present",
+    "g7Detail": "{{gap}} gap, {{review}} to review",
+    "licenseLabel": "License review flags",
+    "licenseValue": "{{count}} flagged",
+    "licenseDetail": "{{behavioral}} behavioral-use, {{nonCommercial}} non-commercial",
+    "crosswalkLabel": "Regulatory coverage",
+    "crosswalkValue": "{{count}} frameworks",
+    "crosswalkDetail": "{{present}}/{{total}} elements mapped present"
+  },
+  "licenses": {
+    "empty": "No licenses were detected.",
+    "emptyHint": "There is nothing to classify because the scan identified no components — the licenses view reads them from the same inventory.",
+    "reviewTitle": "License review needed",
+    "reviewHint": "AI-restrictive terms — human review required.",
+    "flagBehavioral": "Behavioral-use",
+    "flagNonCommercial": "Non-commercial",
+    "tier": {
+      "networkCopyleft": "Network copyleft",
+      "strongCopyleft": "Strong copyleft",
+      "weakCopyleft": "Weak copyleft",
+      "reviewNeeded": "Review needed",
+      "uncategorized": "Uncategorized",
+      "permissive": "Permissive"
+    },
+    "conflictTitle": "Conflicts with your outbound license ({{license}})",
+    "conflictHint": "How each dependency's terms sit against the license you distribute under. A documentation aid — it surfaces combinations that need a person to look, and makes no legal determination.",
+    "conflictIncompatible": "Cannot be met",
+    "conflictConditional": "Depends on how you ship",
+    "conflictUnknown": "Cannot judge",
+    "conflictCompatible": "No conflict",
+    "conflictOffTitle": "Outbound-license conflicts were not checked",
+    "conflictOffHint": "This scan did not declare the license the project ships under, so dependencies could not be compared against it. Re-run with --license <spdx-id> (or set PROJECT_LICENSE) to turn the check on."
+  },
+  "recent": {
+    "title": "Scan management",
+    "subtitle": "Scans saved in this machine's local output folder.",
+    "total": "Total scans",
+    "atRisk": "At risk",
+    "projects": "Projects",
+    "searchPlaceholder": "Search scans…",
+    "noMatch": "No scans match the filter.",
+    "shown": "{{shown}} of {{total}}",
+    "colScan": "Scan",
+    "colType": "Type",
+    "colGenerated": "Generated",
+    "colComponents": "Components",
+    "colSeverity": "Top severity",
+    "vsPrevious": "Change since the previous scan of this project",
+    "sevUp": "Worse than the previous scan",
+    "sevDown": "Better than the previous scan",
+    "delete": "Delete",
+    "deleted": "Scan deleted",
+    "scanNotFound": "Scan “{{id}}” was not found. It may have been deleted.",
+    "confirmDeleteTitle": "Delete this scan?",
+    "confirmDeleteBody": "The output files for {{scan}} are removed from this machine. Nothing is kept elsewhere, so this cannot be undone.",
+    "typeAi": "AI model",
+    "typeSbom": "SBOM",
+    "typeSource": "Source",
+    "typeFirmware": "Firmware",
+    "typeContainer": "Container",
+    "typeRootfs": "RootFS",
+    "emptyTitle": "Generate your first SBOM",
+    "emptyBody": "Scan a folder, Git repo, Docker image, SBOM or AI model. BomLens builds the bill of materials, license notice and security report locally, in one run.",
+    "emptyOutSbom": "SBOM (CycloneDX)",
+    "emptyOutNotice": "Open-source notice",
+    "emptyOutSecurity": "Security report",
+    "source": "Delete a file and it leaves this list too.",
+    "demoSubtitle": "Five finished scans — a project's source, a container image, a device firmware image, an AI model, and an SBOM received from a supplier"
+  },
+  "validation": {
+    "required": "Fill in the required fields marked above.",
+    "file": "Choose a file to analyze.",
+    "project": "Enter a project name.",
+    "version": "Enter a version.",
+    "target": "Enter the scan target.",
+    "uploadUrl": "Enter the upload server URL.",
+    "uploadToken": "Enter the upload API token.",
+    "truscaProjectId": "Enter the TRUSCA project id."
+  },
+  "provenance": {
+    "folder": "Scanned folder",
+    "yocto": "Yocto build directory",
+    "git": "Cloned from",
+    "image": "Container image",
+    "file": "Uploaded file",
+    "sbom": "Received SBOM",
+    "model": "AI model"
+  },
+  "image": {
+    "ready": "The image for this input is already downloaded.",
+    "download": "Download now",
+    "downloadSize": "about {{size}} GB to download",
+    "pullingStart": "Starting the download…",
+    "pullingLayers": "Downloading — {{complete}} of {{total}} layers done",
+    "failed": {
+      "timeout": "The download stopped making progress and was cancelled. Check the network and try again.",
+      "disk": "The download ran out of disk space. Free some space and try again.",
+      "dns": "The registry could not be resolved. Check the network or DNS settings.",
+      "proxy": "The connection was refused or intercepted, which usually means a proxy or a corporate certificate. Ask whoever runs the network.",
+      "auth": "The registry refused the download for lack of permission.",
+      "unknown": "The download failed. The log above says what docker reported."
+    }
+  },
+  "cisa": {
+    "subtitle": "2026 SBOM minimum elements",
+    "allAdvisory": "Advisory here: these do not change the pass or fail verdict, which the submission requirements above decide.",
+    "cluster": {
+      "cisa-metadata": "SBOM metadata",
+      "cisa-component": "Component data",
+      "cisa-practices": "Practices and processes"
+    }
+  },
+  "conf": {
+    "kind": {
+      "pass": "Met",
+      "actionable": "Can be fixed",
+      "review": "Needs a person",
+      "na": "Not applicable"
+    },
+    "searchPlaceholder": "Search requirements and references",
+    "showingAll": "Showing all {{count}} checks.",
+    "showingFiltered": "Showing {{count}} of {{total}} checks.",
+    "noMatch": "No check matches this filter.",
+    "report": "Report ({{ext}})",
+    "hiddenByFilter": "{{count}} more match this search under another filter."
+  }
+}

@@ -1,0 +1,1108 @@
+{
+  "appTitle": "BomLens",
+  "subtitle": "단일 프로젝트의 SBOM · 고지문 · 보안 보고서를 한 번에",
+  "retry": "다시 시도",
+  "form": {
+    "title": "스캔 설정",
+    "description": "프로젝트 정보를 입력하고 생성할 항목을 선택하세요.",
+    "project": "프로젝트 이름",
+    "projectPlaceholder": "my-app",
+    "version": "버전",
+    "versionPlaceholder": "1.0.0",
+    "options": "생성 옵션",
+    "advanced": "고급",
+    "run": "스캔 실행",
+    "running": "스캔 중…",
+    "demoRunDisabled": "이 데모는 스캔을 실행할 수 없습니다. 뒤에 실행할 컴퓨터가 없는 정적 페이지입니다.",
+    "demoRunDisabledCta": "내 코드에서 실행해 보기"
+  },
+  "source": {
+    "label": "스캔 대상",
+    "currentDir": "현재 폴더",
+    "currentDirPath": "현재 폴더",
+    "currentDirHint": "이 폴더(컨테이너에 /src로 마운트)의 소스를 스캔합니다. 다른 폴더를 스캔하려면 그 폴더에서 --ui를 실행하세요.",
+    "rootfsDir": "디렉터리 / rootfs",
+    "yoctoBuildDir": "Yocto 빌드 디렉터리",
+    "rootfsPlaceholder": "centos-rootfs/  (현재 폴더 기준 상대경로)",
+    "rootfsHint": "현재 폴더(/src) 하위의 OS rootfs나 임의 하위 폴더를 디렉터리로 스캔합니다. Yocto 빌드 디렉터리는 그렇게 인식해서, 빌드 트리 대신 빌드가 만든 이미지 SBOM을 분석합니다. 폴더 밖 경로는 거부되므로, rootfs를 실행 폴더 하위에 두거나 --mount로 마운트하거나 Docker 이미지 입력을 사용하세요.",
+    "scanRoot": "스캔 위치",
+    "scanRootCurrent": "현재 폴더 ({{path}})",
+    "scanRootCurrentNoPath": "현재 폴더",
+    "rootfsSubpath": "하위 폴더 (선택)",
+    "rootfsSubpathHint": "비워 두면 마운트한 폴더 전체를 스캔합니다. 하위 폴더를 적으면 그 범위만 스캔합니다.",
+    "addScanFolder": "폴더 추가…",
+    "removeScanFolder": "이 폴더를 목록에서 제거",
+    "scanFolderDesktopHint": "추가한 폴더는 읽기 전용 스캔 대상이 됩니다. 폴더를 추가하거나 제거하면 스캐너가 잠시 재시작됩니다.",
+    "gitUrl": "GitHub URL",
+    "gitHint": "공개 저장소는 그대로, 비공개는 아래 토큰을 입력하세요.",
+    "gitPlaceholder": "https://github.com/org/repo",
+    "gitToken": "토큰 (비공개 저장소, 선택)",
+    "gitTokenPlaceholder": "ghp_… (Personal Access Token)",
+    "gitTokenHint": "비공개 저장소일 때만 입력. 토큰은 클론에 1회용으로만 쓰이고 저장·로그에 남지 않습니다.",
+    "zipUpload": "ZIP 업로드",
+    "sbomUpload": "SBOM 업로드",
+    "sbomAnalyzeHint": "위험분석을 위해 고지문·보안 보고서가 자동 활성화됩니다.",
+    "firmwareUpload": "펌웨어 업로드",
+    "firmwareHint": "추출 후 syft·cve-bin-tool로 컴포넌트를 식별합니다(.bin/.img/.squashfs 등).",
+    "firmwareUnavailable": "펌웨어 분석은 Docker가 실행 중이어야 사용할 수 있습니다(펌웨어 이미지를 sibling 컨테이너로 실행합니다).",
+    "siblingPullNotice": "처음 실행할 때 전용 이미지를 내려받습니다(용량이 크며 한 번만 받습니다). 이후 실행은 받아 둔 이미지를 재사용합니다.",
+    "dockerImage": "Docker 이미지",
+    "dockerHint": "로컬/원격 Docker 이미지를 스캔합니다(Docker 소켓 필요).",
+    "dockerPlaceholder": "nginx:latest",
+    "aiModel": "AI 모델 또는 데이터셋",
+    "aiModelPlaceholder": "google-bert/bert-base-uncased 또는 figshare.com/articles/.../33412285",
+    "aiModelHint": "HuggingFace 모델 ID를 '조직/모델' 형식으로 입력하거나(예: Qwen/Qwen2.5-0.5B), Figshare 항목의 페이지 주소나 DOI, 항목 번호를 입력합니다. 네트워크로 정보를 가져와 CycloneDX ML-BOM을 생성합니다.",
+    "aiModelUnavailable": "AI 모델 SBOM은 Docker가 실행 중이어야 사용할 수 있습니다(AIBOM 이미지를 sibling 컨테이너로 실행합니다).",
+    "modelUpload": "모델 파일",
+    "modelUploadHint": "모델 파일의 헤더를 직접 읽습니다. HuggingFace 계정과 네트워크가 필요 없어 공개하지 않은 모델도 스캔할 수 있습니다. 채울 수 있는 정보는 형식마다 다릅니다. GGUF는 이름과 라이선스, 아키텍처를 담고 있지만 safetensors는 대개 텐서 정보만 있습니다. 8GB가 넘는 파일은 파일을 그 자리에서 읽는 CLI(--model-file)를 쓰십시오.",
+    "hfAuthOn": "HuggingFace 인증 상태입니다. 비공개 저장소와 게이트 저장소도 해석됩니다.",
+    "hfAuthOff": "인증 없이 실행 중이라 공개 모델만 해석됩니다. 비공개·게이트 저장소를 스캔하려면(예: 공개 전 모델 검토) HF_TOKEN을 설정하고 UI를 다시 시작하세요.",
+    "usageContext": "사용 형태",
+    "usageUnspecified": "지정 안 함",
+    "usageContextHint": "모델을 어떻게 사용할지 선택합니다. 지정하면 라이선스 판정이 이 사용 형태를 기준으로 매겨집니다.",
+    "uploading": "업로드 진행률",
+    "uploadErrorTooLarge": "파일이 커서 서버가 받을 수 없습니다. 더 작은 압축본으로 다시 시도하거나, 압축을 푼 폴더를 스캔해 주세요.",
+    "uploadErrorNetwork": "스캔 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인하고 다시 시도해 주세요.",
+    "uploadErrorServer": "서버가 요청을 처리하지 못했습니다. 다시 시도하고, 계속 실패하면 스캐너를 재시작해 주세요.",
+    "uploadErrorRejected": "서버가 업로드를 받지 않았습니다. 파일을 확인하고 다시 시도해 주세요.",
+    "packageUpload": "빌드 산출물",
+    "packageUploadHint": "jar, war, deb, rpm, whl 파일이거나 Windows·macOS 설치 파일입니다. 실행 가능한 jar에는 내장된 의존성이 함께 들어 있어 소스를 스캔한 것과 비슷한 결과가 나오고, 의존성이 없는 라이브러리 jar는 결과가 비어 나옵니다. 설치 파일은 먼저 압축을 풉니다. 구성요소가 바깥 파일이 아니라 안에 들어 있기 때문입니다.",
+    "dropHere": "파일을 여기에 놓으세요",
+    "browse": "파일 선택",
+    "replaceFile": "교체",
+    "removeFile": "선택한 파일 제거",
+    "uploadingPercent": "업로드 중… {{percent}}%"
+  },
+  "options": {
+    "notice": "고지문",
+    "noticeHint": "오픈소스 라이선스 고지문(NOTICE) 생성",
+    "aiNoticeHint": "AI 모델은 고지문이 모델과 데이터셋 라이선스를 정리하고, 사용 제한이 있는 라이선스(RAIL·비상업)를 검토 대상으로 표시합니다. 켜 두기를 권장합니다.",
+    "security": "보안 보고서",
+    "securityHint": "Trivy 취약점 보고서 생성",
+    "deepSource": "전이 의존성까지 해석",
+    "deepSourceHint": "현재 폴더를 스캔할 때와 똑같이, 폴더를 컨테이너에서 빌드해 전체 의존성 트리를 정확한 전이 버전까지 해석합니다. 끄면 선언된 패키지만 빠르게 훑습니다.",
+    "deepLicense": "파일 단위 라이선스 스캔",
+    "deepLicenseHint": "패키지가 선언한 라이선스에 더해, ScanCode로 내 소스 파일을 직접 스캔해 파일 단위 라이선스 텍스트와 헤더를 찾아냅니다 (느림).",
+    "scanMethodHint": "패키지 매니저 없이 스캔하는 소스를 위한 고급 분석입니다. 프로젝트를 패키지 매니저(Maven, npm, pip, Go modules 등)로 빌드한다면 SBOM이 이미 충분하므로 꺼 둬도 됩니다.",
+    "identifyVendored": "복사해 넣은 오픈소스 탐지",
+    "identifyVendoredHint": "소스 트리에 직접 복사해 넣은 서드파티 오픈소스(주로 C/C++)를 SCANOSS로 찾아냅니다. 소스가 아니라 파일 지문만 OSSKB 서비스로 전송합니다.",
+    "scanossTokenPlaceholder": "SCANOSS 토큰 (선택)",
+    "scanossTokenHint": "무료 OSSKB는 호출 한도가 있어 가끔 쓰기엔 충분하지만 자주 돌리면 빈 결과가 나올 수 있습니다. 자주 사용한다면 scanoss.com에서 토큰을 발급해 넣으세요. 토큰은 1회용으로만 쓰이고 저장하거나 로그에 남기지 않습니다.",
+    "includeOsv": "더 많은 취약점 권고",
+    "includeOsvHint": "펌웨어 취약점 매칭에 OSV.dev 권고를 추가합니다. OSV 데이터베이스는 이미지에 포함돼 있지 않아, 이 실행에서 osv.dev로부터 내려받습니다(진행률은 아래에 표시됩니다).",
+    "deepCve": "심층 CVE 매칭 (NVD CPE)",
+    "deepCveHint": "다른 매칭 경로가 놓치는 취약점까지 NVD 전용 취약점 정보로 대조합니다. 시간이 더 걸리고, 보안 보고서를 함께 켭니다.",
+    "byteStable": "재현 가능한 출력",
+    "byteStableHint": "같은 입력을 다시 스캔하면 바이트 단위로 동일한 SBOM을 만들어, 출력을 비교하고 체크섬으로 검증할 수 있습니다. 실행마다 결과가 달라질 수 있는 네트워크 라이선스 조회는 건너뜁니다.",
+    "upload": "서버로 업로드",
+    "uploadHint": "스캔 후 생성된 SBOM을 Dependency-Track 또는 TRUSCA 서버로 보냅니다. 서버 주소와 토큰은 이 실행에만 쓰이고 저장하지 않습니다.",
+    "outboundLicense": "배포 라이선스 (선택)",
+    "outboundLicenseHint": "프로젝트를 배포하는 SPDX 식별자입니다(예: Apache-2.0). 지정하면 조건이 충돌하는 의존성을 표시합니다. 소스 스캔으로는 알아낼 수 없어 지정하지 않으면 검사하지 않습니다."
+  },
+  "upload": {
+    "target": "대상",
+    "targetDT": "Dependency-Track",
+    "targetTrusca": "TRUSCA",
+    "url": "서버 주소",
+    "urlPlaceholder": "https://dtrack.example.com",
+    "token": "API 토큰",
+    "tokenPlaceholder": "업로드 토큰을 붙여넣으세요",
+    "tokenHint": "Dependency-Track은 X-Api-Key, TRUSCA는 Bearer 토큰을 씁니다. 토큰은 이 실행에만 쓰이고 저장하지 않습니다.",
+    "projectId": "TRUSCA 프로젝트 id",
+    "projectIdPlaceholder": "프로젝트 UUID"
+  },
+  "progress": {
+    "title": "실행 로그",
+    "waiting": "스캔을 시작하면 실시간 로그가 여기에 표시됩니다.",
+    "cvedbDownloading": "CVE 데이터베이스 다운로드 중"
+  },
+  "result": {
+    "title": "결과",
+    "kindAi": "AI 모델",
+    "kindSource": "소스",
+    "kindImage": "컨테이너 이미지",
+    "kindFirmware": "펌웨어",
+    "kindRootfs": "루트 파일시스템",
+    "kindAnalyze": "SBOM 분석",
+    "kindSbom": "SBOM",
+    "succeeded": "스캔 완료",
+    "failed": "스캔 실패",
+    "rescan": "재스캔",
+    "rescanHint": "같은 대상을 이 설정을 채운 채로 다시 스캔합니다",
+    "components": "컴포넌트",
+    "vulnerabilities": "취약점",
+    "noSecurity": "보안 보고서를 생성하지 않았습니다",
+    "noSecurityHint": "이 스캔에는 취약점 보고서가 없습니다. 대조를 하지 않은 것이므로, 비어 있다는 것이 취약점이 없다는 뜻은 아닙니다.",
+    "aiScanTitle": "AI 모델 SBOM (ML-BOM)",
+    "aiScanBody": "HuggingFace 모델 메타데이터로 생성된 AI SBOM입니다. 모델과 데이터셋 중심이라 일반 소프트웨어보다 컴포넌트 수가 적습니다.",
+    "vendoredHintTitle": "컴포넌트가 거의 없습니다 — C/C++ 임베디드 소스인가요?",
+    "vendoredHintBody": "패키지 매니저가 없는 C/C++ 소스에는 오픈소스를 그대로 복사(vendored)해 넣은 경우가 많아, 일반 스캔으로는 보이지 않습니다. 고급 스캔 옵션에서 \"복사해 넣은 오픈소스 탐지\"를 켜고 다시 실행하세요. 소스가 아니라 파일 지문만 전송됩니다.",
+    "zeroComponentsTitle": "컴포넌트를 찾지 못했습니다",
+    "zeroComponentsBody": "안전하다는 뜻이 아니라 경고입니다. 읽을 것이 없으면 결과가 0건이 됩니다. 폴더 최상위에 의존성 목록 파일(requirements.txt, package.json, pom.xml 등)이 없거나, 검사 경로가 다른 곳을 가리키는 경우입니다. 목록과 경로를 확인한 뒤 다시 검사해 주십시오.",
+    "unpinnedTitle": "검사 시점에 버전이 정해졌습니다",
+    "unpinnedBody": "이 프로젝트는 버전을 범위로 적었고 고정 파일이 없어서, 여기 표시된 버전은 지금 새로 설치하면 받게 될 버전입니다. 여러분 환경에 설치된 버전과 다를 수 있습니다. 취약점 결과도 이 버전을 기준으로 나온 것입니다. 실제 환경의 위험을 보려면 정확한 버전이 적힌 목록으로 검사해 주십시오.",
+    "scanWarningsTitle": "검사 중 알린 사항",
+    "sbomDegradedTitle": "직접 의존성만 — 전이 의존성 분석이 실행되지 않음",
+    "sbomDegradedBody": "전이 의존성 분석기(cdxgen)가 실행되지 못해, 이 SBOM에는 직접 의존성만 담겼습니다. Docker가 사용 가능한지 확인한 뒤 다시 스캔하면 전체 의존성 그래프를 얻습니다.",
+    "sbomDegradedDisk": "전이 의존성 분석기(cdxgen)가 Docker 디스크 공간 부족으로 실행되지 못해, 이 SBOM에는 직접 의존성만 담겼습니다. 공간을 확보(예: \"docker system prune\")한 뒤 다시 스캔하면 전체 의존성 그래프를 얻습니다.",
+    "scanossUnavailableTitle": "SCANOSS 검색이 완료되지 않았습니다",
+    "scanossUnavailableBody": "호출 한도 초과, 네트워크 문제, 토큰 부재로 OSSKB 검색이 막혔습니다. 무료 OSSKB는 익명 호출 한도가 있어, '고급 스캔 옵션'에서 SCANOSS 토큰을 넣고 다시 실행하면 결과가 나올 수 있습니다.",
+    "scanossNoMatchTitle": "복사된 오픈소스를 찾지 못했습니다",
+    "scanossNoMatchBody": "SCANOSS 검색은 정상 완료됐지만, 소스에 직접 복사된 서드파티 오픈소스를 찾지 못했습니다. 실제로 없거나 OSSKB에 등록되지 않은 코드일 수 있습니다.",
+    "vendoredBadge": "vendored",
+    "vendoredBadgeHint": "소스에 복사된 오픈소스로 SCANOSS가 식별",
+    "presenceOnlyVersion": "버전 미확인",
+    "presenceOnlyHint": "ELF 구조(라이브러리 파일 또는 NEEDED 항목)로 존재가 확인됐으나 버전 문자열이 남아 있지 않습니다. 버전이 없으면 취약점 데이터베이스에서 조회할 것이 없으므로 취약점 결과가 이 컴포넌트를 다루지 않습니다. 라이선스 고지 의무는 그대로 발생합니다.",
+    "vendoredMatch": "일치도 {{pct}}",
+    "severityTitle": "심각도 분포",
+    "severityFilterHint": "심각도를 클릭하면 필터됩니다",
+    "noVulns": "발견된 취약점이 없습니다",
+    "noVulnsHint": "검사를 실행했고, 식별한 구성요소를 모두 취약점 정보와 대조했습니다. 식별하지 못한 구성요소는 이 검사의 대상이 아닙니다.",
+    "noVulnsAction": "검사한 구성요소 보기",
+    "securityScanFailed": "보안 스캔이 실패해 결과가 생성되지 않았습니다. 여기 표시된 수치는 실제 취약점 노출을 반영하지 않습니다.",
+    "securityScanPartial": "보안 스캐너가 오류를 보고했습니다. 아래 결과는 불완전할 수 있습니다.",
+    "artifacts": "생성된 결과물",
+    "artifactsEmpty": "생성된 결과물이 없습니다.",
+    "artifactCount": "결과물 {{count}}개 · {{size}}",
+    "downloadAll": "전체 다운로드 (ZIP)",
+    "copyLink": "링크 복사",
+    "copied": "링크를 복사했습니다",
+    "downloadStarted": "다운로드를 시작했습니다",
+    "signed": "서명됨",
+    "spdxExport": "SPDX 2.3으로 내보내기",
+    "spdxExporting": "변환 중…",
+    "spdxExportFailed": "SPDX로 내보내지 못했습니다. CycloneDX SBOM은 그대로 사용할 수 있습니다.",
+    "kind": {
+      "riskReport": {
+        "title": "오픈소스 위험분석 보고서",
+        "desc": "라이선스와 취약점을 아우른 공급망 위험 분석 종합본입니다."
+      },
+      "sbom": {
+        "title": "SBOM (CycloneDX)",
+        "desc": "정규화된 소프트웨어 구성 명세를 담은 CycloneDX JSON입니다. SPDX 2.3 사본이 필요하면 언제든 내보낼 수 있습니다."
+      },
+      "notice": {
+        "title": "오픈소스 고지문",
+        "desc": "포함된 컴포넌트의 라이선스 고지와 저작권 표시입니다."
+      },
+      "conformance": {
+        "title": "적합성 보고서",
+        "desc": "제출한 SBOM의 포맷 검증 결과입니다."
+      },
+      "aiProfile": {
+        "title": "AI 준수 프로필",
+        "desc": "이 모델의 G7 최소 요소와 검토가 필요한 라이선스, 규제 대응표를 모은 문서입니다."
+      },
+      "security": {
+        "title": "보안 보고서",
+        "desc": "컴포넌트에서 발견된 알려진 취약점(CVE)입니다."
+      },
+      "license": {
+        "title": "정밀 라이선스 분석",
+        "desc": "ScanCode 심화 라이선스 탐지 결과입니다."
+      },
+      "signature": {
+        "title": "SBOM 서명",
+        "desc": "SBOM 검증용 cosign 서명입니다."
+      }
+    },
+    "download": "다운로드",
+    "view": "보기",
+    "conformance": "적합성",
+    "verdictPass": "적합",
+    "verdictFail": "부적합",
+    "riskReport": "오픈소스 위험분석 보고서",
+    "tabSummary": "요약",
+    "tabComponents": "컴포넌트",
+    "tabVulns": "취약점",
+    "tabDependencies": "의존성",
+    "tabSourceTree": "소스 트리",
+    "componentsEmpty": "검출된 컴포넌트가 없습니다.",
+    "componentsEmptyHint": "스캔은 끝났지만 구성요소를 하나도 식별하지 못했습니다. 인식할 수 있는 매니페스트나 잠금 파일, 패키지 데이터베이스가 없는 대상에서 흔히 이렇게 나옵니다.",
+    "componentsSearch": "이름, 라이선스, 유형 검색…",
+    "allTypes": "모든 유형",
+    "allLicenses": "모든 라이선스",
+    "allSeverities": "모든 심각도",
+    "licenseSummaryTitle": "라이선스",
+    "licenseClassTitle": "라이선스 분류",
+    "licenseClassFilterHint": "분류를 클릭하면 필터됩니다",
+    "licenseMore": "외 {{count}}개",
+    "licenseRowHint": "라이선스를 클릭하면 컴포넌트가 열립니다",
+    "componentsCount": "{{total}}개 중 {{shown}}개",
+    "truncated": "{{count}}행까지 표시",
+    "noMatch": "일치하는 항목이 없습니다.",
+    "licenseNone": "라이선스 미선언",
+    "filterHasVulns": "취약점 있음",
+    "filterDirectOnly": "직접 의존만",
+    "filterNeedsReview": "검토 필요",
+    "scopeDirect": "직접",
+    "scopeTransitive": "전이",
+    "colName": "이름",
+    "colVersion": "버전",
+    "colType": "유형",
+    "colScope": "범위",
+    "colRisk": "위험",
+    "colLicense": "라이선스",
+    "colSource": "소스/다운로드",
+    "colCopyright": "저작권",
+    "colSeverity": "심각도",
+    "colCve": "CVE",
+    "colPackage": "컴포넌트",
+    "colInstalled": "설치 버전",
+    "vulnSearchPlaceholder": "CVE, 컴포넌트, 제목 검색",
+    "vulnShown": "{{total}}건 중 {{shown}}건 표시",
+    "colFixed": "수정 버전",
+    "vulnCvss": "CVSS",
+    "colEpss": "EPSS",
+    "kevBadge": "KEV",
+    "kevHint": "실제 악용 중(CISA Known Exploited Vulnerabilities)",
+    "colNvdSeverity": "NVD 등급",
+    "statusFixed": "수정됨",
+    "statusAffected": "영향받음",
+    "statusWillNotFix": "수정 계획 없음",
+    "statusEndOfLife": "지원 종료",
+    "statusFixDeferred": "수정 보류",
+    "statusUnderInvestigation": "조사 중",
+    "statusFixedHint": "공급사 또는 보안 권고에서 이 CVE를 수정됨으로 보고했습니다.",
+    "statusAffectedHint": "공급사 또는 보안 권고에서 설치된 버전이 영향받는다고 확인했습니다.",
+    "statusWillNotFixHint": "공급사가 이 CVE를 수정하지 않기로 했습니다.",
+    "statusEndOfLifeHint": "이 컴포넌트는 지원이 종료되어 수정 계획이 없습니다.",
+    "statusFixDeferredHint": "수정이 예정되어 있으나 아직 배포되지 않았습니다.",
+    "statusUnderInvestigationHint": "공급사가 이 CVE를 아직 조사하고 있습니다.",
+    "vulnPublished": "공개일",
+    "vulnDescription": "설명",
+    "vulnReferences": "참고 링크",
+    "vulnNoDetail": "추가 상세 정보가 없습니다.",
+    "vulnRowToggle": "취약점 상세 보기",
+    "componentRowToggle": "컴포넌트 상세 보기",
+    "eolTile": "지원 종료",
+    "eolAtRisk": "취약점 동반 {{count}}건",
+    "eolBadge": "지원 종료",
+    "eolBadgeHint": "상위 지원이 종료됨 — 보안 패치가 제공되지 않습니다",
+    "eolSince": "{{date}} 종료",
+    "filterEol": "지원 종료",
+    "colEol": "지원 상태",
+    "outdatedTile": "최신 아님",
+    "outdatedBadge": "최신 아님",
+    "outdatedBadgeHint": "같은 릴리스 주기에 더 최신 패치가 있습니다",
+    "outdatedLatest": "최신: {{version}}",
+    "outdatedReleasesBehind": "릴리스 {{count}}개 뒤처짐",
+    "outdatedLastReleased": "{{date}} 배포",
+    "filterOutdated": "최신 아님",
+    "filterLicenseUnclear": "라이선스 확인 필요",
+    "columns": "열",
+    "filters": "필터",
+    "clearFilters": "필터 지우기",
+    "colCurrency": "버전 최신성",
+    "maliciousBadge": "악성 패키지",
+    "maliciousBadgeHint": "설치하는 쪽을 공격하려고 배포된 패키지입니다. 올릴 수 있는 버전이 없으므로 제거하고, 빌드가 접근할 수 있었던 자격 증명을 교체하세요.",
+    "kernelAdvisories": "커널 관련 권고 {{count}}건은 보안 보고서에 실리며 위 집계에는 넣지 않았습니다. 커널 권고 대부분은 그 장비가 빌드하지 않은 서브시스템에 대한 것이고, SBOM으로는 어느 것인지 가릴 수 없습니다.",
+    "viewInComponents": "컴포넌트에서 {{name}} 보기",
+    "viewInVulns": "{{name}}의 취약점 보기",
+    "exportCsv": "CSV 내보내기",
+    "csvName": "이름",
+    "csvVersion": "버전",
+    "csvType": "유형",
+    "csvLicenses": "라이선스",
+    "csvScope": "범위",
+    "csvVulnCount": "취약점 수",
+    "csvMaxSeverity": "최고 심각도",
+    "csvPurl": "패키지 URL",
+    "csvCve": "CVE",
+    "csvSeverity": "심각도",
+    "csvPackage": "패키지",
+    "csvInstalled": "설치 버전",
+    "csvFixed": "수정 버전",
+    "csvCvss": "CVSS",
+    "csvEpss": "EPSS",
+    "csvKev": "악용 확인",
+    "csvTitle": "제목",
+    "artifactFiles": "(파일 {{count}}개)"
+  },
+  "deps": {
+    "loading": "의존성을 불러오는 중…",
+    "loadError": "의존성 보기를 위한 SBOM을 불러오지 못했습니다.",
+    "viewGraph": "그래프",
+    "viewTree": "트리",
+    "direct": "직접",
+    "cycle": "순환",
+    "empty": "기록된 의존 관계가 없습니다.",
+    "emptyHint": "이 SBOM에는 구성요소는 있지만 서로의 관계가 기록되어 있지 않습니다. 매니페스트나 잠금 파일을 읽는 스캔은 관계를 담지만, 빌드된 이미지나 펌웨어 이미지, 바이너리 스캔에서는 대개 담기지 않습니다.",
+    "flatFallback": "이 SBOM에는 의존성 그래프가 없어 평면 컴포넌트 목록으로 표시합니다.",
+    "expand": "펼치기",
+    "collapse": "접기",
+    "treeLabel": "의존성 트리",
+    "expandNamed": "{{name}} 펼치기",
+    "collapseNamed": "{{name}} 접기",
+    "tooLarge": "노드가 {{count}}개로 {{cap}}개를 넘습니다. 트리 보기를 사용하세요.",
+    "graphError": "의존성 그래프를 렌더링하지 못했습니다.",
+    "search": "패키지 검색…",
+    "legendTransitive": "간접",
+    "legendVuln": "취약점 있음",
+    "arrowHint": "화살표는 패키지가 의존하는 대상을 가리킵니다.",
+    "interactHint": "노드에 마우스를 올리면 연결을 추적하고, 클릭하면 상세를 봅니다.",
+    "keyboardHint": "키보드 사용 시 트리 보기로 전환해 탐색하세요.",
+    "graphAria": "의존성 그래프(시각). 키보드로 탐색하려면 트리 보기로 전환하세요.",
+    "hasVuln": "알려진 취약점 있음",
+    "zoomIn": "확대",
+    "zoomOut": "축소",
+    "fit": "화면에 맞추기",
+    "savePng": "PNG로 저장",
+    "legendRoot": "스캔한 구성요소"
+  },
+  "sourceTree": {
+    "loading": "소스 트리를 불러오는 중…",
+    "loadError": "소스 파일 트리를 불러오지 못했습니다.",
+    "empty": "스캔된 소스 파일이 없습니다.",
+    "noLicenseHint": "라이선스 정보는 ScanCode(딥 라이선스) 스캔을 실행하면 표시됩니다."
+  },
+  "sourceViewer": {
+    "selectPrompt": "파일을 고르면 스캔한 내용을 볼 수 있습니다.",
+    "summary": "스캔한 트리에서 파일 {{count}}개를 담았습니다.",
+    "summaryOmitted": "{{count}}개는 담지 않았습니다(바이너리이거나 저장 한도를 넘었습니다).",
+    "lines": "{{count}}줄",
+    "truncated": "일부만 표시",
+    "truncatedFoot": "이 파일의 나머지 부분은 저장 한도를 넘어 담지 않았습니다.",
+    "showAll": "남은 {{count}}줄 더 보기",
+    "missingBinary": "미리 볼 수 없습니다. 바이너리 파일이라 경로만 기록했습니다.",
+    "missingBudget": "미리 볼 수 없습니다. 저장 한도에 먼저 도달해 이 파일은 담지 못했습니다.",
+    "missingUnknown": "이 파일은 내용을 담지 않았습니다.",
+    "symlink": "심볼릭 링크",
+    "symlinkTo": "이 항목은 다음을 가리키는 심볼릭 링크입니다:",
+    "linksSummary": "심볼릭 링크 {{count}}개."
+  },
+  "inputSbom": {
+    "loading": "제출된 SBOM을 불러오는 중…",
+    "loadError": "제출된 SBOM의 정보를 불러오지 못했습니다.",
+    "intro": "이 스캔은 다른 곳에서 만든 SBOM을 읽었습니다. 아래는 그 문서가 도착했을 때의 내용으로, 다른 화면의 분석에 쓰인 CycloneDX로 변환하기 전 상태입니다.",
+    "unnamed": "제출된 SBOM",
+    "entries": "항목 {{count}}개",
+    "componentsHint": "항목 자체는 필터와 위험도와 함께 다음에서 볼 수 있습니다:",
+    "field": {
+      "format": "형식",
+      "documentName": "문서 이름",
+      "created": "생성 시각",
+      "tools": "생성 도구",
+      "supplier": "공급자",
+      "authors": "작성자",
+      "documentId": "문서 식별자",
+      "rootComponent": "설명 대상",
+      "rootLicense": "선언된 라이선스",
+      "purl": "패키지 URL"
+    }
+  },
+  "severity": {
+    "CRITICAL": "Critical",
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low",
+    "UNKNOWN": "Unknown",
+    "NONE": "None"
+  },
+  "viewer": {
+    "open": "결과물 보기",
+    "close": "닫기"
+  },
+  "dialog": {
+    "cancel": "취소"
+  },
+  "theme": {
+    "toLight": "라이트 모드로",
+    "toDark": "다크 모드로"
+  },
+  "lang": {
+    "label": "언어"
+  },
+  "nav": {
+    "label": "섹션",
+    "collapse": "사이드바 접기",
+    "expand": "사이드바 펼치기",
+    "recent": "최근 스캔",
+    "depSplitTitle": "직접 / 전이",
+    "recentScans": "스캔 관리",
+    "recentEmpty": "최근 스캔이 아직 없습니다",
+    "recentDelete": "이 스캔 삭제",
+    "sectionsHint": "스캔을 실행하면 결과 섹션이 여기에 표시됩니다.",
+    "group": {
+      "inventory": "인벤토리",
+      "ai": "AI",
+      "outputs": "산출물",
+      "security": "보안",
+      "compliance": "컴플라이언스"
+    },
+    "overview": "개요",
+    "components": "컴포넌트",
+    "dependencies": "의존성",
+    "sourceTree": "소스 트리",
+    "vulnerabilities": "취약점",
+    "licenses": "라이선스",
+    "conformance": "SBOM 적합성",
+    "models": "모델 · 데이터셋",
+    "artifacts": "산출물",
+    "inputSbom": "제출된 SBOM",
+    "help": "도움말",
+    "helpDocs": "문서",
+    "helpDemo": "온라인 데모",
+    "helpVersion": "버전 {{version}}",
+    "helpVersionUnknown": "이 빌드에는 버전이 기록되지 않았습니다",
+    "conformanceSplitTitle": "측정한 필수 검사 중 통과한 개수",
+    "lookupTitle": "외부 취약점 조회"
+  },
+  "shell": {
+    "newScan": "새 스캔",
+    "demoGetTool": "BomLens 받기",
+    "demoBannerTitle": "읽기 전용 데모",
+    "demoBannerBody": "실제로 스캔한 결과를 그대로 담아 둘러볼 수 있게 한 화면입니다. 여기서는 스캔과 업로드, 삭제가 꺼져 있습니다. 직접 만든 결과를 보려면 각자 환경에서 BomLens를 실행하면 됩니다.",
+    "demoBannerCta": "실행 방법 보기"
+  },
+  "search": {
+    "placeholder": "컴포넌트, CVE 검색…",
+    "none": "일치 항목 없음",
+    "components": "컴포넌트",
+    "vulnerabilities": "취약점",
+    "lookupGroup": "외부 조회",
+    "lookupExternal": "OSV.dev에서 \"{{term}}\" 조회"
+  },
+  "lookup": {
+    "title": "외부 취약점 조회",
+    "subtitle": "CVE/GHSA ID나 purl, 또는 패키지 이름과 버전으로 OSV.dev에 실시간으로 조회합니다. 로컬 데이터가 아닙니다.",
+    "inputLabel": "CVE, GHSA, purl, 또는 패키지 이름",
+    "inputPlaceholder": "CVE-2021-44228, pkg:npm/lodash@4.17.21, 또는 패키지 이름",
+    "ecosystemLabel": "생태계",
+    "ecosystemPlaceholder": "생태계 선택",
+    "versionLabel": "버전",
+    "versionPlaceholder": "예: 4.17.21",
+    "submit": "조회",
+    "searching": "조회 중…",
+    "unsupportedPurl": "지원하지 않는 패키지 유형입니다: {{type}}",
+    "notFound": "OSV.dev 카탈로그에 없음",
+    "notFoundHint": "목록에 없다고 안전하다는 뜻은 아닙니다. 어떤 취약점 데이터베이스도 모든 취약점을 담고 있지는 않습니다.",
+    "packageClean": "이 버전에 알려진 취약점이 없습니다",
+    "errorInvalid": "올바른 ID, purl, 또는 패키지 + 버전 형식이 아닙니다.",
+    "errorOffline": "이 서버가 OSV.dev에 접속할 수 없습니다. 폐쇄망 환경에서는 정상입니다. 접속이 가능해지기 전까지 조회는 실패합니다.",
+    "errorUpstream": "OSV.dev가 정상적으로 응답하지 않았습니다. 잠시 후 다시 시도하세요.",
+    "errorBusy": "지금은 조회 요청이 많습니다. 잠시 후 다시 시도하세요.",
+    "errorUnreachable": "이 조회를 위해 서버에 접속할 수 없습니다.",
+    "truncated": "OSV.dev가 여기 표시된 것보다 더 많은 취약점을 보고했습니다.",
+    "withdrawn": "철회됨",
+    "aliases": "다른 이름",
+    "affected": "영향받는 범위",
+    "references": "참고 링크",
+    "cvss": "CVSS",
+    "published": "발행일",
+    "modified": "수정일",
+    "ecosystem": {
+      "npm": "npm",
+      "pypi": "PyPI",
+      "maven": "Maven",
+      "go": "Go",
+      "cargo": "crates.io",
+      "rubygems": "RubyGems",
+      "packagist": "Packagist",
+      "nuget": "NuGet"
+    }
+  },
+  "newscan": {
+    "title": "무엇을 스캔할까요?",
+    "subtitle": "대상을 고르면 SBOM과 고지문, 보안 보고서를 로컬에서 한 번에 생성합니다.",
+    "source": "소스",
+    "settings": "스캔 설정",
+    "outputs": "산출물",
+    "scanOptions": "고급 스캔 옵션",
+    "upload": "업로드(선택)",
+    "enabledCount": "{{n}}개 켜짐",
+    "on": "켜짐",
+    "catCode": "코드",
+    "catArtifact": "아티팩트",
+    "catSbom": "SBOM",
+    "catAiModel": "AI 모델"
+  },
+  "run": {
+    "stageGenerate": "SBOM 생성",
+    "stageNormalize": "정규화",
+    "stageNotice": "고지문",
+    "stageSecurity": "보안",
+    "stageDeepCve": "심층 CVE 매칭",
+    "stageReport": "보고서",
+    "failedTitle": "스캔을 끝내지 못했습니다",
+    "failedBody": "스캔이 완료되기 전에 문제가 발생했습니다. 아래 실행 로그에서 원인을 확인한 뒤 다시 시도하세요.",
+    "retry": "다시 시도",
+    "cancel": "취소"
+  },
+  "overview": {
+    "needsAttention": "주의 필요",
+    "allClear": "주의할 항목이 없습니다",
+    "attnConformance": "필수 적합성 검사 {{count}}건 실패",
+    "attnVulns": "Critical과 High 취약점 {{count}}건",
+    "attnReview": "검토가 필요한 컴포넌트 {{count}}개",
+    "explore": "둘러보기",
+    "jumpHint": "{{section}} 보기",
+    "depBreakdown": "직접 {{direct}} · 전이 {{transitive}}",
+    "yoctoVex": {
+      "title": "빌드에서 이미 처리한 취약점",
+      "allHandled": "이 이미지에서 알려진 취약점은 빌드 과정에서 모두 처리됐습니다. 패치 적용 {{fixed}}건, 해당 없음 {{notAffected}}건이며 남은 것은 없습니다.",
+      "withOpen": "{{open}}건이 아직 남아 있습니다. 나머지는 빌드에서 처리했습니다. 패치 적용 {{fixed}}건, 해당 없음 {{notAffected}}건입니다."
+    },
+    "vsPrevious": "{{label}} 대비",
+    "compDelta": "컴포넌트 {{delta}}",
+    "compSame": "컴포넌트 변동 없음",
+    "sevUp": "이전보다 심각도 높음",
+    "sevDown": "이전보다 심각도 낮음",
+    "sevSame": "심각도 변동 없음",
+    "sevTrendLabel": "최고 심각도",
+    "topRisk": "위험이 큰 컴포넌트",
+    "topRiskOf": "취약점 있는 {{total}}개 중 {{shown}}개",
+    "topRiskAll": "전체 컴포넌트",
+    "attnMalicious": "악성 패키지 {{count}}개 — 제거하고 자격 증명을 교체하세요",
+    "attnModelRisk": "라이선스나 보안 검토가 필요한 모델·데이터셋 {{count}}건",
+    "attnConformanceGap": "채울 수 있는 적합성 항목 {{count}}건",
+    "depNone": "기록된 관계 없음"
+  },
+  "models": {
+    "loading": "모델 정보를 불러오는 중…",
+    "loadError": "모델 SBOM을 불러오지 못했습니다.",
+    "empty": "모델 컴포넌트가 없습니다.",
+    "emptyHint": "이 화면은 기계학습 모델과 그 모델이 선언한 데이터셋을 보여줍니다. AI 모델을 스캔했을 때만 만들어집니다.",
+    "architecture": "아키텍처",
+    "task": "태스크",
+    "supplier": "공급자",
+    "identifier": "식별자",
+    "integrity": "무결성",
+    "integrityYes": "해시 있음",
+    "integrityNo": "해시 없음",
+    "disclosure": "공개 정보",
+    "disclosureHint": "각 항목이 모델 카드에 문서화되어 있는지를 나타냅니다. 모델 자체의 개방성을 단정하지 않습니다.",
+    "axisWeights": "가중치",
+    "axisArchitecture": "아키텍처",
+    "axisTrainingData": "학습 데이터",
+    "axisTrainingProcess": "학습 과정",
+    "documented": "문서화됨",
+    "notDocumented": "미문서화",
+    "references": "참조",
+    "limitations": "한계",
+    "datasets": "데이터셋",
+    "dsName": "데이터셋",
+    "dsLicense": "라이선스",
+    "dsIntegrity": "무결성",
+    "dsSource": "파생 출처",
+    "dsUnresolved": "읽을 수 없음",
+    "dsNoLicense": "표기 없음",
+    "dsHashed": "콘텐츠 해시 기록됨",
+    "dsNotHashed": "콘텐츠 해시 없음",
+    "dsAssessment": "판정",
+    "assessment": "판정",
+    "assessLicense": "라이선스",
+    "assessSecurity": "파일 보안",
+    "assessDatasets": "데이터셋",
+    "assessTrainingData": "학습 데이터 이용 조건",
+    "assessNotEvaluated": "평가 안 됨",
+    "gradeOk": "제약 신호 없음",
+    "gradeConditional": "조건부 사용",
+    "gradeCaution": "주의",
+    "gradeReview": "검토 필요",
+    "reasons": "근거",
+    "usageContext": "판정 기준 사용 형태",
+    "usageInternal": "내부 검토·연구",
+    "usageProduct": "제품 탑재",
+    "usageRedistribute": "파인튜닝·재배포",
+    "usageOutputsOnly": "산출물만 이용",
+    "localScan": "불러올 때 코드 실행",
+    "localScan_clean": "pickle 데이터에서 코드를 실행하는 항목을 찾지 못함",
+    "localScan_suspicious": "확인이 필요한 항목 있음",
+    "localScan_unsafe": "코드를 실행하는 항목 발견",
+    "localScan_not_applicable": "이 가중치 형식은 불러올 때 코드를 실행하지 않음",
+    "localScan_error": "이 검사를 위해 파일을 읽지 못함",
+    "customLicenseQuote": "커스텀 라이선스 발췌",
+    "lineageConflict": "선언된 라이선스가 상위 모델 {{name}}의 라이선스와 충돌합니다.",
+    "disclaimer": "이 판정은 법적 자문이 아닌 안내입니다."
+  },
+  "g7": {
+    "empty": "기록된 적합성 검사가 없습니다.",
+    "panelIntro": "이 SBOM이 형식·제출 요건을 얼마나 갖췄는지 검증합니다. 규제 대응표는 참고용이며, 규정 준수를 판정하지 않습니다.",
+    "subtitle": "AI G7 최소 요소",
+    "present": "{{present}}/{{total}} 충족",
+    "advisory": "권고 {{count}}건",
+    "review": "검토 필요 {{count}}건",
+    "allAdvisory": "G7 요소는 모두 권고이며 비구속 지침입니다.",
+    "formatTitle": "형식 적합성",
+    "basePassed": "{{passed}}/{{total}} 통과",
+    "required": "필수",
+    "sPass": "충족",
+    "sFail": "실패",
+    "sWarn": "권고",
+    "howToFix": "보완 방법:",
+    "evidence": "충족 근거:",
+    "missing": "누락 항목:",
+    "example": "예시:",
+    "learnMore": "더 알아보기",
+    "cluster": {
+      "metadata": "메타데이터",
+      "slp": "시스템 속성",
+      "models": "모델",
+      "dp": "데이터셋 속성",
+      "infrastructure": "인프라",
+      "sp": "보안 속성",
+      "kpi": "핵심 성과 지표"
+    },
+    "source": {
+      "auto": "자동 확인",
+      "inferred": "신호 추정",
+      "declared": "선언 필요",
+      "na": "검토 필요",
+      "notApplicable": "해당 없음"
+    },
+    "help": {
+      "g7-meta-author": {
+        "what": "SBOM을 만든 주체(작성자, 공급사 또는 제조사)입니다.",
+        "fix": "metadata.authors, metadata.supplier 또는 metadata.manufacturer를 설정하세요."
+      },
+      "g7-meta-version": {
+        "what": "이 SBOM 문서의 버전입니다.",
+        "fix": "최상위 version 필드를 설정하세요."
+      },
+      "g7-meta-format-name": {
+        "what": "SBOM 데이터 형식 이름입니다(예: CycloneDX).",
+        "fix": "bomFormat 필드를 설정하세요."
+      },
+      "g7-meta-format-version": {
+        "what": "SBOM 형식 규격 버전입니다(예: 1.7).",
+        "fix": "specVersion 필드를 설정하세요."
+      },
+      "g7-meta-signature": {
+        "what": "SBOM 작성자의 전자 서명입니다.",
+        "fix": "SBOM에 서명하고 signature 블록을 추가하세요."
+      },
+      "g7-meta-tool-name": {
+        "what": "SBOM을 생성한 도구입니다.",
+        "fix": "metadata.tools에 생성 도구를 기록하세요."
+      },
+      "g7-meta-tool-version": {
+        "what": "생성 도구의 버전입니다.",
+        "fix": "metadata.tools에 도구 버전을 기록하세요."
+      },
+      "g7-meta-gen-context": {
+        "what": "SBOM이 생성된 맥락입니다(빌드 또는 분석).",
+        "fix": "bomlens:generationContext 속성을 추가하세요."
+      },
+      "g7-meta-timestamp": {
+        "what": "SBOM이 생성된 시점입니다.",
+        "fix": "metadata.timestamp를 설정하세요."
+      },
+      "g7-meta-dependency": {
+        "what": "컴포넌트 사이의 의존 관계입니다.",
+        "fix": "dependencies 그래프를 채우세요."
+      },
+      "g7-slp-name": {
+        "what": "전체 시스템의 이름입니다.",
+        "fix": "모델이 아닌 루트 컴포넌트의 metadata.component.name을 설정하세요."
+      },
+      "g7-slp-components": {
+        "what": "시스템을 구성하는 컴포넌트입니다.",
+        "fix": "시스템 구성 컴포넌트를 SBOM에 나열하세요."
+      },
+      "g7-slp-producer": {
+        "what": "시스템을 만든 주체입니다.",
+        "fix": "metadata.component.publisher 또는 metadata.supplier를 설정하세요."
+      },
+      "g7-slp-version": {
+        "what": "시스템 버전입니다.",
+        "fix": "metadata.component.version을 설정하세요."
+      },
+      "g7-slp-timestamp": {
+        "what": "시스템이 빌드된 시점입니다.",
+        "fix": "metadata.timestamp를 설정하세요."
+      },
+      "g7-slp-data-flow": {
+        "what": "시스템 내 데이터 흐름입니다.",
+        "fix": "시스템 데이터 흐름을 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-slp-data-usage": {
+        "what": "시스템의 데이터 사용 방식입니다.",
+        "fix": "시스템의 데이터 사용을 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-slp-io": {
+        "what": "시스템의 입력·출력 특성입니다.",
+        "fix": "시스템 입출력을 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-slp-app-area": {
+        "what": "시스템이 의도한 적용 분야입니다.",
+        "fix": "의도한 적용 분야를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-model-name": {
+        "what": "모델의 이름입니다.",
+        "fix": "machine-learning-model 컴포넌트의 name을 설정하세요."
+      },
+      "g7-model-id": {
+        "what": "모델을 PURL/CPE 같은 표준 식별자로 식별합니다.",
+        "fix": "SBOM의 모델 컴포넌트에 purl 또는 cpe를 추가하세요."
+      },
+      "g7-model-version": {
+        "what": "모델 버전입니다.",
+        "fix": "모델 컴포넌트의 version을 설정하세요."
+      },
+      "g7-model-timestamp": {
+        "what": "모델이 생성된 시점입니다.",
+        "fix": "모델 컴포넌트에 created/timestamp 속성을 추가하세요."
+      },
+      "g7-model-producer": {
+        "what": "모델을 만든 주체입니다.",
+        "fix": "모델 컴포넌트에 publisher, supplier 또는 manufacturer를 설정하세요."
+      },
+      "g7-model-description": {
+        "what": "모델에 대한 설명입니다.",
+        "fix": "모델 컴포넌트의 description을 설정하세요."
+      },
+      "g7-model-hash-value": {
+        "what": "모델 가중치 파일의 무결성 해시입니다.",
+        "fix": "모델 파일 해시(SHA-256 등)를 컴포넌트의 hashes에 추가하세요."
+      },
+      "g7-model-hash-alg": {
+        "what": "모델 파일에 사용한 해시 알고리즘입니다.",
+        "fix": "컴포넌트 hashes의 각 항목에 alg(예: SHA-256)를 설정하세요."
+      },
+      "g7-model-card": {
+        "what": "아키텍처와 학습 파라미터 등 모델 카드 정보입니다.",
+        "fix": "modelCard.modelParameters(아키텍처, 하이퍼파라미터)를 채우세요."
+      },
+      "g7-model-io": {
+        "what": "모델의 입력·출력 특성입니다.",
+        "fix": "modelCard.modelParameters의 inputs와 outputs를 설정하세요."
+      },
+      "g7-model-training": {
+        "what": "데이터셋과 아키텍처 등 학습 관련 특성입니다.",
+        "fix": "modelCard.modelParameters의 datasets/modelArchitecture를 설정하세요."
+      },
+      "g7-model-license": {
+        "what": "모델에 적용되는 라이선스 정보입니다.",
+        "fix": "모델 카드에 라이선스를 명시하거나 SBOM 컴포넌트의 licenses 필드를 채우세요."
+      },
+      "g7-model-openness": {
+        "what": "가중치와 아키텍처, 데이터, 학습 과정의 공개 수준입니다.",
+        "fix": "모델의 개방성(공개 가중치·데이터·학습 코드)을 openness:* 속성으로 선언하세요."
+      },
+      "g7-model-extref": {
+        "what": "모델의 외부 참조(배포처, 문서)입니다.",
+        "fix": "모델 컴포넌트에 externalReferences를 추가하세요."
+      },
+      "g7-ds-name": {
+        "what": "각 학습 데이터셋의 이름입니다.",
+        "fix": "이름이 있는 data 컴포넌트(또는 모델 카드 datasets)를 추가하세요."
+      },
+      "g7-ds-description": {
+        "what": "데이터셋에 대한 설명입니다.",
+        "fix": "data 컴포넌트의 description을 설정하세요."
+      },
+      "g7-ds-content": {
+        "what": "데이터셋의 내용입니다.",
+        "fix": "데이터셋 내용을 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-ds-identifier": {
+        "what": "데이터셋의 고정 식별자입니다.",
+        "fix": "data 컴포넌트의 bom-ref 또는 purl을 설정하세요."
+      },
+      "g7-ds-hash": {
+        "what": "데이터셋의 무결성 해시입니다.",
+        "fix": "데이터셋 파일 해시를 추가하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-ds-provenance": {
+        "what": "데이터셋의 출처입니다.",
+        "fix": "componentData.governance 또는 provenance/source 속성을 설정하세요."
+      },
+      "g7-ds-statistics": {
+        "what": "데이터셋의 통계적 특성입니다.",
+        "fix": "데이터셋 통계를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-ds-sensitivity": {
+        "what": "데이터셋의 민감 정보(개인정보 또는 저작권)입니다.",
+        "fix": "데이터셋 민감도를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-ds-dependency": {
+        "what": "데이터셋의 의존 관계입니다.",
+        "fix": "데이터셋 의존 관계를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-ds-license": {
+        "what": "데이터셋의 라이선스입니다.",
+        "fix": "data 컴포넌트에 licenses를 추가하세요."
+      },
+      "g7-infra-software": {
+        "what": "인프라의 소프트웨어 의존성입니다.",
+        "fix": "library/application/framework 컴포넌트를 SBOM에 포함하세요."
+      },
+      "g7-infra-hardware": {
+        "what": "시스템이 동작하는 하드웨어입니다(HBOM 연결).",
+        "fix": "device/hardware 컴포넌트나 하드웨어 BOM 참조를 추가하세요."
+      },
+      "g7-sec-controls": {
+        "what": "시스템에 적용한 보안 통제입니다.",
+        "fix": "보안 통제를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-sec-compliance": {
+        "what": "시스템이 충족하는 보안 규정 준수입니다.",
+        "fix": "보안 규정 준수를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-sec-policy": {
+        "what": "사이버 보안 정책 정보입니다.",
+        "fix": "사이버 보안 정책을 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-sec-vulns": {
+        "what": "시스템에 대해 참조된 알려진 취약점입니다.",
+        "fix": "SBOM에 vulnerabilities 섹션(VEX 또는 권고)을 추가하세요."
+      },
+      "g7-kpi-security": {
+        "what": "시스템의 보안 지표입니다.",
+        "fix": "보안 지표를 문서화하세요 — 자동 출처가 없어 사람 검토가 필요합니다."
+      },
+      "g7-kpi-operational": {
+        "what": "모델의 운영 성능 지표입니다.",
+        "fix": "modelCard.quantitativeAnalysis.performanceMetrics를 설정하세요."
+      },
+      "cisa-sbom-author": {
+        "what": "이 SBOM을 생성한 주체. 스캔을 실행한 조직이나 사람이며 도구가 아닙니다.",
+        "fix": "--sbom-author(또는 SBOM_AUTHOR)로 정식 명칭을 지정하면 metadata.authors에 기록됩니다."
+      },
+      "cisa-sbom-author-signature": {
+        "what": "SBOM 작성자에게 귀속되는 디지털 서명으로, 문서 안에 담긴 것.",
+        "fix": "문서 자체에 서명하거나, 파일 옆에 따로 온 서명을 검증하고 검증 사실을 기록해 둡니다."
+      },
+      "cisa-sbom-format-name": {
+        "what": "이 SBOM이 쓰인 데이터 형식의 이름.",
+        "fix": "통용되는 형식으로 출력합니다. CycloneDX에서는 bomFormat이 이름을 담습니다."
+      },
+      "cisa-sbom-format-version": {
+        "what": "그 데이터 형식의 버전.",
+        "fix": "형식이 아직 유지하는 버전을 specVersion에 적습니다."
+      },
+      "cisa-sbom-generation-context": {
+        "what": "이 SBOM이 기술하는 생애주기 단계. 구성요소 데이터가 무엇을 뜻할 수 있는지를 정합니다.",
+        "fix": "metadata.lifecycles를 설정합니다. 매니페스트를 읽었으면 pre-build, 빌드 산출물을 읽었으면 post-build입니다."
+      },
+      "cisa-sbom-timestamp": {
+        "what": "SBOM 데이터를 마지막으로 바꾼 시각.",
+        "fix": "RFC 9557 형식으로 metadata.timestamp를 설정합니다."
+      },
+      "cisa-sbom-tool-name": {
+        "what": "작성자가 SBOM을 생성하거나 수정하는 데 쓴 도구.",
+        "fix": "metadata.tools에 도구를 정식 명칭으로 적습니다."
+      },
+      "cisa-sbom-tool-version": {
+        "what": "그 도구의 어느 빌드가 돌았는지. 없으면 도구 이름만으로는 알 수 있는 것이 적습니다.",
+        "fix": "도구 항목마다 버전을 적거나, 알 수 없으면 미상임을 밝힙니다."
+      },
+      "cisa-sbom-version": {
+        "what": "같은 구성요소·버전에 대한 이 SBOM이 몇 번째 판인지.",
+        "fix": "문서 버전을 설정합니다. 이 최소 요소를 따르는 첫 발행본은 1입니다."
+      },
+      "cisa-component-name": {
+        "what": "생산자가 각 구성요소에 붙인 이름.",
+        "fix": "모든 구성요소에 이름을 답니다."
+      },
+      "cisa-component-version": {
+        "what": "각 구성요소의 버전. 취약점 매칭이 이 값을 키로 씁니다.",
+        "fix": "모든 구성요소에 버전을 적거나, 존재는 확인했고 버전은 확정하지 못했다고 표시합니다."
+      },
+      "cisa-component-producer": {
+        "what": "각 구성요소를 만든 주체. 문제가 생겼을 때 연락할 지점입니다.",
+        "fix": "publisher, supplier, authors, manufacturer 중 하나를 채우거나 출처 미상임을 밝힙니다."
+      },
+      "cisa-component-identifiers": {
+        "what": "구성요소를 다른 데이터베이스와 연결하는 식별자 하나 이상.",
+        "fix": "구성요소마다 PURL이나 CPE를 답니다. 둘 다 있을 수 없는 파일은 해시가 식별자입니다."
+      },
+      "cisa-component-license": {
+        "what": "각 구성요소가 배포되는 라이선스.",
+        "fix": "SPDX 식별자로 licenses를 채우거나 라이선스 미상임을 밝힙니다."
+      },
+      "cisa-component-hash-value": {
+        "what": "각 실행 가능 산출물의 해시. 받는 쪽이 자기 사본을 검증할 수 있게 합니다.",
+        "fix": "산출물에 접근할 수 있으면 hashes를 채우고, 접근할 수 없으면 미상임을 밝힙니다."
+      },
+      "cisa-component-hash-algorithm": {
+        "what": "각 해시를 만든 알고리즘. 알고리즘 없는 해시는 다시 계산해 볼 수 없습니다.",
+        "fix": "해시마다 알고리즘 이름을 IANA 등록명으로 적습니다."
+      },
+      "cisa-component-dependency-relationship": {
+        "what": "어느 구성요소가 어느 것을 필요로 하는지. 영향 범위를 답할 수 있게 하는 그래프입니다.",
+        "fix": "이행 의존성까지 포함해 의존 관계를 기록합니다."
+      },
+      "cisa-machine-processable-data": {
+        "what": "SBOM이 도구가 읽을 수 있는 통용 개방 형식으로 되어 있는지.",
+        "fix": "한 도구만 읽는 형식 대신 CycloneDX나 SPDX로 전달합니다."
+      },
+      "cisa-coverage": {
+        "what": "SBOM이 소프트웨어의 구성요소를 이행 의존성까지 빠짐없이 담았는지."
+      },
+      "cisa-accommodation-of-updates": {
+        "what": "발행한 SBOM 데이터를 정정할 수 있고 정정본이 지체 없이 나가는지."
+      },
+      "cisa-distribution-and-delivery": {
+        "what": "필요한 쪽이 SBOM을 받을 수 있는지, 접근 통제가 권한 있는 쪽까지 막지는 않는지."
+      },
+      "cisa-explicit-unknowns": {
+        "what": "빈 필드가 왜 비었는지 밝히는지. 작성자가 모르는 것인지, 알지만 뺀 것인지.",
+        "fix": "문서 전체에 대해 한 번 밝힙니다. 스캔은 앞의 경우만 만들므로 이 파이프라인이 그렇게 적습니다."
+      },
+      "cisa-frequency": {
+        "what": "소프트웨어 버전마다 자기 SBOM이 있는지, 데이터가 바뀌면 정정본을 다시 내는지."
+      }
+    },
+    "verdictFailed": "필수 검사 {{count}}건 실패",
+    "verdictFailed_one": "필수 검사 1건 실패",
+    "verdictFailed_zero": "필수 검사 실패 없음",
+    "verdictGap": "권고 미비 {{count}}건",
+    "verdictReview": "사람이 확인할 항목 {{count}}건",
+    "baseMandatory": "필수 {{passed}}/{{total}} 통과",
+    "missingMore": "외 {{count}}개",
+    "needsPerson": "확인할 것:",
+    "sNa": "해당 없음",
+    "notApplicable": "해당 없음 {{count}}건"
+  },
+  "crosswalk": {
+    "title": "규제 대응표",
+    "disclaimer": "규정 준수 판정이 아니라 문서 준비를 돕는 자료입니다. 이 대응표는 SBOM이 담을 수 있는 문서화 항목만 다루며, 공정성·편향 평가나 위험관리처럼 SBOM으로 표현할 수 없는 의무는 별도 문서로 이행해야 합니다.",
+    "totals": "매핑된 {{total}}개 중 충족 {{present}}개, 미비 {{gap}}개, 실패 {{failed}}개, 검토 필요 {{review}}개",
+    "thFramework": "프레임워크",
+    "thTotal": "합계",
+    "refs": "참조:",
+    "present": "충족",
+    "gap": "미비",
+    "advisory": "권고",
+    "review": "검토 필요",
+    "failed": "실패"
+  },
+  "aiProfile": {
+    "title": "AI 준수 개요",
+    "note": "AI SBOM 분석 결과를 문서 검토용으로 한눈에 모은 요약입니다. 규정 준수 여부를 판정하지 않습니다.",
+    "verdict": {
+      "pass": "통과",
+      "warn": "권고",
+      "fail": "미달",
+      "unknown": "알 수 없음"
+    },
+    "g7Label": "G7 최소 요소",
+    "g7Value": "{{auto}}개 중 {{present}}개 충족",
+    "g7Detail": "미비 {{gap}}개, 검토 대상 {{review}}개",
+    "licenseLabel": "라이선스 검토 대상",
+    "licenseValue": "{{count}}개 표시",
+    "licenseDetail": "행위 제한 {{behavioral}}개, 비상업용 {{nonCommercial}}개",
+    "crosswalkLabel": "규제 대응 범위",
+    "crosswalkValue": "프레임워크 {{count}}개",
+    "crosswalkDetail": "매핑 요소 {{present}}/{{total}}개 충족"
+  },
+  "licenses": {
+    "empty": "감지된 라이선스가 없습니다.",
+    "emptyHint": "스캔이 구성요소를 찾지 못해 분류할 대상이 없습니다. 라이선스 화면은 같은 목록에서 라이선스를 읽습니다.",
+    "reviewTitle": "라이선스 검토 필요",
+    "reviewHint": "AI 제한 조항 — 사람 검토가 필요합니다.",
+    "flagBehavioral": "행위 기반 제한",
+    "flagNonCommercial": "비상업",
+    "tier": {
+      "networkCopyleft": "Network copyleft",
+      "strongCopyleft": "Strong copyleft",
+      "weakCopyleft": "Weak copyleft",
+      "reviewNeeded": "Review needed",
+      "uncategorized": "Uncategorized",
+      "permissive": "Permissive"
+    },
+    "conflictTitle": "배포 라이선스({{license}})와의 충돌",
+    "conflictHint": "배포하는 라이선스를 기준으로 각 의존성의 조건이 어떻게 맞물리는지 보여 줍니다. 검토가 필요한 조합을 드러내는 참고 자료이며 법적 판단을 내리지 않습니다.",
+    "conflictIncompatible": "충족 불가",
+    "conflictConditional": "배포 방식에 따라 달라짐",
+    "conflictUnknown": "판정 불가",
+    "conflictCompatible": "충돌 없음",
+    "conflictOffTitle": "배포 라이선스 충돌은 검사하지 않았습니다",
+    "conflictOffHint": "이 스캔에서 프로젝트가 배포되는 라이선스를 선언하지 않아 의존성과 대조할 수 없었습니다. --license <spdx-id>를 지정하거나 PROJECT_LICENSE를 설정해 다시 스캔하면 검사가 켜집니다."
+  },
+  "recent": {
+    "title": "스캔 관리",
+    "subtitle": "이 머신의 로컬 출력 폴더에 저장된 스캔",
+    "total": "전체 스캔",
+    "atRisk": "위험 주의",
+    "projects": "프로젝트",
+    "searchPlaceholder": "스캔 검색…",
+    "noMatch": "필터에 맞는 스캔이 없습니다.",
+    "shown": "{{total}}개 중 {{shown}}개",
+    "colScan": "스캔",
+    "colType": "유형",
+    "colGenerated": "생성",
+    "colComponents": "컴포넌트",
+    "colSeverity": "최고 심각도",
+    "vsPrevious": "이 프로젝트의 이전 스캔 대비 변화",
+    "sevUp": "이전 스캔보다 나빠졌습니다",
+    "sevDown": "이전 스캔보다 나아졌습니다",
+    "delete": "삭제",
+    "deleted": "스캔을 삭제했습니다",
+    "scanNotFound": "스캔 “{{id}}”을(를) 찾지 못했습니다. 삭제되었을 수 있습니다.",
+    "confirmDeleteTitle": "이 스캔을 삭제할까요?",
+    "confirmDeleteBody": "{{scan}}의 산출물 파일이 이 컴퓨터에서 지워집니다. 다른 곳에 사본이 없으므로 되돌릴 수 없습니다.",
+    "typeAi": "AI 모델",
+    "typeSbom": "SBOM",
+    "typeSource": "소스",
+    "typeFirmware": "펌웨어",
+    "typeContainer": "컨테이너",
+    "typeRootfs": "RootFS",
+    "emptyTitle": "첫 SBOM을 만들어 보세요",
+    "emptyBody": "폴더나 Git 저장소, Docker 이미지, SBOM, AI 모델을 스캔하면 BomLens가 SBOM과 고지문, 보안 보고서를 한 번에 로컬에서 만듭니다.",
+    "emptyOutSbom": "SBOM (CycloneDX)",
+    "emptyOutNotice": "오픈소스 고지문",
+    "emptyOutSecurity": "보안 보고서",
+    "source": "파일을 지우면 목록에서도 사라집니다.",
+    "demoSubtitle": "완료된 스캔 다섯 건입니다. 프로젝트 소스와 컨테이너 이미지, 기기 펌웨어 이미지, AI 모델, 그리고 공급사에게 받은 SBOM을 각각 스캔했습니다"
+  },
+  "validation": {
+    "required": "위에 표시된 필수 항목을 채워 주세요.",
+    "file": "분석할 파일을 선택하세요.",
+    "project": "프로젝트 이름을 입력하세요.",
+    "version": "버전을 입력하세요.",
+    "target": "스캔 대상을 입력하세요.",
+    "uploadUrl": "업로드 서버 주소를 입력하세요.",
+    "uploadToken": "업로드 API 토큰을 입력하세요.",
+    "truscaProjectId": "TRUSCA 프로젝트 id를 입력하세요."
+  },
+  "provenance": {
+    "folder": "스캔한 폴더",
+    "yocto": "Yocto 빌드 디렉터리",
+    "git": "복제한 저장소",
+    "image": "컨테이너 이미지",
+    "file": "업로드한 파일",
+    "sbom": "받은 SBOM",
+    "model": "AI 모델"
+  },
+  "image": {
+    "ready": "이 입력에 필요한 이미지를 이미 받아 두었습니다.",
+    "download": "지금 받기",
+    "downloadSize": "내려받을 용량 약 {{size}} GB",
+    "pullingStart": "받기를 시작합니다…",
+    "pullingLayers": "받는 중 — 레이어 {{total}}개 중 {{complete}}개 완료",
+    "failed": {
+      "timeout": "받는 도중 진행이 멎어 중단했습니다. 네트워크를 확인한 뒤 다시 눌러 주세요.",
+      "disk": "디스크 공간이 부족해 받지 못했습니다. 공간을 확보한 뒤 다시 눌러 주세요.",
+      "dns": "레지스트리 주소를 찾지 못했습니다. 네트워크나 DNS 설정을 확인해 주세요.",
+      "proxy": "연결이 거부되거나 중간에서 가로채였습니다. 프록시나 사내 인증서 문제일 때 이렇게 나타납니다. 네트워크 담당자에게 문의해 주세요.",
+      "auth": "권한이 없어 레지스트리가 받기를 거부했습니다.",
+      "unknown": "받기에 실패했습니다. 위 로그에 docker가 보고한 내용이 있습니다."
+    }
+  },
+  "cisa": {
+    "subtitle": "2026 SBOM 최소 요소",
+    "allAdvisory": "여기 항목은 권고입니다. 적합·부적합 판정은 위의 제출 요건이 정합니다.",
+    "cluster": {
+      "cisa-metadata": "SBOM 메타데이터",
+      "cisa-component": "구성요소 데이터",
+      "cisa-practices": "운영 원칙"
+    }
+  },
+  "conf": {
+    "kind": {
+      "pass": "충족",
+      "actionable": "조치 가능",
+      "review": "사람이 확인",
+      "na": "해당 없음"
+    },
+    "searchPlaceholder": "검사 항목과 참조 규정 검색",
+    "showingAll": "검사 {{count}}건을 모두 표시합니다.",
+    "showingFiltered": "검사 {{total}}건 중 {{count}}건을 표시합니다.",
+    "noMatch": "이 조건에 맞는 검사가 없습니다.",
+    "report": "보고서 ({{ext}})",
+    "hiddenByFilter": "다른 필터에 이 검색과 일치하는 항목이 {{count}}건 더 있습니다."
+  }
+}
