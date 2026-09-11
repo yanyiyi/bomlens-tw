@@ -945,7 +945,7 @@
         "what": "Whether each software version has its own SBOM, and a corrected one is reissued when data changes."
       }
     },
-    "verdictFailed": "{{count}} mandatory checks failed",
+    "verdictFailed_other": "{{count}} mandatory checks failed",
     "verdictFailed_one": "1 mandatory check failed",
     "verdictFailed_zero": "No mandatory check failed",
     "verdictGap": "{{count}} advisory short",

@@ -945,7 +945,7 @@
         "what": "소프트웨어 버전마다 자기 SBOM이 있는지, 데이터가 바뀌면 정정본을 다시 내는지."
       }
     },
-    "verdictFailed": "필수 검사 {{count}}건 실패",
+    "verdictFailed_other": "필수 검사 {{count}}건 실패",
     "verdictFailed_one": "필수 검사 1건 실패",
     "verdictFailed_zero": "필수 검사 실패 없음",
     "verdictGap": "권고 미비 {{count}}건",

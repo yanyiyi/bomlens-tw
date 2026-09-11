@@ -1282,11 +1282,7 @@ msgid ""
 "signing runs last so it covers the final SBOM. Dashed steps are optional or "
 "input-specific. Each step is best-effort — a failure is skipped with a "
 "warning rather than aborting the scan (signing and upload excepted)."
-msgstr ""
-"不論輸入是什麼，SBOM 都會走過同一組固定順序的步驟。正規化跑在最前面，讓後續每"
-"個步驟拿到的輸入都是穩定的；簽章跑在最後，這樣它涵蓋的才是最終的 SBOM。虛線的"
-"步驟是選用或只適用於特定輸入。每個步驟都是盡力而為 (best-effort)——失敗時只會"
-"發出警告並略過，不會中止整次掃描（簽章與上傳例外）。"
+msgstr "無論採用何種輸入，SBOM 都會依照相同的固定順序進行處理。首先執行正規化，以確保後續各步驟的輸入一致；最後執行簽章，以涵蓋最終產生的 SBOM。虛線表示選用或僅適用於特定輸入的步驟。除簽章與上傳外，各步驟均採盡力而為 (best-effort) 的方式執行；若執行失敗，會發出警告並略過該步驟，而不會中止整個掃描程序。"
 
 #. type: Plain text
 #: docs/concepts/pipeline-by-input.md:71
@@ -1386,22 +1382,20 @@ msgstr "如何閱讀與解讀 BomLens 產生的開放原始碼授權聲明、安
 #: docs/concepts/reports-explained.md:5
 #, no-wrap
 msgid "What the reports mean"
-msgstr "報告怎麼讀"
+msgstr "如何解讀報告"
 
 #. type: Plain text
 #: docs/concepts/reports-explained.md:8
 msgid ""
 "This page explains how to read and interpret BomLens reports after a scan. "
 "For how to produce them, see [Generating reports](../guides/reports.md)."
-msgstr ""
-"這一頁說明掃描結束後如何閱讀與解讀 BomLens 的報告。產生方式請看[產生報告](../"
-"guides/reports.md)。"
+msgstr "這一頁說明掃描結束後如何閱讀與解讀 BomLens 的報告。其產生方式請看[產生報告](../guides/reports.md)。"
 
 #. type: Title ##
 #: docs/concepts/reports-explained.md:9
 #, no-wrap
 msgid "What the notice handles"
-msgstr "授權聲明一併處理的事"
+msgstr "授權聲明的處理內容"
 
 #. type: Plain text
 #: docs/concepts/reports-explained.md:12
@@ -1432,12 +1426,7 @@ msgid ""
 "wording of major licenses (`MIT`, `BSD-2-Clause`, `BSD-3-Clause`, "
 "`Apache-2.0`, `ISC`) and the SPDX identifier is recovered. A text that stays "
 "ambiguous is kept as `CUSTOM` rather than guessed."
-msgstr ""
-"掃描工具無法判定授權條款名稱、只留下 `CUSTOM` 並附上授權條款檔全文時"
-"（LICENSE 檔改寫了著作權標示行的 Go 模組很常見），會把全文與主要授權條款"
-"（`MIT`、`BSD-2-Clause`、`BSD-3-Clause`、`Apache-2.0`、`ISC`）的條文用語比"
-"對，還原出 SPDX 識別碼。比對後仍然含糊的全文會保留為 `CUSTOM`，不會用猜測值填"
-"補。"
+msgstr "掃描工具無法判定授權條款名稱，僅留下 `CUSTOM` 並附上授權條款檔全文時（常見於 LICENSE 檔改寫著作權標示行的 Go 模組），會將全文與主要授權條款（`MIT`、`BSD-2-Clause`、`BSD-3-Clause`、`Apache-2.0`、`ISC`）的條文用語進行比對，以還原 SPDX 識別碼。若比對後仍無法明確判定授權條款，則會保留為 `CUSTOM`，而不會逕行推測。"
 
 #. type: Bullet: '- '
 #: docs/concepts/reports-explained.md:17
@@ -1452,11 +1441,7 @@ msgid ""
 "the end of the notice. This satisfies the obligation of licenses that "
 "require the full text, without separate collection. The bundled originals "
 "are in `docker/lib/licenses/*.txt`."
-msgstr ""
-"21 種主要開放原始碼授權條款（`Apache-2.0`、`MIT`、`BSD-3-Clause`、`GPL`／"
-"`LGPL` 家族等）的 SPDX 標準全文，會一併附在授權聲明的最後。這樣就能滿足要求隨"
-"附全文的授權條款義務，不必另外蒐集。內建的原文放在 `docker/lib/licenses/"
-"*.txt`。"
+msgstr "21 種主要開放原始碼授權條款（`Apache-2.0`、`MIT`、`BSD-3-Clause`、`GPL`／`LGPL` 家族等）的 SPDX 標準全文，也會附在授權聲明的最後。如此即可履行須隨附授權條款全文的義務，無須另外蒐集。這些內建的授權條款全文位於 `docker/lib/licenses/*.txt`。"
 
 #. type: Title ##
 #: docs/concepts/reports-explained.md:18
@@ -1662,11 +1647,7 @@ msgid ""
 "upstream end-of-life. This is a supply-chain risk separate from CVEs: a "
 "runtime or framework past its support date gets no more upstream security "
 "fixes, so a Critical or High reported later has no patch to apply."
-msgstr ""
-"BomLens 也會標示各元件的發行週期是否已到上游的終止支援（End-of-Life，EOL）。"
-"這是與 CVE 各自獨立的供應鏈風險：過了支援期限的執行環境或框架不會再有上游的安"
-"全修正，因此之後即使報出 Critical（嚴重）或 High（高）等級的弱點，也沒有修補"
-"可以套用。"
+msgstr "BomLens 也會標示各元件的發行週期是否已達上游的支援終止期限（End-of-Life，EOL）。這是與 CVE 各自獨立的供應鏈風險：超過支援期限的執行環境或框架不會再獲得上游提供的安全性修正，因此之後即使通報 Critical（嚴重）或 High（高）等級的弱點，也沒有修補程式可供套用。"
 
 #. type: Bullet: '- '
 #: docs/concepts/reports-explained.md:59
@@ -2324,9 +2305,7 @@ msgid ""
 "Submit a PR following the [contributing guide](https://github.com/sktelecom/"
 "bomlens/blob/main/CONTRIBUTING.md). Include the following in the PR "
 "description."
-msgstr ""
-"依照[貢獻指南](https://github.com/sktelecom/bomlens/blob/main/"
-"CONTRIBUTING.md)送出 PR。PR 說明裡請包含以下內容。"
+msgstr "依照[貢獻指南](https://github.com/sktelecom/bomlens/blob/main/CONTRIBUTING.md)送出 PR，並在 PR 說明中包含以下內容。"
 
 #. type: Bullet: '- '
 #: docs/contribute/package-managers.md:108
@@ -2818,7 +2797,7 @@ msgstr "撰寫測試的原則"
 #: docs/contribute/testing.md:143
 #, no-wrap
 msgid "**Independence**: Each test must not depend on other tests. Results must stay the same regardless of test order.\n"
-msgstr "**獨立性**：每個測試都不能依賴其他測試。不論執行順序如何改變，結果都必須一致。\n"
+msgstr "**獨立性**：每個測試都不能依賴其他測試。無論執行順序如何改變，結果都必須一致。\n"
 
 #. type: Plain text
 #: docs/contribute/testing.md:145
@@ -3880,7 +3859,7 @@ msgstr ""
 #. type: Plain text
 #: docs/guides/ai-model.md:216
 msgid "Two frameworks cover every analyzed SBOM, AI or not:"
-msgstr "有兩個框架涵蓋所有被分析的 SBOM，不論是不是 AI："
+msgstr "有兩個框架涵蓋所有被分析的 SBOM，無論是不是 AI："
 
 #. type: Bullet: '- '
 #: docs/guides/ai-model.md:219
@@ -4297,9 +4276,7 @@ msgid ""
 "For any input form, adding `--all --generate-only` produces all three at "
 "once (the risk report is on by default and is only turned off with `--no-"
 "report`)."
-msgstr ""
-"不論哪一種輸入形式，加上 `--all --generate-only` 就會一次產生這三份（風險報告"
-"預設開啟，只有 `--no-report` 會把它關掉）。"
+msgstr "無論哪一種輸入形式，加上 `--all --generate-only` 就會一次產生這三份（風險報告預設開啟，只有 `--no-report` 會把它關掉）。"
 
 #. type: Title ##
 #: docs/guides/by-input.md:21 docs/guides/server-delivery.md:22
@@ -5538,7 +5515,7 @@ msgstr ""
 msgid ""
 "Firmware analysis needs the firmware image (above), whether you use the web "
 "UI or the CLI."
-msgstr "不論用網頁介面還是 CLI，韌體分析都需要上面那個韌體映像檔。"
+msgstr "無論用網頁介面還是 CLI，韌體分析都需要上面那個韌體映像檔。"
 
 #. type: Plain text
 #: docs/guides/firmware.md:51

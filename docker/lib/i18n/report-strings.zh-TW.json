@@ -195,7 +195,7 @@
   "risk.h3_licclass": "授權分類（Copyleft 強度）",
   "risk.licclass_intro_md": "每個元件也會以 `bomlens:licenseClass` 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」，不會逕自視為「寬鬆式 (Permissive)」。",
   "risk.licclass_intro_html_a": "每個元件也會以 ",
-  "risk.licclass_intro_html_b": " 屬性記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」，不會逕自視為「寬鬆式 (Permissive)」。",
+  "risk.licclass_intro_html_b": " 屬性會記錄在 SBOM 中。無法辨識的授權條款會保留為「未分類 (Uncategorized)」，不會直接歸類為「寬鬆式 (Permissive)」。",
   "risk.h3_malicious": "已知惡意套件",
   "risk.malicious_intro": "這些不是可以靠修補解決的弱點。為了攻擊安裝者而發佈的套件必須移除，並輪替建置過程可能接觸到的所有認證資訊。",
   "risk.malicious_list": "與內建 OSV 快照比對後確認的套件：",
