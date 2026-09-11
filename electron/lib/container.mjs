@@ -38,8 +38,14 @@ function readAppVersion(req = createRequire(import.meta.url)) {
 // 버전을 읽지 못하는 실행(소스에서 띄운 개발 앱)에서만 `:latest`로 돌아간다.
 export const APP_VERSION = readAppVersion();
 
+// 이 포크는 자체 이미지를 발행한다. 메인 창의 스캔 UI는 이미지 안에서 서빙되는데,
+// 상류 이미지에는 이 포크의 zh-TW 카탈로그가 없어 중국어 전환이 나타나지 않기 때문이다.
+// 네임스페이스를 한 곳에만 적어 두고, SBOM_IMAGE_NAMESPACE로 덮어쓸 수 있게 한다
+// (발행 전 예행 연습, 또는 이미지를 미리 적재해 둔 오프라인 현장에서 재빌드 없이 쓰기 위해).
+export const IMAGE_NAMESPACE = process.env.SBOM_IMAGE_NAMESPACE ?? "ghcr.io/yanyiyi";
+
 export function imageRef(name, { version = APP_VERSION } = {}) {
-  return `ghcr.io/sktelecom/${name}:${version ?? "latest"}`;
+  return `${IMAGE_NAMESPACE}/${name}:${version ?? "latest"}`;
 }
 
 export const DEFAULT_IMAGE = process.env.SBOM_SCANNER_IMAGE ?? imageRef("bomlens");

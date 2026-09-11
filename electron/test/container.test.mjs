@@ -23,6 +23,7 @@ import {
   dockerStatus,
   findFreePort,
   imageRef,
+  IMAGE_NAMESPACE,
   resetDockerBin,
   resolveDockerBin,
   scanMountArgs,
@@ -75,8 +76,8 @@ test("DEFAULT_IMAGE pins the app's own version, not :latest", () => {
   // `:latest`는 릴리스가 아니라 main 최신 빌드를 가리키므로 릴리스 앱이 그것을 받으면
   // 설치한 버전과 도는 스캐너가 어긋난다. 기본값은 이 앱의 package.json 버전이어야 한다.
   if (!process.env.SBOM_SCANNER_IMAGE) {
-    assert.equal(DEFAULT_IMAGE, `ghcr.io/sktelecom/bomlens:${APP_VERSION}`);
-    assert.notEqual(DEFAULT_IMAGE, "ghcr.io/sktelecom/bomlens:latest");
+    assert.equal(DEFAULT_IMAGE, `${IMAGE_NAMESPACE}/bomlens:${APP_VERSION}`);
+    assert.notEqual(DEFAULT_IMAGE, `${IMAGE_NAMESPACE}/bomlens:latest`);
   }
 });
 
@@ -86,17 +87,25 @@ test("APP_VERSION is the packaged app version", () => {
 
 test("imageRef falls back to :latest when the version is unknown", () => {
   // 소스에서 띄운 개발 앱은 버전을 읽지 못할 수 있다. 그때만 예전 동작으로 돌아간다.
-  assert.equal(imageRef("bomlens", { version: null }), "ghcr.io/sktelecom/bomlens:latest");
-  assert.equal(imageRef("bomlens", { version: "1.2.3" }), "ghcr.io/sktelecom/bomlens:1.2.3");
+  assert.equal(imageRef("bomlens", { version: null }), `${IMAGE_NAMESPACE}/bomlens:latest`);
+  assert.equal(imageRef("bomlens", { version: "1.2.3" }), `${IMAGE_NAMESPACE}/bomlens:1.2.3`);
+});
+
+test("fork images are published under this fork's namespace", () => {
+  // 위의 검증들은 네임스페이스에 무관하게 통과하므로(상류 값이어도 통과한다) 값 자체는
+  // 여기 한 곳에서 못 박는다. 상류를 머지하다 이 상수가 되돌아가면 이 테스트가 잡는다.
+  if (!process.env.SBOM_IMAGE_NAMESPACE) {
+    assert.equal(IMAGE_NAMESPACE, "ghcr.io/yanyiyi");
+  }
 });
 
 test("sibling images are pinned to the same version as the base image", () => {
   // 형제가 :latest에 남아 있으면 방금 띄운 베이스 이미지와 어긋난다.
   if (!process.env.SBOM_FIRMWARE_IMAGE) {
-    assert.equal(FIRMWARE_IMAGE, `ghcr.io/sktelecom/bomlens-firmware:${APP_VERSION}`);
+    assert.equal(FIRMWARE_IMAGE, `${IMAGE_NAMESPACE}/bomlens-firmware:${APP_VERSION}`);
   }
   if (!process.env.SBOM_AIBOM_IMAGE) {
-    assert.equal(AIBOM_IMAGE, `ghcr.io/sktelecom/bomlens-aibom:${APP_VERSION}`);
+    assert.equal(AIBOM_IMAGE, `${IMAGE_NAMESPACE}/bomlens-aibom:${APP_VERSION}`);
   }
 });
 

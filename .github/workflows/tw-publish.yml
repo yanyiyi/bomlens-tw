@@ -1,0 +1,49 @@
+name: TW - publish fork images
+
+# 這個 fork 發佈自己的掃描器映像檔，因為桌面 app 的主視窗介面是由映像檔內部提供的，
+# 上游的映像檔沒有這個 fork 的 zh-TW 目錄檔（docker/web/frontend/src/locales/zh-TW）。
+#
+# 為什麼不直接用 docker-publish.yml 的 workflow_dispatch：那個入口只吃 push 與
+# skip_scan，沒有 version。少了 version，metadata-action 只會打出 latest 與 sha-，
+# 而桌面 app 拉的是與自己版本相同的 tag（electron/lib/container.mjs 的 APP_VERSION），
+# 於是使用者會撞上 notag。workflow_call 才有 version，所以這裡用 caller 的形式呼叫它。
+#
+# namespace 不必指定：docker-publish.yml 的 PUBLISH_OWNER 預設就是
+# github.repository_owner，在這個 fork 就是自己的帳號。
+#
+# 先決條件（repo 設定，不在檔案裡）：
+#   - Variables 要有 CI_LINUX_RUNNER = ["ubuntu-latest"]，否則每個 job 都會去等一個
+#     這個 fork 沒有的 self-hosted runner。
+#   - Actions → General → Workflow permissions 選 Read and write。
+#   - 第一次發佈成功後，GHCR 的 package 預設是 private，要手動改成 public，
+#     否則使用者匿名 pull 會拿到 denied。
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '版本，例如 v1.11.8（要與 electron/package.json 的版本一致）'
+        required: true
+        type: string
+      skip_scan:
+        description: '略過發佈前的映像檔掃描（只在掃描器本身出狀況擋住發佈時使用）'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/docker-publish.yml
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    with:
+      push: true
+      version: ${{ inputs.version }}
+      skip_scan: ${{ inputs.skip_scan }}
